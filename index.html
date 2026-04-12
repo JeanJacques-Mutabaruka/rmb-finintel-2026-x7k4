@@ -31,6 +31,23 @@
 
 
 /* Hero intro responsive */
+
+/* ── MOBILE: Triangle cards & expanded panels ── */
+@media (max-width: 768px) {
+  /* Triangle cards: 3 col → 1 col */
+  .tri-cards-grid { grid-template-columns: 1fr !important; }
+  /* Expanded panel inner grids: 3 col → 1 col */
+  .tri-inner-grid { grid-template-columns: 1fr !important; }
+  /* Markets panel: 2 col → 1 col */
+  .tri-markets-grid { grid-template-columns: 1fr !important; }
+  /* Principles cards: 3 col → 1 col */
+  .tri-principles-grid { grid-template-columns: 1fr !important; }
+  /* Layer cards: ensure nowrap titles wrap properly */
+  .layer-name { white-space: normal !important; font-size: 16px !important; }
+  /* Principle expandable cards detail padding */
+  #principles-list > div [id^="p-detail-"] { padding-left: 16px !important; }
+}
+
 @media (max-width:768px) {
   .hero-intro-grid { grid-template-columns: 1fr !important; }
   .phase-row-label { display: block; margin-bottom: 2px; }
@@ -271,97 +288,107 @@
   <p class="section-lead">Effective mineral financial intelligence is built on three interlocking frameworks — each with three dimensions — that together define a coherent and complete analytical architecture. Click any triangle to expand.</p>
 
   <!-- THREE TRIANGLES -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
-    <div style="background:var(--blue-lt);border:2px solid var(--blue);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri1')">
-      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px">ToR Mandate</div>
-      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
-        <polygon points="60,8 8,96 112,96" fill="rgba(27,108,168,0.12)" stroke="#1B6CA8" stroke-width="2.5"/>
-        <text x="60" y="30" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Intelligence</text>
-        <text x="22" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Strategic</text>
-        <text x="97" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Institutional</text>
-      </svg>
-      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Strategic Layers</div>
-      <div style="font-size:12px;color:var(--text-muted)">Intelligence · Strategic Advisory · Institutional</div>
-      <div style="margin-top:12px;font-size:11px;color:var(--blue);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
-    </div>
-    <div style="background:var(--gold-pale);border:2px solid var(--gold);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri2')">
-      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Markets</div>
-      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
-        <polygon points="60,8 8,96 112,96" fill="rgba(184,134,11,0.1)" stroke="#B8860B" stroke-width="2.5"/>
-        <line x1="60" y1="20" x2="25" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
-        <line x1="60" y1="20" x2="95" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
-        <line x1="30" y1="88" x2="90" y2="88" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
-        <text x="60" y="30" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">PRICE</text>
-        <text x="18" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">DEMAND</text>
-        <text x="100" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">OFFER</text>
-      </svg>
-      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Market Dimensions</div>
-      <div style="font-size:12px;color:var(--text-muted)">Demand · Offer · Price</div>
-      <div style="margin-top:12px;font-size:11px;color:var(--gold);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
-    </div>
-    <div style="background:var(--g-pale);border:2px solid var(--g-deep);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri3')">
-      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:12px">Financial Intelligence</div>
-      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
-        <polygon points="60,8 8,96 112,96" fill="rgba(26,92,56,0.1)" stroke="#1A5C38" stroke-width="2.5"/>
-        <text x="60" y="26" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Company</text>
-        <text x="60" y="36" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Centric</text>
-        <text x="16" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Dynamic</text>
-        <text x="16" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Markets</text>
-        <text x="102" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Full Costs</text>
-        <text x="102" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Modeling</text>
-      </svg>
-      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 FI Principles</div>
-      <div style="font-size:12px;color:var(--text-muted)">Company · Markets · Full Costs Modeling</div>
-      <div style="margin-top:12px;font-size:11px;color:var(--g-deep);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
-    </div>
-  </div>
+  <!-- THREE TRIANGLES — each wraps its own expand panel -->
+  <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:32px">
 
-  <!-- EXPAND PANELS -->
-  <div id="tri1" style="display:none;margin-bottom:20px;background:var(--blue-lt);border:1px solid var(--blue);border-radius:var(--radius);padding:28px 32px">
-    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Strategic Layers — Mapping to FI Principles</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 1 — Intelligence & Analytics</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Dynamic Markets</strong> principle: monitoring demand-offer-price dynamics, price gap analysis, and market outlook.</div></div>
-      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 2 — Strategic Advisory</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Full Costs (Financial) Modeling</strong> principle: trade diversification, finance instruments, energy policy, logistics and market access costs.</div></div>
-      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 3 — Institutional Embedding</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Company-Centric</strong> principle: capacity building ensures companies and regulators independently use financial intelligence.</div></div>
-    </div>
-  </div>
-
-  <div id="tri2" style="display:none;margin-bottom:20px;background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius);padding:28px 32px">
-    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:8px">Markets as Dynamic Systems: The Demand-Offer-Price Triangle</div>
-    <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.7">Markets must be understood across three interactive dimensions — on both the selling side and the production side (energy, raw materials, investment capital, machinery).</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-      <div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
-          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">📉</div><div style="font-weight:700;font-size:12px;color:#7A5800">DEMAND</div></div>
-          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">🏭</div><div style="font-weight:700;font-size:12px;color:#7A5800">OFFER</div></div>
-          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">💰</div><div style="font-weight:700;font-size:12px;color:#7A5800">PRICE</div></div>
-        </div>
-        <div style="background:#FFFFFF;border-radius:6px;padding:14px;font-size:13px;color:var(--text-body);line-height:1.7">
-          → Confrontation of demand and offer <strong>determines price</strong><br>
-          → Price signals <strong>influence demand and offer</strong> in return<br>
-          → Demand-offer gap <strong>drives investment decisions</strong><br>
-          → Investment increases future offer → impacts future prices
+    <!-- Card 1: ToR Mandate -->
+    <div style="border:2px solid var(--blue);border-radius:var(--radius);overflow:hidden">
+      <div style="background:var(--blue-lt);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri1')">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px">ToR Mandate</div>
+        <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+          <polygon points="60,8 8,96 112,96" fill="rgba(27,108,168,0.12)" stroke="#1B6CA8" stroke-width="2.5"/>
+          <text x="60" y="30" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Intelligence</text>
+          <text x="22" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Strategic</text>
+          <text x="97" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Institutional</text>
+        </svg>
+        <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Strategic Layers</div>
+        <div style="font-size:12px;color:var(--text-muted)">Intelligence · Strategic Advisory · Institutional</div>
+        <div id="tri1-label" style="margin-top:12px;font-size:11px;color:var(--blue);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+      </div>
+      <div id="tri1" style="display:none;background:var(--blue-lt);border-top:1px solid var(--blue);padding:28px 32px">
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Strategic Layers — Mapping to FI Principles</div>
+        <div class="tri-inner-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 1 — Intelligence & Analytics</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Dynamic Markets</strong> principle: monitoring demand-offer-price dynamics, price gap analysis, and market outlook.</div></div>
+          <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 2 — Strategic Advisory</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Full Costs (Financial) Modeling</strong> principle: trade diversification, finance instruments, energy policy, logistics and market access costs.</div></div>
+          <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 3 — Institutional Embedding</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Company-Centric</strong> principle: capacity building ensures companies and regulators independently use financial intelligence.</div></div>
         </div>
       </div>
-      <div style="background:#FFFFFF;border-radius:6px;padding:18px">
-        <div style="font-size:24px;text-align:center;margin-bottom:8px">🚲</div>
-        <div style="font-weight:700;color:#7A5800;margin-bottom:8px;font-size:14px;text-align:center">The Bicycle Equilibrium</div>
-        <p style="font-size:13px;color:var(--text-muted);line-height:1.7">Market equilibrium is dynamic — like a bicycle: <strong>without movement one falls</strong>, but <strong>excessive speed without control leads to a crash</strong>. Mastering it requires knowing the destination, reading the road, and continuously calibrating speed. This is what mineral financial intelligence must do: <strong>ride the market — not fall off it</strong>.</p>
+    </div>
+
+    <!-- Card 2: Markets -->
+    <div style="border:2px solid var(--gold);border-radius:var(--radius);overflow:hidden">
+      <div style="background:var(--gold-pale);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri2')">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Markets</div>
+        <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+          <polygon points="60,8 8,96 112,96" fill="rgba(184,134,11,0.1)" stroke="#B8860B" stroke-width="2.5"/>
+          <line x1="60" y1="20" x2="25" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="60" y1="20" x2="95" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="30" y1="88" x2="90" y2="88" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="60" y="30" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">PRICE</text>
+          <text x="18" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">DEMAND</text>
+          <text x="100" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">OFFER</text>
+        </svg>
+        <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Market Dimensions</div>
+        <div style="font-size:12px;color:var(--text-muted)">Demand · Offer · Price</div>
+        <div id="tri2-label" style="margin-top:12px;font-size:11px;color:var(--gold);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+      </div>
+      <div id="tri2" style="display:none;background:var(--gold-pale);border-top:1px solid var(--gold);padding:28px 32px">
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:8px">Markets as Dynamic Systems: The Demand-Offer-Price Triangle</div>
+        <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.7">Markets must be understood across three interactive dimensions — on both the selling side and the production side (energy, raw materials, investment capital, machinery).</p>
+        <div class="tri-markets-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+              <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">📉</div><div style="font-weight:700;font-size:12px;color:#7A5800">DEMAND</div></div>
+              <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">🏭</div><div style="font-weight:700;font-size:12px;color:#7A5800">OFFER</div></div>
+              <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">💰</div><div style="font-weight:700;font-size:12px;color:#7A5800">PRICE</div></div>
+            </div>
+            <div style="background:#FFFFFF;border-radius:6px;padding:14px;font-size:13px;color:var(--text-body);line-height:1.7">
+              → Confrontation of demand and offer <strong>determines price</strong><br>
+              → Price signals <strong>influence demand and offer</strong> in return<br>
+              → Demand-offer gap <strong>drives investment decisions</strong><br>
+              → Investment increases future offer → impacts future prices
+            </div>
+          </div>
+          <div style="background:#FFFFFF;border-radius:6px;padding:18px">
+            <div style="font-size:24px;text-align:center;margin-bottom:8px">🚲</div>
+            <div style="font-weight:700;color:#7A5800;margin-bottom:8px;font-size:14px;text-align:center">The Bicycle Equilibrium</div>
+            <p style="font-size:13px;color:var(--text-muted);line-height:1.7">Market equilibrium is dynamic — like a bicycle: <strong>without movement one falls</strong>, but <strong>excessive speed without control leads to a crash</strong>. Mastering it requires knowing the destination, reading the road, and continuously calibrating speed. This is what mineral financial intelligence must do: <strong>ride the market — not fall off it</strong>.</p>
+          </div>
+        </div>
+        <div style="background:#FFFFFF;border-radius:6px;padding:14px;border-left:4px solid var(--gold);margin-top:14px">
+          <strong style="color:#7A5800;font-size:13px">⚠️ Production-Side Markets — Often Overlooked: </strong>
+          <span style="font-size:13px;color:var(--text-muted)">Markets also exist on the production side — energy, raw materials, investment capital, machinery — each with their own demand-offer-price dynamics. A disruption in any of these directly impacts production costs and competitive positioning on the selling side.</span>
+        </div>
       </div>
     </div>
-    <div style="background:#FFFFFF;border-radius:6px;padding:14px;border-left:4px solid var(--gold);margin-top:14px">
-      <strong style="color:#7A5800;font-size:13px">⚠️ Production-Side Markets — Often Overlooked: </strong>
-      <span style="font-size:13px;color:var(--text-muted)">Markets also exist on the production side — energy, raw materials, investment capital, machinery — each with their own demand-offer-price dynamics. A disruption in any of these directly impacts production costs and competitive positioning on the selling side.</span>
-    </div>
-  </div>
 
-  <div id="tri3" style="display:none;margin-bottom:20px;background:var(--g-pale);border:1px solid var(--g-deep);border-radius:var(--radius);padding:28px 32px">
-    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Financial Intelligence Principles</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
-      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🏢</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 1 — Company-Centric</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">The company is the unit of analysis. Any policy that does not take into account companies' interests and their business environments is destined to fail.</div></div>
-      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🚲</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 2 — Dynamic Markets</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Markets analysed across three interactive dimensions on both the selling side and production side. Market equilibrium is dynamic — like the bicycle 🚲.</div></div>
-      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">📐</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 3 — Full Costs (Financial) Modeling</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">All costs modeled: production, policy compliance, logistics, market access, and complete financial flows (assets, inventory, receivables, payables, cashflow, financing).</div></div>
+    <!-- Card 3: FI Principles -->
+    <div style="border:2px solid var(--g-deep);border-radius:var(--radius);overflow:hidden">
+      <div style="background:var(--g-pale);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri3')">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:12px">Financial Intelligence</div>
+        <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+          <polygon points="60,8 8,96 112,96" fill="rgba(26,92,56,0.1)" stroke="#1A5C38" stroke-width="2.5"/>
+          <text x="60" y="26" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Company</text>
+          <text x="60" y="36" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Centric</text>
+          <text x="16" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Dynamic</text>
+          <text x="16" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Markets</text>
+          <text x="102" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Full Costs</text>
+          <text x="102" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Modeling</text>
+        </svg>
+        <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 FI Principles</div>
+        <div style="font-size:12px;color:var(--text-muted)">Company · Markets · Full Costs Modeling</div>
+        <div id="tri3-label" style="margin-top:12px;font-size:11px;color:var(--g-deep);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+      </div>
+      <div id="tri3" style="display:none;background:var(--g-pale);border-top:1px solid var(--g-deep);padding:28px 32px">
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Financial Intelligence Principles</div>
+        <div class="tri-principles-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+          <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🏢</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 1 — Company-Centric</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">The company is the unit of analysis. Any policy that does not take into account companies' interests and their business environments is destined to fail.</div></div>
+          <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🚲</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 2 — Dynamic Markets</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Markets analysed across three interactive dimensions on both the selling side and production side. Market equilibrium is dynamic — like the bicycle 🚲.</div></div>
+          <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">📐</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 3 — Full Costs (Financial) Modeling</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">All costs modeled: production, policy compliance, logistics, market access, and complete financial flows (assets, inventory, receivables, payables, cashflow, financing).</div></div>
+        </div>
+      </div>
     </div>
+
   </div>
 
   <!-- 5 CORE PRINCIPLES EXPANDABLE CARDS -->
@@ -996,11 +1023,19 @@ function toggleTriangle(id) {
   var el = document.getElementById(id);
   if (!el) return;
   var isOpen = el.style.display !== 'none';
+  // Close all panels and reset all labels
   ['tri1','tri2','tri3'].forEach(function(t){
     var e = document.getElementById(t);
     if (e) e.style.display = 'none';
+    var lbl = document.getElementById(t+'-label');
+    if (lbl) lbl.textContent = 'TAP TO EXPAND ↓';
   });
-  if (!isOpen) el.style.display = 'block';
+  // Open clicked panel if it was closed
+  if (!isOpen) {
+    el.style.display = 'block';
+    var lbl = document.getElementById(id+'-label');
+    if (lbl) lbl.textContent = 'TAP TO COLLAPSE ↑';
+  }
 }
 
 // ── AGENCIES ──
