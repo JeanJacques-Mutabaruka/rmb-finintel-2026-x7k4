@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMB-FinIntel — Energy Module</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.energy-hero-accent { color: #F5A623; }
+/* Geopolitical context cards */
+.geo-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 14px; }
+.geo-card {
+  background: #FFFFFF; border: 1px solid var(--border-lt);
+  border-radius: var(--radius); padding: 24px; transition: all 0.22s;
+  border-top: 3px solid transparent; box-shadow: var(--shadow-sm);
+}
+.geo-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: var(--surface-1); }
+.gc-flag { font-size: 24px; margin-bottom: 10px; }
+.gc-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.gc-text { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.gc-impact { margin-top: 12px; font-size: 12px; font-style: italic; }
+.gc-red { border-top-color: var(--red); } .gc-red .gc-impact { color: #F08080; }
+.gc-gold { border-top-color: var(--gold); } .gc-gold .gc-impact { color: var(--gold); }
+.gc-blue { border-top-color: #7EC8F0; } .gc-blue .gc-impact { color: #7EC8F0; }
+.gc-green { border-top-color: #6FD19A; } .gc-green .gc-impact { color: #6FD19A; }
+
+/* Energy cost decomposition */
+.cost-stack { display: flex; flex-direction: column; gap: 8px; max-width: 680px; }
+.cost-bar-row { display: flex; align-items: center; gap: 12px; }
+.cost-bar-label { font-size: 13px; color: var(--text-muted); min-width: 180px; text-align: right; }
+.cost-bar-track { flex: 1; height: 32px; background: var(--border-lt); border-radius: 4px; overflow: hidden; position: relative; }
+.cost-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; transition: width 1s ease; }
+.cost-bar-pct { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-size: 12px; font-family: var(--font-m); color: var(--text-muted); }
+
+/* Scenario matrix */
+.scenario-matrix { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.sc-card {
+  background: #FFFFFF; border: 1px solid var(--border-lt);
+  border-radius: var(--radius); padding: 22px 18px; transition: all 0.25s; cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.sc-card:hover { transform: translateY(-2px); border-color: rgba(200,150,10,0.3); }
+.sc-scenario { font-family: var(--font-m); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.sc-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.sc-metrics { display: flex; flex-direction: column; gap: 6px; }
+.sc-metric { display: flex; justify-content: space-between; font-size: 13px; }
+.sc-metric-label { color: var(--text-muted); }
+.sc-metric-val { font-weight: 600; font-family: var(--font-m); }
+.val-good { color: #6FD19A; } .val-warn { color: var(--gold); } .val-bad { color: #F08080; }
+
+/* Clean premium section */
+.premium-highlight {
+  background: linear-gradient(135deg, rgba(26,92,56,0.25) 0%, rgba(200,150,10,0.1) 100%);
+  border: 1px solid rgba(26,92,56,0.4); border-left: 4px solid #6FD19A;
+  border-radius: var(--radius); padding: 32px 36px; max-width: 800px;
+}
+.ph-title { font-family: var(--font-d); font-size: 22px; font-weight: 700; color: #6FD19A; margin-bottom: 14px; }
+.ph-text { font-size: 15px; color: var(--text-muted); line-height: 1.72; }
+.ph-stat { display: inline-block; font-family: var(--font-d); font-size: 32px; font-weight: 700; color: var(--gold); margin: 8px 0; }
+
+/* Module integration */
+.integration-flow { display: flex; flex-direction: column; gap: 2px; max-width: 640px; }
+.int-step {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: #FFFFFF; border: 1px solid var(--border-lt);
+  border-radius: 6px; padding: 18px 20px; transition: background 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+.int-step:hover { background: var(--g-xpale); }
+.int-step-num { font-family: var(--font-d); font-size: 24px; font-weight: 700; color: var(--gold); min-width: 32px; }
+.int-step-content {}
+.int-step-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.int-step-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
+/* Timeline for phase 2 */
+.phase2-note {
+  background: rgba(200,150,10,0.08); border: 1px solid rgba(200,150,10,0.2);
+  border-radius: var(--radius); padding: 20px 24px;
+  display: flex; gap: 14px; align-items: flex-start;
+  max-width: 700px;
+}
+.p2-icon { font-size: 22px; flex-shrink: 0; }
+.p2-label { font-family: var(--font-m); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.p2-text { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+@media(max-width:860px){
+  .scenario-matrix{grid-template-columns:1fr;}
+  .geo-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:560px){
+  .geo-grid{grid-template-columns:1fr;}
+  .cost-bar-label{min-width:120px;font-size:12px;}
+}
+
+/* Light theme overrides */
+.geo-card { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.geo-card:hover { background: var(--surface-1); box-shadow: var(--shadow-md); }
+.gc-title { color: var(--text-head); }
+.gc-text { color: var(--text-muted); }
+.gc-red { border-top-color: var(--red); } .gc-red .gc-impact { color: var(--red); }
+.gc-gold { border-top-color: var(--gold); } .gc-gold .gc-impact { color: #7A5800; }
+.gc-blue { border-top-color: var(--blue); } .gc-blue .gc-impact { color: var(--blue); }
+.gc-green { border-top-color: var(--g-deep); } .gc-green .gc-impact { color: var(--g-mid); }
+.cost-bar-label { color: var(--text-body); }
+.cost-bar-track { background: var(--border-lt); }
+.cost-bar-pct { color: var(--text-muted); }
+.sc-card { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.sc-card:hover { box-shadow: var(--shadow-md); border-color: var(--g-lt); }
+.sc-scenario { color: var(--g-deep); }
+.sc-title { color: var(--text-head); }
+.sc-metric-label { color: var(--text-muted); }
+.val-good { color: var(--g-deep); } .val-warn { color: #7A5800; } .val-bad { color: var(--red); }
+.premium-highlight { background: var(--g-pale); border: 1px solid var(--g-lt); border-left: 4px solid var(--g-deep); }
+.ph-title { color: var(--g-deep); }
+.ph-text { color: var(--text-body); }
+.ph-stat { color: var(--gold); }
+.phase2-note { background: var(--gold-pale); border: 1px solid #E8CC80; }
+.p2-label { color: #7A5800; }
+.p2-text { color: var(--text-body); }
+
+</style>
+</head>
+<body>
+
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="architecture.html">Architecture</a>
+    <div class="nav-divider"></div>
+    <a href="energy.html" class="active">⚡ Energy Module</a>
+    <div class="nav-divider"></div>
+    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- HERO -->
+<div class="hero" style="min-height:56vh;">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 70% 40%,rgba(245,166,35,0.2) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 20% 70%,rgba(26,92,56,0.25) 0%,transparent 50%)"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Energy Financial Intelligence Module</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal">Energy is not a utility cost.<br><span class="accent">It is a strategic variable.</span></h1>
+    <p class="hero-lead fade-up au-3">In Rwanda's mining sector, energy is the single largest controllable cost component — and in today's geopolitical context, the most volatile. Any mineral financial intelligence framework that ignores energy costs is systematically incomplete.</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap" class="fade-up au-4">
+      <a href="#geopolitical" class="btn btn-gold">Explore the Context ↓</a>
+      <a href="#module" class="btn btn-outline">See the Module Design</a>
+    </div>
+  </div>
+  <div class="stats-bar fade-up au-5">
+    <div class="stat"><div class="stat-n">25–40%</div><div class="stat-l">Energy as % of mining operating costs (global range)</div></div>
+    <div class="stat"><div class="stat-n">10–20%</div><div class="stat-l">Price premium for low-carbon certified minerals (EU/US buyers)</div></div>
+    <div class="stat"><div class="stat-n">2030</div><div class="stat-l">EU Critical Raw Materials Act sourcing deadline</div></div>
+    <div class="stat"><div class="stat-n">36</div><div class="stat-l">Scenarios modelled: 3 price × 3 mix × 4 minerals</div></div>
+  </div>
+</div>
+
+<!-- GEOPOLITICAL CONTEXT -->
+<section class="section section-alt" id="geopolitical">
+  <div class="eyebrow" style="color:#F5A623">Geopolitical Context</div>
+  <h2 class="section-title">Why Energy Intelligence is Urgent Now</h2>
+  <p class="section-lead">Six converging global developments make energy financial intelligence not a "nice to have" but a strategic necessity for Rwanda's mining sector in 2025–2026.</p>
+  <div class="geo-grid">
+    <div class="geo-card gc-red">
+      <div class="gc-flag">⚔️</div>
+      <div class="gc-title">Russia-Ukraine & Global Energy Disruption</div>
+      <div class="gc-text">Ongoing conflict continues to distort global energy prices, LNG markets, and electricity generation costs. Countries importing energy inputs (diesel, HFO) for off-grid mining operations face persistent cost volatility with no clear resolution timeline.</div>
+      <div class="gc-impact">Impact on Rwanda: diesel-powered artisanal and remote mining operations face unpredictable input cost shocks — often not captured in declared financials.</div>
+    </div>
+    <div class="geo-card gc-gold">
+      <div class="gc-flag">🌍</div>
+      <div class="gc-title">Africa Energy Transition Acceleration</div>
+      <div class="gc-text">The Africa Energy Transition push — backed by G7 Just Energy Transition Partnerships (JETPs) — is driving rapid renewable deployment across the continent. Rwanda's own Vision 2050 targets 80% renewable electricity by 2030. The grid mix is changing, and so are mining sector costs.</div>
+      <div class="gc-impact">Opportunity: mines connected to Rwanda's increasingly renewable grid gain competitive cost and ESG advantages simultaneously.</div>
+    </div>
+    <div class="geo-card gc-blue">
+      <div class="gc-flag">🇪🇺</div>
+      <div class="gc-title">EU Critical Raw Materials Act (2023)</div>
+      <div class="gc-text">The CRMA mandates 10% domestic or trusted-partner sourcing of strategic minerals by 2030. European buyers are implementing carbon footprint requirements for mineral supply chains — the Scope 3 emissions of smelters increasingly depend on the energy source used by upstream miners.</div>
+      <div class="gc-impact">Direct financial impact: low-carbon certified Rwandan minerals qualify for procurement preferences and premium pricing in EU supply chains.</div>
+    </div>
+    <div class="geo-card gc-green">
+      <div class="gc-flag">🇺🇸</div>
+      <div class="gc-title">US Minerals Security Partnership & IRA</div>
+      <div class="gc-text">The US Inflation Reduction Act creates financial incentives for EVs and clean energy technologies using minerals from trusted supply chains. The Minerals Security Partnership explicitly targets financing for mines with responsible energy and environmental practices.</div>
+      <div class="gc-impact">Rwanda-US tungsten shipments have already begun (Trinity Metals). Energy compliance is the next qualifying criterion for expanded partnership.</div>
+    </div>
+    <div class="geo-card gc-gold">
+      <div class="gc-flag">⚡</div>
+      <div class="gc-title">Regional Grid Integration (EAPP)</div>
+      <div class="gc-text">The Eastern Africa Power Pool is advancing cross-border electricity interconnections. Rwanda's access to Kenyan geothermal, Ethiopian hydropower, and DRC's Inga Dam potential will reshape electricity tariff structures for industrial users — including mining companies — within the planning horizon of this engagement.</div>
+      <div class="gc-impact">Energy cost modelling must account for multiple future grid scenarios — not just current Rwanda tariffs.</div>
+    </div>
+    <div class="geo-card gc-red">
+      <div class="gc-flag">📉</div>
+      <div class="gc-title">Global Battery Metals Price Volatility</div>
+      <div class="gc-text">The lithium price crash of 2023–2024, cobalt volatility, and emerging critical minerals demand cycles demonstrate that mineral prices and energy prices move in correlated — and sometimes opposing — directions. A surge in EV demand drives both mineral prices up and energy transition investment up, changing Rwanda's cost and revenue dynamics simultaneously.</div>
+      <div class="gc-impact">Financial models that treat energy cost and mineral price as independent variables will systematically misprize Rwanda's sector risk profile.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ENERGY COST STRUCTURE -->
+<section class="section" id="coststructure">
+  <div class="eyebrow" style="color:var(--g-deep)">Financial Analysis</div>
+  <h2 class="section-title">Energy in Mining Cost Structures — International Benchmarks</h2>
+  <p class="section-lead">Rwanda does not yet have reliable, comprehensive sector-wide cost data — declared financials are incomplete and inconsistent across artisanal, semi-industrial, and industrial operations. The RMB-FinIntel tool is precisely designed to build that data foundation over time. In the meantime, international benchmarks from comparable SSA contexts provide the reference framework.</p>
+
+  <!-- Data limitation notice -->
+  <div style="background:var(--gold-pale);border:1px solid #E8CC80;border-left:4px solid var(--gold);border-radius:var(--radius);padding:16px 20px;margin-bottom:32px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#7A5800;margin-bottom:6px">⚠️ Data Reality Note</div>
+    <p style="font-size:14px;color:var(--text-body);line-height:1.65">Rwanda's mining cost records are not systematically collected or reliably declared. Cost structures vary fundamentally between <strong>artisanal mining</strong> (dominant today — human energy, low capital), <strong>semi-industrial</strong> (mixed machinery, transitional), and <strong>industrial operations</strong> (where Rwanda's sector is heading). A core deliverable of Phase 1 is building the data infrastructure to progressively capture real cost structures — starting from international benchmarks and refining with actual company submissions.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:32px" id="benchmark-cards"></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
+    <div>
+      <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);margin-bottom:16px">International Benchmark — SSA Industrial Mining (World Bank / ICMM Reference)</div>
+      <div class="cost-stack" id="cost-stack"></div>
+      <p style="margin-top:16px;font-size:12px;color:var(--text-muted);font-family:var(--font-m)">Source: World Bank Extractives Global Programmatic Support; ICMM Mining Contribution to Development; adjusted for SSA artisanal/small-scale context. These are reference benchmarks — not Rwanda-specific data.</p>
+    </div>
+    <div>
+      <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:var(--radius);padding:28px;margin-bottom:16px">
+        <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);margin-bottom:14px">Why Energy is the Key Variable</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px">
+          <li style="font-size:14px;color:var(--text-muted);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">→</span>Labour costs are largely fixed — determined by contracts and minimum wage</li>
+          <li style="font-size:14px;color:var(--text-muted);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">→</span>Royalties are set by regulation — not operationally variable</li>
+          <li style="font-size:14px;color:var(--text-muted);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">→</span>Energy IS variable — tariffs change, grid mix changes, diesel prices fluctuate</li>
+          <li style="font-size:14px;color:var(--text-muted);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">→</span>Energy has a double impact: costs AND ESG/clean-premium revenue</li>
+          <li style="font-size:14px;color:var(--text-muted);padding-left:20px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">→</span>A 20% energy tariff increase can tip a marginal mine from profitable to loss-making</li>
+        </ul>
+      </div>
+      <div class="premium-highlight">
+        <div class="ph-title">The Clean Energy Premium Opportunity</div>
+        <p class="ph-text">Rwanda's electricity grid is <strong>already among the cleanest in sub-Saharan Africa</strong> — dominated by hydropower, methane gas, and growing solar. This means minerals mined and processed using Rwanda's grid electricity carry a <em>lower carbon intensity</em> than equivalent minerals from coal-powered competitors (DRC, Zimbabwe, parts of South Africa).</p>
+        <div class="ph-stat">10–20%</div>
+        <p class="ph-text" style="margin-top:8px">This is the estimated price premium European and North American buyers are willing to pay for independently certified low-carbon minerals. Capturing this premium requires: (1) measuring energy source mix per operation, (2) quantifying emissions intensity per tonne of mineral produced, (3) third-party certification, and (4) active marketing to premium buyers — all functions the RMB-FinIntel platform supports.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ASSETS MODULE -->
+<section class="section section-alt" id="assets">
+  <div class="eyebrow" style="color:var(--g-deep)">Phase 2 — Assets Financial Intelligence Module</div>
+  <h2 class="section-title">Assets, Energy & Production: The Strategic Triangle</h2>
+  <p class="section-lead">The type, age, and condition of mining assets are the structural determinants of both energy consumption and production capacity. This three-way relationship — assets → energy → output — is the core of long-term mining sector financial modelling and a key Phase 2 addition to RMB-FinIntel.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:40px">
+    <div style="background:var(--g-pale);border-top:3px solid var(--g-deep);padding:32px 28px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">Pillar 1</div>
+      <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:12px">Asset Categories &amp; Energy Intensity</div>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:14px">Each asset category carries a distinct energy intensity profile. A manual artisanal operation uses almost no mechanical energy — its "energy" is human labour. A diesel excavator consumes 15–25 litres/hour. An industrial processing plant may consume 80–120 kWh per tonne processed.</p>
+      <div style="font-size:13px;color:var(--g-deep);font-style:italic">RMB-FinIntel Phase 2 will classify each company's declared assets by category and automatically estimate energy intensity ranges — even before energy consumption data is available.</div>
+    </div>
+    <div style="background:#EEF4FB;border-top:3px solid var(--blue);padding:32px 28px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:10px">Pillar 2</div>
+      <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:12px">Assets → Production Scale Correlation</div>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:14px">Declared asset values are a proxy for production capacity potential. A company declaring minimal fixed assets but high export volumes — or vice versa — generates an immediate financial intelligence flag. This cross-validation is impossible without an asset financial intelligence module.</p>
+      <div style="font-size:13px;color:var(--blue);font-style:italic">Asset declaration frequency is annual (vs. monthly for payroll). Phase 2 accounts for this lag in cross-validation logic.</div>
+    </div>
+    <div style="background:var(--gold-pale);border-top:3px solid var(--gold);padding:32px 28px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7A5800;margin-bottom:10px">Pillar 3</div>
+      <div style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:12px">Rwanda's Asset Transition Trajectory</div>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.65;margin-bottom:14px">Rwanda's mining sector is transitioning from predominantly artisanal/manual operations toward semi-industrial and industrial scale — a national strategic priority. This transition fundamentally changes the energy consumption profile, cost structure, and production potential of the sector. Financial intelligence modelling must track this trajectory explicitly.</p>
+      <div style="font-size:13px;color:#7A5800;font-style:italic">The Assets Module enables RMB to model the financial implications of this transition — and design incentives accordingly.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:var(--radius);padding:28px 32px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);margin-bottom:16px">Mining Type → Energy Profile → Financial Intelligence Implications</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" id="mining-types"></div>
+    <p style="margin-top:20px;font-size:12px;color:var(--text-muted);font-family:var(--font-m)">⚠️ Phase 2 addition — Asset declarations are acknowledged to be of lower data quality and less frequent (annual) than HR/payroll data. The Assets Module will be built with explicit data quality guards and conservative confidence scoring.</p>
+  </div>
+</section>
+
+<!-- SCENARIO MATRIX -->
+<section class="section section-alt" id="scenarios">
+  <div class="eyebrow" style="color:#F5A623">Scenario Modelling</div>
+  <h2 class="section-title">36-Scenario Competitiveness Matrix</h2>
+  <p class="section-lead">The Energy Module models 36 scenarios: 3 energy price levels × 3 energy mix configurations × 4 mineral categories. Below are 6 representative scenarios.</p>
+  <div class="scenario-matrix" id="sc-matrix"></div>
+  <p style="margin-top:16px;font-size:13px;color:var(--text-muted);font-family:var(--font-m)">Full 36-scenario matrix is a deliverable of P3.4 — Energy Policy Impact Modelling (Month 9)</p>
+</section>
+
+<!-- MODULE DESIGN -->
+<section class="section" id="module">
+  <div class="eyebrow" style="color:#F5A623">Module Design</div>
+  <h2 class="section-title">How the Energy Module is Built</h2>
+  <p class="section-lead">The Energy Financial Intelligence Module integrates into RMB-FinIntel as a standalone analytical layer — fed by the same data templates plus two energy-specific inputs.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+    <div>
+      <h3 style="font-size:17px;font-weight:600;margin-bottom:20px;color:#F5A623">Additional Data Inputs (Energy-Specific)</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
+        <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:6px;padding:16px 18px">
+          <div style="font-family:var(--font-m);font-size:11px;color:var(--g-deep);letter-spacing:1px;margin-bottom:6px;font-weight:600">T6 — ENERGY CONSUMPTION REPORT</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.55">Per company/site/period: electricity consumed (kWh), diesel consumed (litres), other energy sources, total energy spend (RWF/USD). Submitted monthly by operating companies to RMB.</div>
+        </div>
+        <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:6px;padding:16px 18px">
+          <div style="font-family:var(--font-m);font-size:11px;color:var(--g-deep);letter-spacing:1px;margin-bottom:6px;font-weight:600">T7 — ENERGY TARIFF REFERENCE</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.55">From REG/REMA: electricity tariffs by category (industrial, SME) per period; diesel reference price; renewable energy surcharges or credits. Updated when tariffs change.</div>
+        </div>
+      </div>
+      <h3 style="font-size:17px;font-weight:600;margin-bottom:16px;color:#F5A623">Financial Intelligence Outputs</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="int-step"><div class="int-step-num">1</div><div class="int-step-content"><div class="int-step-title">Energy cost as % of total operating costs</div><div class="int-step-desc">By company, by mineral, by year — with benchmark comparison to global peers</div></div></div>
+        <div class="int-step"><div class="int-step-num">2</div><div class="int-step-content"><div class="int-step-title">Energy source mix per operation</div><div class="int-step-desc">Grid electricity vs. diesel vs. renewable — feeds carbon intensity calculation</div></div></div>
+        <div class="int-step"><div class="int-step-num">3</div><div class="int-step-content"><div class="int-step-title">Carbon intensity per tonne of mineral produced</div><div class="int-step-desc">kgCO₂e per tonne — the key metric for clean-premium qualification</div></div></div>
+        <div class="int-step"><div class="int-step-num">4</div><div class="int-step-content"><div class="int-step-title">Competitiveness tipping points</div><div class="int-step-desc">At what energy tariff level does Rwanda's position on the global cost curve deteriorate?</div></div></div>
+        <div class="int-step"><div class="int-step-num">5</div><div class="int-step-content"><div class="int-step-title">Clean premium revenue estimate</div><div class="int-step-desc">Quantifies the additional annual revenue available if Rwanda captures ESG premiums from EU/US buyers</div></div></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:17px;font-weight:600;margin-bottom:20px;color:#F5A623">Policy Recommendations Generated</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
+        <div class="card" style="border-left:3px solid #F5A623"><div class="card-title">⚡ Grid Extension Priorities</div><div class="card-body">Which mining zones have the highest potential return from grid connectivity vs. current diesel use? Financial modelling identifies priority investment zones for REG/MININFRA.</div></div>
+        <div class="card" style="border-left:3px solid #6FD19A"><div class="card-title">☀️ On-Site Renewable Incentives</div><div class="card-body">For remote operations where grid extension is uneconomic, what solar/battery hybrid investment is required and what is the financial payback? Feeds RDB investment incentive design.</div></div>
+        <div class="card" style="border-left:3px solid var(--gold)"><div class="card-title">📋 Tariff Structure Reform</div><div class="card-body">Should mining companies receive dedicated industrial energy tariffs? Financial modelling compares sector competitiveness impact of tariff scenarios against REG revenue impact.</div></div>
+        <div class="card" style="border-left:3px solid #7EC8F0"><div class="card-title">🌿 ESG Certification Pathway</div><div class="card-body">Which companies already meet the energy/emissions threshold for clean-premium qualification? What investments are required for those that don't? Roadmap with quantified revenue upside.</div></div>
+      </div>
+      <div class="phase2-note">
+        <div class="p2-icon">🔮</div>
+        <div>
+          <div class="p2-label">Phase 2 Addition — Asset Intelligence</div>
+          <div class="p2-text">In Phase 2 of RMB-FinIntel, the Energy Module will be extended with <strong>asset declarations analysis</strong> — mapping declared fixed assets (processing equipment, vehicles, generators) against energy consumption to detect under-reported energy use and identify efficiency investment opportunities. Asset data is acknowledged as less reliable than HR data and will be treated accordingly with appropriate confidence scoring.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Architecture</a>
+    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">RMB-FinIntel Energy Module<br>April 2026 · V1.0</div>
+</footer>
+</div>
+
+<script>
+// Cost stack bars
+// ── BENCHMARK CARDS ─────────────────────────────────────────
+const benchmarks=[
+  {type:'Artisanal / ASM',icon:'⛏️',energy:'5–15%',labour:'55–70%',royalties:'8–12%',other:'10–20%',note:'Human energy dominant. Diesel only for occasional equipment. Cost structure highly variable and poorly documented.',color:'var(--g-pale)',border:'var(--g-deep)'},
+  {type:'Semi-Industrial',icon:'🔧',energy:'20–30%',labour:'35–45%',royalties:'10–15%',other:'15–25%',note:'Mixed diesel machinery + some grid electricity. Cost structure improving in documentation. Rwanda's current growth zone.',color:'#EEF4FB',border:'var(--blue)'},
+  {type:'Industrial (SSA Benchmark)',icon:'🏭',energy:'28–40%',labour:'20–30%',royalties:'12–18%',other:'18–28%',note:'Grid + diesel + process energy. Well-documented costs. Rwanda's strategic target — where financial intelligence modelling is most precise.',color:'var(--gold-pale)',border:'var(--gold)'},
+];
+const bcards=document.getElementById('benchmark-cards');
+if(bcards){
+  benchmarks.forEach(function(b){
+    bcards.innerHTML+='<div style="background:'+b.color+';border:1px solid '+b.border+';border-top:3px solid '+b.border+';border-radius:var(--radius);padding:22px 18px;">'
+      +'<div style="font-size:22px;margin-bottom:8px">'+b.icon+'</div>'
+      +'<div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:12px">'+b.type+'</div>'
+      +'<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">'
+      +'<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-muted)">Energy costs</span><strong style="color:#B8860B">'+b.energy+'</strong></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-muted)">Labour</span><strong style="color:var(--g-deep)">'+b.labour+'</strong></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-muted)">Royalties</span><strong style="color:var(--blue)">'+b.royalties+'</strong></div>'
+      +'<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-muted)">Other costs</span><strong style="color:var(--text-muted)">'+b.other+'</strong></div>'
+      +'</div>'
+      +'<div style="font-size:12px;color:var(--text-muted);font-style:italic;line-height:1.5;border-top:1px solid var(--border-lt);padding-top:10px">'+b.note+'</div>'
+      +'</div>';
+  });
+}
+
+// ── MINING TYPES TABLE ───────────────────────────────────────
+const miningTypes=[
+  {type:'Artisanal (ASM)',assets:'Hand tools, basic sluice boxes, small pumps',energy:'<5% mechanical
+~95% human labour',scale:'Very low — kg/day per worker',flag:'High labour cost ratio vs. declared output → production under-declaration risk',color:'var(--g-pale)'},
+  {type:'Semi-Industrial',assets:'Small excavators, diesel generators, basic crushers, water pumps',energy:'20–30% of OpEx
+Diesel dominant',scale:'Medium — tonnes/day',flag:'Diesel consumption should correlate with equipment hours — cross-validate with production',color:'#EEF4FB'},
+  {type:'Industrial',assets:'Heavy excavators, ball mills, industrial processing plant, grid connection',energy:'30–40% of OpEx
+Grid + diesel mix',scale:'High — hundreds of tonnes/day',flag:'Grid consumption trackable via REG data — strongest cross-validation opportunity',color:'var(--gold-pale)'},
+];
+const mt=document.getElementById('mining-types');
+if(mt){
+  miningTypes.forEach(function(m){
+    mt.innerHTML+='<div style="background:'+m.color+';border:1px solid var(--border-lt);border-radius:6px;padding:18px">'
+      +'<div style="font-weight:700;font-size:14px;color:var(--text-head);margin-bottom:8px">'+m.type+'</div>'
+      +'<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px"><strong style="color:var(--g-deep)">Assets:</strong> '+m.assets+'</div>'
+      +'<div style="font-size:12px;color:var(--text-muted);margin-bottom:6px"><strong style="color:#B8860B">Energy profile:</strong> '+m.energy+'</div>'
+      +'<div style="font-size:12px;color:var(--text-muted);margin-bottom:8px"><strong style="color:var(--blue)">Production scale:</strong> '+m.scale+'</div>'
+      +'<div style="font-size:12px;background:var(--red-lt);border:1px solid #F4B8B8;border-radius:4px;padding:8px;color:var(--red)"><strong>⚑ Intel flag:</strong> '+m.flag+'</div>'
+      +'</div>';
+  });
+}
+
+const costs=[
+  {label:'Energy (electricity + diesel)',pct:32,color:'#F5A623'},
+  {label:'Labour & HR',pct:28,color:'#6FD19A'},
+  {label:'Royalties & taxes',pct:14,color:'#7EC8F0'},
+  {label:'Consumables & materials',pct:12,color:'var(--gold)'},
+  {label:'Logistics & transport',pct:8,color:'#9EB0A4'},
+  {label:'Environmental & compliance',pct:4,color:'#B2CDB9'},
+  {label:'Overhead & admin',pct:2,color:'#C8E6D2'},
+];
+const stack=document.getElementById('cost-stack');
+costs.forEach(c=>{
+  stack.innerHTML+=`<div class="cost-bar-row">
+    <div class="cost-bar-label">${c.label}</div>
+    <div class="cost-bar-track">
+      <div class="cost-bar-fill" style="width:${c.pct}%;background:${c.color}">${c.pct >= 12 ? c.pct+'%' : ''}</div>
+      ${c.pct < 12 ? `<span class="cost-bar-pct">${c.pct}%</span>` : ''}
+    </div>
+  </div>`;
+});
+
+// Scenario matrix
+const scenarios=[
+  {sc:'Scenario A',title:'Current Baseline',em:'Grid-dominant (hydro+methane)',ep:'Current REG tariff',comp:{ci:'0.18 kgCO₂e/kWh','Energy % OpEx':'32%','vs. Global Peers':'−5% (competitive)','Clean Premium':'Partial eligibility'},vals:['good','warn','good','warn']},
+  {sc:'Scenario B',title:'Tariff +30% (Grid)',em:'Grid-dominant',ep:'+30% tariff shock',comp:{ci:'0.18 kgCO₂e/kWh','Energy % OpEx':'41%','vs. Global Peers':'+8% (disadvantaged)','Clean Premium':'Partial eligibility'},vals:['good','bad','bad','warn']},
+  {sc:'Scenario C',title:'Solar Hybrid Transition',em:'60% grid + 40% solar',ep:'Blended cost',comp:{ci:'0.11 kgCO₂e/kWh','Energy % OpEx':'27%','vs. Global Peers':'−12% (strong)','Clean Premium':'Full eligibility'},vals:['good','good','good','good']},
+  {sc:'Scenario D',title:'Diesel Dependency',em:'60% diesel (off-grid)',ep:'International diesel',comp:{ci:'0.72 kgCO₂e/kWh','Energy % OpEx':'44%','vs. Global Peers':'+18% (uncompetitive)','Clean Premium':'Not eligible'},vals:['bad','bad','bad','bad']},
+  {sc:'Scenario E',title:'EAPP Regional Grid',em:'Regional hydro + geothermal',ep:'EAPP pooled price (est.)',comp:{ci:'0.09 kgCO₂e/kWh','Energy % OpEx':'24%','vs. Global Peers':'−18% (benchmark)','Clean Premium':'Full + premium tier'},vals:['good','good','good','good']},
+  {sc:'Scenario F',title:'Energy Shock (Geopolitical)',em:'Grid disruption → diesel fallback',ep:'Emergency diesel pricing',comp:{ci:'0.55 kgCO₂e/kWh','Energy % OpEx':'51%','vs. Global Peers':'+25% (critical)','Clean Premium':'Lost'},vals:['bad','bad','bad','bad']},
+];
+const scm=document.getElementById('sc-matrix');
+scenarios.forEach((s,i)=>{
+  const keys=Object.keys(s.comp);
+  scm.innerHTML+=`<div class="sc-card">
+    <div class="sc-scenario">${s.sc}</div>
+    <div class="sc-title">${s.title}</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;font-style:italic">${s.em} · ${s.ep}</div>
+    <div class="sc-metrics">${keys.map((k,j)=>`<div class="sc-metric"><span class="sc-metric-label">${k}</span><span class="sc-metric-val ${s.vals[j]?('val-'+s.vals[j]):''}">${s.comp[k]}</span></div>`).join('')}</div>
+  </div>`;
+});
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

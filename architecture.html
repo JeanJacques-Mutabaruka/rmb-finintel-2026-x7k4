@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMB-FinIntel — Tool Architecture</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── MODULE BRICKS ── */
+.arch-intro { max-width: 700px; }
+.modules-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.mod-brick {
+  background: rgba(255,255,255,0.03);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius); padding: 28px 24px;
+  cursor: pointer; transition: all 0.25s; position: relative; overflow: hidden;
+  border-top: 3px solid transparent;
+}
+.mod-brick:hover, .mod-brick.active {
+  background: rgba(255,255,255,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+}
+.mod-brick.active { border-color: var(--gold); border-top-color: var(--gold); }
+.mod-brick .mod-icon { font-size: 28px; margin-bottom: 14px; display: block; }
+.mod-brick .mod-num { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+.mod-brick .mod-name { font-family: var(--font-d); font-size: 17px; font-weight: 700; margin-bottom: 10px; line-height: 1.2; }
+.mod-brick .mod-short { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.55; }
+.mod-brick .mod-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+/* phase colour tops */
+.mod-brick.ph0 { border-top-color: var(--grey); }
+.mod-brick.ph1 { border-top-color: #1B6CA8; }
+.mod-brick.ph2 { border-top-color: var(--gold); }
+.mod-brick.ph3 { border-top-color: var(--g-deep); }
+.mod-brick.ph0:hover,.mod-brick.ph0.active { border-color: var(--grey); }
+.mod-brick.ph1:hover,.mod-brick.ph1.active { border-color: #1B6CA8; }
+.mod-brick.ph2:hover,.mod-brick.ph2.active { border-color: var(--gold); }
+.mod-brick.ph3:hover,.mod-brick.ph3.active { border-color: var(--g-deep); }
+
+/* Detail panel */
+.detail-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(200,150,10,0.2);
+  border-radius: var(--radius);
+  padding: 36px 40px;
+  margin-top: 20px;
+  transition: all 0.3s;
+  display: none;
+}
+.detail-panel.visible { display: block; animation: fadeIn 0.3s ease; }
+.dp-header { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 28px; }
+.dp-icon { font-size: 40px; flex-shrink: 0; }
+.dp-title-block {}
+.dp-title { font-family: var(--font-d); font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.dp-subtitle { font-size: 14px; color: rgba(255,255,255,0.5); }
+.dp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.dp-box { background: rgba(255,255,255,0.04); border-radius: 6px; padding: 20px; }
+.dp-box-title { font-family: var(--font-m); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
+.dp-box ul { list-style: none; }
+.dp-box ul li { font-size: 14px; color: rgba(255,255,255,0.7); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); line-height: 1.5; }
+.dp-box ul li::before { content: '→'; color: var(--gold); margin-right: 8px; font-size: 12px; }
+.dp-box ul li:last-child { border: none; }
+.dp-insight {
+  background: rgba(200,150,10,0.08);
+  border: 1px solid rgba(200,150,10,0.2);
+  border-radius: 6px; padding: 18px 20px;
+  font-size: 14px; line-height: 1.65; color: rgba(255,255,255,0.8);
+  margin-bottom: 16px;
+}
+.dp-insight strong { color: var(--gold); }
+.dp-accuracy-note {
+  background: rgba(27,108,168,0.1);
+  border: 1px solid rgba(27,108,168,0.25);
+  border-radius: 6px; padding: 16px 20px;
+  font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.7);
+}
+.dp-accuracy-note strong { color: #7EC8F0; }
+
+/* Stakeholder section */
+.stakeholders { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 40px; }
+.sh-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius); padding: 22px 18px;
+  cursor: pointer; transition: all 0.22s; text-align: center;
+}
+.sh-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+.sh-card.sh-active { border-color: var(--gold); background: rgba(200,150,10,0.06); }
+.sh-icon { font-size: 32px; margin-bottom: 10px; }
+.sh-name { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.sh-role { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.45; }
+.sh-detail {
+  display: none; margin-top: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius); padding: 24px 28px;
+}
+.sh-detail.visible { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; animation: fadeIn 0.3s; }
+.sh-detail-box { }
+.sh-detail-title { font-family: var(--font-m); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 10px; }
+.sh-detail-list { list-style: none; }
+.sh-detail-list li { font-size: 14px; color: rgba(255,255,255,0.72); padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.sh-detail-list li::before { content: '✓'; color: #6FD19A; margin-right: 8px; font-size: 12px; }
+.sh-detail-list li:last-child { border: none; }
+
+/* No data retention banner */
+.no-retention {
+  background: linear-gradient(135deg, rgba(26,92,56,0.2) 0%, rgba(200,150,10,0.08) 100%);
+  border: 1px solid rgba(26,92,56,0.4);
+  border-left: 4px solid #6FD19A;
+  border-radius: var(--radius); padding: 24px 28px;
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.nr-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.nr-title { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #6FD19A; }
+.nr-text { font-size: 14px; color: rgba(255,255,255,0.72); line-height: 1.65; }
+
+/* Data flow diagram */
+.flow-diagram {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding: 20px 0;
+}
+.flow-node {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius); padding: 16px 18px;
+  text-align: center; min-width: 130px; flex-shrink: 0;
+  cursor: default;
+}
+.flow-node.fn-source { border-color: #1B6CA8; background: rgba(27,108,168,0.1); }
+.flow-node.fn-engine { border-color: var(--gold); background: rgba(200,150,10,0.1); }
+.flow-node.fn-output { border-color: var(--g-deep); background: rgba(26,92,56,0.15); }
+.flow-node .fn-icon { font-size: 22px; margin-bottom: 8px; }
+.flow-node .fn-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.flow-node .fn-sub { font-size: 11px; color: rgba(255,255,255,0.45); }
+.flow-arrow { font-size: 20px; color: var(--gold); padding: 0 8px; flex-shrink: 0; opacity: 0.6; }
+
+@media(max-width:860px){
+  .modules-grid{grid-template-columns:1fr 1fr;}
+  .dp-grid{grid-template-columns:1fr;}
+  .stakeholders{grid-template-columns:1fr 1fr;}
+  .sh-detail.visible{grid-template-columns:1fr;}
+}
+@media(max-width:560px){
+  .modules-grid{grid-template-columns:1fr;}
+  .stakeholders{grid-template-columns:1fr 1fr;}
+}
+
+/* Light theme overrides */
+.mod-brick { background: #FFFFFF; border: 1.5px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.mod-brick:hover, .mod-brick.active { background: var(--g-xpale); box-shadow: var(--shadow-md); }
+.mod-brick.ph0 { border-top-color: var(--text-muted); }
+.mod-brick.ph1 { border-top-color: var(--blue); }
+.mod-brick.ph2 { border-top-color: var(--gold); }
+.mod-brick.ph3 { border-top-color: var(--g-deep); }
+.mod-brick.ph1.active, .mod-brick.ph1:hover { border-color: var(--blue); }
+.mod-brick.ph2.active, .mod-brick.ph2:hover { border-color: var(--gold); }
+.mod-brick.ph3.active, .mod-brick.ph3:hover { border-color: var(--g-deep); }
+.mod-num { color: var(--text-light); }
+.mod-name { color: var(--text-head); }
+.mod-short { color: var(--text-muted); }
+.detail-panel { background: #FFFFFF; border: 1px solid var(--border-md); box-shadow: var(--shadow-md); }
+.dp-title { color: var(--text-head); }
+.dp-subtitle { color: var(--text-muted); }
+.dp-box { background: var(--surface-1); }
+.dp-box-title { color: var(--g-deep); }
+.dp-box ul li { color: var(--text-body); border-bottom: 1px solid var(--border-lt); }
+.dp-box ul li::before { color: var(--g-deep); }
+.dp-insight { background: var(--gold-pale); border: 1px solid #E8CC80; color: var(--text-body); }
+.dp-insight strong { color: #7A5800; }
+.dp-accuracy-note { background: var(--blue-lt); border: 1px solid #B8D4EE; color: var(--text-body); }
+.dp-accuracy-note strong { color: var(--blue); }
+.sh-card { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.sh-card:hover { background: var(--g-xpale); border-color: var(--g-lt); }
+.sh-card.sh-active { border-color: var(--g-deep); background: var(--g-pale); }
+.sh-name { color: var(--text-head); }
+.sh-role { color: var(--text-muted); }
+.sh-detail { background: #FFFFFF; border: 1px solid var(--border-md); box-shadow: var(--shadow-md); }
+.sh-detail-title { color: var(--text-muted); }
+.sh-detail-list li { color: var(--text-body); border-bottom: 1px solid var(--border-lt); }
+.sh-detail-list li::before { color: var(--g-deep); }
+.no-retention { background: var(--g-pale); border: 1px solid var(--g-lt); border-left: 4px solid var(--g-deep); }
+.nr-title { color: var(--g-deep); }
+.nr-text { color: var(--text-body); }
+.flow-node { background: #FFFFFF; border: 1px solid var(--border-lt); }
+.flow-node.fn-source { border-color: var(--blue); background: var(--blue-lt); }
+.flow-node.fn-engine { border-color: var(--gold); background: var(--gold-lt); }
+.flow-node.fn-output { border-color: var(--g-deep); background: var(--g-pale); }
+.flow-node .fn-label { color: var(--text-head); }
+.flow-node .fn-sub { color: var(--text-muted); }
+.flow-arrow { color: var(--g-deep); opacity: 0.8; }
+.int-step { background: #FFFFFF; border: 1px solid var(--border-lt); }
+.int-step:hover { background: var(--g-xpale); }
+.int-step-num { color: var(--g-deep); }
+.int-step-title { color: var(--text-head); }
+.int-step-desc { color: var(--text-muted); }
+
+</style>
+</head>
+<body>
+
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="architecture.html" class="active">Architecture</a>
+    <div class="nav-divider"></div>
+    <a href="energy.html">⚡ Energy Module</a>
+    <div class="nav-divider"></div>
+    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- HERO -->
+<div class="hero" style="min-height:52vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Tool Architecture</div>
+    <h1 class="hero-title fade-up au-2">RMB-FinIntel <span class="accent">Interactive Architecture</span></h1>
+    <p class="hero-lead fade-up au-3">Click any module to explore what it does, what data it uses, what financial intelligence it produces, and which stakeholders benefit — without any data being retained.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-4">
+      <a href="#modules" class="btn btn-gold">Explore Modules ↓</a>
+      <a href="#stakeholders" class="btn btn-outline">Stakeholder Views</a>
+      <a href="demo.html" class="btn btn-green">▶ Live Demo</a>
+    </div>
+  </div>
+</div>
+
+<!-- NO DATA RETENTION PRINCIPLE -->
+<section class="section section-alt" id="principle">
+  <div class="no-retention">
+    <div class="nr-icon">🔒</div>
+    <div>
+      <div class="nr-title">No Data Retention — Distributed Financial Intelligence Model</div>
+      <div class="nr-text">The RMB-FinIntel tool is designed as a <strong>distributed platform</strong>. Each stakeholder (RMB, RRA, individual mining companies) runs their own analysis on their own data within their own environment. Only <strong>compiled, aggregated outputs</strong> are shared with RMB — never raw individual records. Personal employee data (salaries, identities) never leaves the company's environment. This model enables sector-wide financial intelligence while fully respecting data confidentiality obligations and Rwanda's data protection framework.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA FLOW -->
+<section class="section" id="dataflow">
+  <div class="eyebrow">Data Architecture</div>
+  <h2 class="section-title">How Data Flows Through the System</h2>
+  <p class="section-lead">Five standardised Excel templates feed a processing engine that produces financial intelligence outputs — without centralising raw sensitive data.</p>
+  <div class="flow-diagram">
+    <div class="flow-node fn-source"><div class="fn-icon">📋</div><div class="fn-label">T1 Export Declarations</div><div class="fn-sub">From RRA</div></div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-node fn-source"><div class="fn-icon">🏭</div><div class="fn-label">T2 Production Reports</div><div class="fn-sub">From Companies → RMB</div></div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-node fn-source"><div class="fn-icon">👥</div><div class="fn-label">T3+T4 HR & Payroll</div><div class="fn-sub">From RRA / Companies</div></div>
+    <div class="flow-arrow">+</div>
+    <div class="flow-node fn-source"><div class="fn-icon">📈</div><div class="fn-label">T5 Market Prices</div><div class="fn-sub">LME / LBMA (manual upload)</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node fn-engine"><div class="fn-icon">⚙️</div><div class="fn-label">Processing Engine</div><div class="fn-sub">Standardise · Cross-validate · Flag</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node fn-output"><div class="fn-icon">📊</div><div class="fn-label">Financial Intelligence</div><div class="fn-sub">Dashboards · Reports · Alerts</div></div>
+  </div>
+  <p style="margin-top:16px;font-size:13px;color:rgba(255,255,255,0.4);font-family:var(--font-m)">Note: Data is accepted as declared — including known inaccuracies. The gap between declared and estimated values is itself a key financial intelligence signal.</p>
+</section>
+
+<!-- MODULES -->
+<section class="section section-alt" id="modules">
+  <div class="eyebrow">Interactive Module Explorer</div>
+  <h2 class="section-title">Click Any Module to Explore</h2>
+  <p class="section-lead">Six functional modules, each producing distinct financial intelligence outputs. All start from uploaded Excel files — no API, no live connection required.</p>
+
+  <div class="modules-grid" id="mod-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <div class="dp-header">
+      <div class="dp-icon" id="dp-icon"></div>
+      <div class="dp-title-block">
+        <div class="dp-title" id="dp-title"></div>
+        <div class="dp-subtitle" id="dp-subtitle"></div>
+      </div>
+    </div>
+    <div class="dp-insight" id="dp-insight"></div>
+    <div class="dp-grid" id="dp-grid"></div>
+    <div class="dp-accuracy-note" id="dp-accuracy"></div>
+  </div>
+</section>
+
+<!-- IMPERFECT DATA VALUE -->
+<section class="section" id="imperfect">
+  <div class="eyebrow">A Core Principle</div>
+  <h2 class="section-title">The Value of Imperfect Data</h2>
+  <p class="section-lead">Declared data in Rwanda's mining sector is known to be imperfect. This is not a barrier — it is the starting point.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+    <div class="card" style="border-left:3px solid #1B6CA8">
+      <div class="card-title">📉 The Gap IS the Signal</div>
+      <div class="card-body">The difference between declared export prices and LME benchmarks is not a data quality problem — it is a <strong style="color:var(--gold)">financial intelligence finding</strong>. Quantifying it is the first step to closing it. Even rough declared data reveals the order of magnitude of revenue leakage.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--gold)">
+      <div class="card-title">📊 Trends Over Accuracy</div>
+      <div class="card-body">A 10-year trend in declared values — even if systematically under-declared — reveals direction: is the gap widening or narrowing? Is sector employment improving? These directional signals are policy-relevant regardless of absolute accuracy.</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--g-deep)">
+      <div class="card-title">🔀 Cross-Source Triangulation</div>
+      <div class="card-body">When export declarations, production reports, and payroll data are brought together, implausible combinations become visible that no single dataset would reveal. Triangulation detects anomalies even when individual datasets are imperfect.</div>
+    </div>
+    <div class="card" style="border-left:3px solid #6FD19A">
+      <div class="card-title">🎯 Improving Data Quality</div>
+      <div class="card-body">The tool itself drives data quality improvement. By showing companies the financial intelligence derived from their declarations — and the gaps flagged — it creates <strong style="color:#6FD19A">informed incentives</strong> to report more accurately over time.</div>
+    </div>
+  </div>
+</section>
+
+<!-- STAKEHOLDERS -->
+<section class="section section-alt" id="stakeholders">
+  <div class="eyebrow">Stakeholder Views</div>
+  <h2 class="section-title">Who Uses What — and How</h2>
+  <p class="section-lead">Click each stakeholder to see their specific access level, the financial intelligence they receive, and the decisions it supports.</p>
+  <div class="stakeholders" id="sh-grid"></div>
+  <div class="sh-detail" id="sh-detail"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="energy.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">⚡ Energy Module →</a>
+    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">RMB-FinIntel Architecture<br>April 2026 · V1.0</div>
+</footer>
+</div>
+
+<script>
+// ── MODULE DATA ──
+const modules = [
+  {
+    id:'m0', ph:'ph0', icon:'🏠', num:'MODULE 0', name:'Home & Data Upload Centre', short:'Control panel — upload templates, configure salary bands, load demo data',
+    tags:['All Phases','Foundation'],
+    subtitle:'The gateway to all financial intelligence — validate your data before any analysis begins',
+    insight:'<strong>Why this matters:</strong> A structured upload centre with immediate validation transforms ad-hoc data sharing into a disciplined, auditable process. Every dataset uploaded generates a validation report — creating an institutional record of data quality over time.',
+    tasks:['5 standardised Excel template uploaders (T1–T5)','Immediate column validation and date format checking','Salary band configuration table (dynamic per year)','Session summary: companies detected, date range, completeness %','🧪 Load Demo Data — full tool explorable without real files'],
+    outputs:['Validation status per template (✅/⚠️/❌)','Data completeness scorecard','Session summary dashboard'],
+    accuracy:'<strong>Data quality principle:</strong> The tool accepts data as declared. Validation checks structure and format — not the accuracy of values. Inaccurate but structured data is processed and its imperfections are surfaced as financial intelligence signals in subsequent modules.'
+  },
+  {
+    id:'m1', ph:'ph1', icon:'📦', num:'MODULE 1', name:'Export Financial Intelligence', short:'10-year volume & value trends, destination analysis, production vs. export reconciliation',
+    tags:['Phase 2','ToR: R1, R3'],
+    subtitle:'Track what Rwanda exports, to whom, at what value — and spot what does not add up',
+    insight:'<strong>Key financial intelligence:</strong> By aggregating declared export shipments over 10 years, this module reveals structural patterns invisible in any single year — concentration risk (too dependent on one buyer or market), seasonal anomalies, and the trajectory of export revenues per mineral.',
+    tasks:['Volume trend charts by product (monthly, 10-year)','Export value trend with implied unit price calculation','Destination analysis: country concentration (HHI index)','Top 5 buyers per mineral product','Production vs. export reconciliation (gap detection)'],
+    outputs:['Export volume & value dashboard','Buyer concentration index per mineral','Production-export gap table (anomaly flag)','10-year trend summary per product'],
+    accuracy:'<strong>On declared data:</strong> Export volumes and values are declared by exporters. Under-declaration is common. However, the <em>trend</em> in declared values is still informative — a declining trend in declared unit prices relative to LME is a consistent signal regardless of absolute accuracy.'
+  },
+  {
+    id:'m2', ph:'ph2', icon:'💰', num:'MODULE 2', name:'Price Gap Financial Analysis', short:'Rwanda export price vs. LME/LBMA benchmarks — the revenue leakage detector',
+    tags:['Phase 2','ToR: R2, R5'],
+    subtitle:'The single most strategic module — quantifies the gap between what Rwanda earns and what it should earn',
+    insight:'<strong>Strategic financial intelligence:</strong> For each mineral and each month over 10 years, this module plots Rwanda\'s average declared export price against the LME/LBMA benchmark. The gap area — shaded in amber — represents potential revenue not captured. Even with imperfect declared data, the <em>order of magnitude</em> of this gap informs: royalty calibration, offtake negotiation strategy, and transfer pricing investigation priorities.',
+    tasks:['Dual-line chart: Rwanda price vs. LME/LBMA per product','Gap shading (amber) with monthly USD/unit difference','Cumulative revenue impact calculation over selected period','Legitimate deduction modelling (TC/RC, transport, penalties)','Residual unexplained gap trend — the key investigation signal'],
+    outputs:['Price gap dashboard per mineral','Monthly gap table with revenue impact estimate','Trend analysis: is the gap narrowing or widening?','Cumulative estimated revenue forgone over 10 years'],
+    accuracy:'<strong>On benchmarking:</strong> LME/LBMA prices are loaded via manual Excel upload (T5). The comparison uses declared export values — known to be imperfect. The gap analysis therefore gives a <em>minimum estimate</em> of revenue forgone. The true gap is likely larger. This is explicitly noted in all outputs.'
+  },
+  {
+    id:'m3', ph:'ph2', icon:'👥', num:'MODULE 3', name:'HR & Revenue Distribution', short:'Salary bands, payroll analysis, added-value distribution across the sector',
+    tags:['Phase 2','Socio-economic'],
+    subtitle:'How mining revenues distribute across workers — and what this tells us about sector quality and inequality',
+    insight:'<strong>Policy financial intelligence:</strong> By distributing employees into dynamic salary bands (configurable per year to reflect minimum wage changes), this module reveals: whether sector employment is concentrated in low-pay categories, how much of export revenues flows to employees vs. government vs. residual profit, and whether the sector is improving as an employer over time. These are critical inputs for investment incentive design and social licence policy.',
+    tasks:['Dynamic salary band configuration (per-year thresholds)','Employee count distribution by band per year','Gross/net salary, tax, and social security by band','Year-over-year band distribution evolution','Added value waterfall: export revenue → payroll → taxes → residual'],
+    outputs:['Salary band distribution dashboard (per year, per company)','Payroll as % of export revenues over time','Revenue distribution waterfall chart','Employment quality index vs. national average','Inequality indicator: top band % of total payroll'],
+    accuracy:'<strong>On payroll data:</strong> Declared payroll figures are monthly filings to RRA. They may under-represent informal or contract workers. However, the band distribution of declared employees is sufficient to reveal structural inequality patterns and track improvement over multiple years.'
+  },
+  {
+    id:'m4', ph:'ph3', icon:'🔀', num:'MODULE 4', name:'Cross-Source Analytics', short:'Triangulating export, production, and HR data to surface structural anomalies',
+    tags:['Phase 3','Advanced'],
+    subtitle:'Where the real financial intelligence emerges — from combining data streams no single dataset can reveal',
+    insight:'<strong>Advanced financial intelligence:</strong> When export declarations (T1), production reports (T2), and payroll data (T3) are brought together, implausible combinations become visible. A company declaring 500 tonnes of concentrate exported but only 200 tonnes produced; payroll implying 500 employees at average salary S but headcount declaration showing 200 — these are not definitive fraud indicators, but they are <em>prioritised investigation leads</em>. This module generates a ranked anomaly list.',
+    tasks:['Revenue per employee ratio (by company, over time)','Export vs. production reconciliation per company','Payroll-headcount consistency cross-check','Sector concentration index (top 3 companies % of total)','Seasonal export pattern heatmap','Multi-source anomaly flag with confidence score'],
+    outputs:['Anomaly report with ranked flags (not accusations — investigation leads)','Company concentration index over time','Seasonal pattern heatmap','Revenue per employee benchmark comparison'],
+    accuracy:'<strong>On anomaly flagging:</strong> Flags are generated by statistical rules — values outside 2 standard deviations from peer group or year-on-year change exceeding defined thresholds. Every flag includes a confidence score and explicit note that it requires human investigation before any conclusion.'
+  },
+  {
+    id:'m5', ph:'ph3', icon:'📋', num:'MODULE 5', name:'Data Quality Scorecard', short:'Per-company, per-year data quality grading — tracks improvement over time',
+    tags:['Phase 3','Institutional'],
+    subtitle:'The tool that makes itself obsolete — by driving systematic improvement in sector data quality',
+    insight:'<strong>Institutional financial intelligence:</strong> Perhaps the most institutionally valuable module. By scoring every company\'s submission quality across four dimensions (completeness, internal consistency, cross-source consistency, year-on-year plausibility), this module creates a <em>ranked data quality register</em>. Companies with consistently poor scores become audit priorities. The sector-wide trend in data quality is the ultimate measure of the financial intelligence function\'s institutional impact.',
+    tasks:['Completeness score: % of required fields populated','Internal consistency: do totals add up within submission?','Cross-source consistency: does this match other data sources?','Year-on-year plausibility: are changes within normal ranges?','Overall data quality grade (A–E) per company per year'],
+    outputs:['Company data quality leaderboard','Sector-wide data quality trend over time','Priority improvement recommendations (auto-generated)','Improvement tracker: before vs. after function launch'],
+    accuracy:'<strong>The meta-purpose:</strong> This module exists precisely because data is imperfect. Its purpose is not to penalise companies but to <em>measure and drive improvement</em>. The financial intelligence function succeeds when this scorecard shows consistent upward trends — meaning declared data is becoming more reliable year by year.'
+  },
+];
+
+const grid=document.getElementById('mod-grid'), panel=document.getElementById('detail-panel');
+let activeMod=null;
+
+modules.forEach(m=>{
+  const el=document.createElement('div');
+  el.className=`mod-brick ${m.ph}`; el.dataset.id=m.id;
+  el.innerHTML=`
+    <span class="mod-icon">${m.icon}</span>
+    <div class="mod-num">${m.num}</div>
+    <div class="mod-name">${m.name}</div>
+    <p class="mod-short">${m.short}</p>
+    <div class="mod-tags">${m.tags.map(t=>`<span class="badge badge-gold">${t}</span>`).join('')}</div>`;
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.mod-brick').forEach(b=>b.classList.remove('active'));
+    if(activeMod===m.id){ panel.classList.remove('visible'); activeMod=null; return; }
+    el.classList.add('active'); activeMod=m.id;
+    document.getElementById('dp-icon').textContent=m.icon;
+    document.getElementById('dp-title').textContent=m.name;
+    document.getElementById('dp-subtitle').textContent=m.subtitle;
+    document.getElementById('dp-insight').innerHTML=m.insight;
+    document.getElementById('dp-grid').innerHTML=`
+      <div class="dp-box"><div class="dp-box-title">Key Tasks</div><ul>${m.tasks.map(t=>`<li>${t}</li>`).join('')}</ul></div>
+      <div class="dp-box"><div class="dp-box-title">Financial Intelligence Outputs</div><ul>${m.outputs.map(o=>`<li>${o}</li>`).join('')}</ul></div>`;
+    document.getElementById('dp-accuracy').innerHTML=m.accuracy;
+    panel.classList.add('visible');
+    setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  });
+  grid.appendChild(el);
+});
+
+// ── STAKEHOLDERS ──
+const stakeholders=[
+  {
+    icon:'🏛️', name:'RMB Leadership', role:'Director General & Senior Management',
+    access:['Executive dashboard (read-only)','Quarterly market intelligence reports','Sector-wide anomaly summary','Annual market outlook'],
+    decisions:['Royalty and fiscal policy calibration','Sector investment attraction priorities','Regulatory inspection scheduling','Inter-ministerial briefings']
+  },
+  {
+    icon:'🏭', name:'Mining Companies', role:'Individual operators (confidential)',
+    access:['Own data analysis only (no other company data visible)','Own salary band distribution','Own export price vs. LME comparison','Own data quality score'],
+    decisions:['Internal pricing improvement','Workforce compensation benchmarking','Data quality improvement actions','Investment planning inputs']
+  },
+  {
+    icon:'🏦', name:'RRA & MINICOM', role:'Revenue Authority & Trade Ministry',
+    access:['Sector-level aggregated outputs only','Cross-source consistency flags (no raw data)','Export destination diversification analysis','Payroll tax contribution trends'],
+    decisions:['Tax compliance risk prioritisation','Trade policy alignment','Export certification efficiency','Sector fiscal contribution monitoring']
+  },
+  {
+    icon:'💼', name:'Investors & Banks', role:'FDI investors & local financial institutions',
+    access:['Public investor intelligence hub (curated)','Sector risk profiles (anonymised companies)','ESG compliance status','Market outlook and price scenarios'],
+    decisions:['Investment entry/exit decisions','Mining project financing terms','ESG-linked instrument eligibility','Local bank credit risk assessment']
+  },
+];
+
+const shgrid=document.getElementById('sh-grid'), shdetail=document.getElementById('sh-detail');
+let activeSh=null;
+stakeholders.forEach((s,i)=>{
+  const el=document.createElement('div'); el.className='sh-card';
+  el.innerHTML=`<div class="sh-icon">${s.icon}</div><div class="sh-name">${s.name}</div><div class="sh-role">${s.role}</div>`;
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.sh-card').forEach(c=>c.classList.remove('sh-active'));
+    if(activeSh===i){ shdetail.classList.remove('visible'); activeSh=null; return; }
+    el.classList.add('sh-active'); activeSh=i;
+    shdetail.classList.add('visible');
+    shdetail.innerHTML=`
+      <div class="sh-detail-box"><div class="sh-detail-title">Financial Intelligence Access</div><ul class="sh-detail-list">${s.access.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <div class="sh-detail-box"><div class="sh-detail-title">Decisions Supported</div><ul class="sh-detail-list">${s.decisions.map(d=>`<li>${d}</li>`).join('')}</ul></div>`;
+    setTimeout(()=>shdetail.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  });
+  shgrid.appendChild(el);
+});
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

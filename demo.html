@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMB-FinIntel — Live Demo</title>
+<link rel="stylesheet" href="shared.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+.demo-banner {
+  background: rgba(200,150,10,0.12); border: 1px solid rgba(200,150,10,0.35);
+  border-left: 4px solid var(--gold); border-radius: 0;
+  padding: 12px 24px; display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: var(--text-muted);
+  position: sticky; top: 58px; z-index: 150;
+}
+.demo-banner strong { color: var(--gold); }
+
+/* Tab bar */
+.demo-tabs { display: flex; gap: 4px; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.08); background: var(--g-char); overflow-x: auto; }
+.demo-tab {
+  padding: 14px 22px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border-bottom: 3px solid transparent; color: var(--text-muted);
+  white-space: nowrap; transition: all 0.2s; border-top-left-radius: 4px; border-top-right-radius: 4px;
+  background: rgba(255,255,255,0.03); margin-bottom: -1px;
+}
+.demo-tab:hover { color: var(--text-muted); background: rgba(255,255,255,0.06); }
+.demo-tab.active { border-bottom-color: var(--gold); color: var(--white); background: rgba(200,150,10,0.1); }
+
+/* Tab content */
+.tab-content { display: none; padding: 40px; background: rgba(255,255,255,0.02); }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 14px; margin-bottom: 32px; }
+.kpi {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius); padding: 20px 18px; text-align: center;
+}
+.kpi-val { font-family: var(--font-d); font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.kpi-label { font-size: 12px; color: var(--text-muted); }
+.kpi-delta { font-size: 12px; font-family: var(--font-m); margin-top: 4px; }
+.kpi-up { color: var(--g-deep); } .kpi-down { color: var(--red); }
+
+/* Chart containers */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.chart-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 24px; }
+.chart-box.full { grid-column: 1 / -1; }
+.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.chart-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-family: var(--font-m); }
+.chart-wrap { position: relative; height: 260px; }
+.chart-wrap.tall { height: 320px; }
+
+/* Filter bar */
+.filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+.filter-select {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white); padding: 8px 14px; border-radius: 5px; font-size: 13px;
+  font-family: var(--font-b); cursor: pointer; outline: none;
+}
+.filter-select:focus { border-color: var(--gold); }
+.filter-label { font-size: 13px; color: var(--text-muted); }
+
+/* Anomaly table */
+.anomaly-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.anomaly-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.anomaly-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.anomaly-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.anomaly-score { margin-left: auto; flex-shrink: 0; }
+
+/* Download btn */
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(26,92,56,0.2); border: 1px solid rgba(26,92,56,0.4);
+  color: var(--g-deep); padding: 8px 16px; border-radius: 5px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--font-b);
+  text-decoration: none;
+}
+.dl-btn:hover { background: rgba(26,92,56,0.35); border-color: var(--g-deep); }
+
+/* Salary band */
+.band-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
+.band-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 16px; text-align: center; }
+.band-label { font-family: var(--font-m); font-size: 20px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.band-range { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-family: var(--font-m); }
+.band-count { font-size: 22px; font-weight: 700; font-family: var(--font-d); margin-bottom: 2px; }
+.band-pct { font-size: 12px; color: var(--text-muted); }
+
+/* Year selector */
+.year-tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.year-tab { padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); color: var(--text-muted); background: rgba(255,255,255,0.04); transition: all 0.2s; font-family: var(--font-m); }
+.year-tab:hover { color: var(--white); border-color: var(--text-muted); }
+.year-tab.active { background: var(--g-deep); border-color: var(--g-deep); color: var(--white); }
+
+@media(max-width:860px){
+  .chart-grid{grid-template-columns:1fr;}
+  .chart-box.full{grid-column:1;}
+  .band-grid{grid-template-columns:repeat(3,1fr);}
+  .demo-tabs{padding:0 16px;}
+  .tab-content{padding:24px 16px;}
+}
+
+/* Light theme overrides */
+.demo-banner { background: var(--gold-pale); border: 1px solid #E8CC80; border-left: 4px solid var(--gold); color: var(--text-body); }
+.demo-banner strong { color: #7A5800; }
+.demo-tabs { background: var(--surface-1); border-bottom: 2px solid var(--border-md); }
+.demo-tab { color: var(--text-muted); background: #FFFFFF; border: 1px solid var(--border-lt); border-bottom: none; }
+.demo-tab:hover { color: var(--g-deep); background: var(--g-xpale); }
+.demo-tab.active { color: var(--g-deep); background: var(--g-pale); border-bottom: 3px solid var(--g-deep); font-weight: 700; }
+.tab-content { background: #FFFFFF; }
+.kpi { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.kpi-label { color: var(--text-muted); }
+.kpi-val { color: var(--g-deep); }
+.chart-box { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.chart-title { color: var(--text-head); }
+.chart-sub { color: var(--text-muted); }
+.filter-label { color: var(--text-muted); }
+.filter-select { background: #FFFFFF; border: 1px solid var(--border-md); color: var(--text-body); }
+.anomaly-title { color: var(--text-head); }
+.anomaly-desc { color: var(--text-muted); }
+.anomaly-row { border-bottom: 1px solid var(--border-lt); }
+.band-card { background: #FFFFFF; border: 1px solid var(--border-lt); }
+.band-range { color: var(--text-muted); }
+.band-pct { color: var(--text-muted); }
+.year-tab { color: var(--text-muted); background: #FFFFFF; border: 1px solid var(--border-md); }
+.year-tab:hover { color: var(--g-deep); border-color: var(--g-deep); }
+.year-tab.active { background: var(--g-deep); border-color: var(--g-deep); color: #FFFFFF; }
+.dl-btn { background: var(--g-pale); border: 1px solid var(--g-lt); color: var(--g-deep); }
+.dl-btn:hover { background: var(--g-lt); border-color: var(--g-deep); }
+
+</style>
+</head>
+<body>
+
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="architecture.html">Architecture</a>
+    <div class="nav-divider"></div>
+    <a href="energy.html">⚡ Energy Module</a>
+    <div class="nav-divider"></div>
+    <a href="demo.html" class="active nav-demo">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <span>⚠️</span>
+  <span><strong>DEMO MODE</strong> — Fictive data loaded for illustration purposes. All company names, values, and figures are synthetic. Upload real data files in the Streamlit application to begin live analysis.</span>
+  <a href="architecture.html" style="margin-left:auto;color:'var(--gold)';text-decoration:none;font-size:12px;white-space:nowrap">Learn how it works →</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" style="min-height:38vh;padding:48px 40px 32px">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Interactive Demo — Fictive Data</div>
+    <h1 class="hero-title fade-up au-2" style="font-size:clamp(26px,3vw,38px)">RMB-FinIntel <span class="accent">Demo Platform</span></h1>
+    <p class="hero-lead fade-up au-3" style="font-size:15px">Navigate through all five analytical modules using synthetic Rwanda mining sector data. This is the financial intelligence that would be generated from real declared data.</p>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="demo-tabs">
+  <div class="demo-tab active" data-tab="t0">🏠 Overview</div>
+  <div class="demo-tab" data-tab="t1">📦 Export Intelligence</div>
+  <div class="demo-tab" data-tab="t2">💰 Price Gap Analysis</div>
+  <div class="demo-tab" data-tab="t3">👥 HR Distribution</div>
+  <div class="demo-tab" data-tab="t4">🔀 Cross-Source Analytics</div>
+  <div class="demo-tab" data-tab="t5">⚡ Energy Module</div>
+</div>
+
+<!-- TAB 0: OVERVIEW -->
+<div class="tab-content active" id="t0">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Sector Overview Dashboard</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:28px">Demo data: 8 fictive companies, 10 years (2015–2024), 4 minerals (Cassiterite, Coltan, Wolframite, Gold)</p>
+  <div class="kpi-row" id="kpi-row0"></div>
+  <div class="chart-grid">
+    <div class="chart-box full">
+      <div class="chart-title">Total Declared Export Value by Mineral (2015–2024)</div>
+      <div class="chart-sub">USD millions · Stacked by mineral · Fictive data</div>
+      <div class="chart-wrap tall"><canvas id="c0_overview"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Export Value Share by Mineral (2024)</div>
+      <div class="chart-sub">% of total declared exports</div>
+      <div class="chart-wrap"><canvas id="c0_pie"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Top 5 Export Destinations (2024)</div>
+      <div class="chart-sub">% of declared export value</div>
+      <div class="chart-wrap"><canvas id="c0_dest"></canvas></div>
+    </div>
+  </div>
+  <div style="margin-top:8px"><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_Overview_SectorDashboard')">📥 DOWNLOAD — Sector Overview (.xlsx)</button></div>
+</div>
+
+<!-- TAB 1: EXPORT INTELLIGENCE -->
+<div class="tab-content" id="t1">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Export Financial Intelligence</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Volume trends, implied unit prices, and buyer concentration analysis</p>
+  <div class="filter-bar">
+    <span class="filter-label">Mineral:</span>
+    <select class="filter-select" id="mineral-select" onchange="updateExportCharts()">
+      <option value="0">Cassiterite (Tin)</option>
+      <option value="1">Coltan (Tantalum)</option>
+      <option value="2">Wolframite (Tungsten)</option>
+      <option value="3">Gold</option>
+    </select>
+  </div>
+  <div class="kpi-row" id="kpi-row1"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title" id="export-vol-title">Cassiterite — Export Volume (MT, 2015–2024)</div>
+      <div class="chart-sub">Declared metric tonnes · Annual · Fictive data</div>
+      <div class="chart-wrap"><canvas id="c1_vol"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title" id="export-val-title">Cassiterite — Declared Export Value (USD, 2015–2024)</div>
+      <div class="chart-sub">USD thousands · Annual · Fictive data</div>
+      <div class="chart-wrap"><canvas id="c1_val"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title" id="export-price-title">Cassiterite — Implied Declared Unit Price (USD/MT)</div>
+      <div class="chart-sub">Declared value ÷ declared volume · Note: known to be underestimated vs. LME</div>
+      <div class="chart-wrap"><canvas id="c1_price"></canvas></div>
+    </div>
+  </div>
+  <div><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_T1_ExportIntelligence')">📥 DOWNLOAD — Export Financial Intelligence (.xlsx)</button></div>
+</div>
+
+<!-- TAB 2: PRICE GAP -->
+<div class="tab-content" id="t2">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Price Gap Financial Analysis</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Rwanda declared price vs. LME/LBMA benchmark — the revenue intelligence indicator</p>
+  <div class="filter-bar">
+    <span class="filter-label">Mineral:</span>
+    <select class="filter-select" id="gap-mineral" onchange="updateGapChart()">
+      <option value="0">Cassiterite (Tin) — LME benchmark</option>
+      <option value="1">Coltan (Tantalum) — benchmark price</option>
+      <option value="2">Wolframite (Tungsten) — benchmark price</option>
+      <option value="3">Gold — LBMA benchmark</option>
+    </select>
+  </div>
+  <div class="kpi-row" id="kpi-row2"></div>
+  <div class="chart-grid">
+    <div class="chart-box full">
+      <div class="chart-title" id="gap-title">Cassiterite — Rwanda Declared Price vs. LME Benchmark (USD/MT)</div>
+      <div class="chart-sub">Gap area (amber) = estimated revenue not captured · Fictive data for illustration</div>
+      <div class="chart-wrap tall"><canvas id="c2_gap"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Monthly Gap (USD/MT) — Last 12 Months</div>
+      <div class="chart-sub">Positive = Rwanda price below benchmark</div>
+      <div class="chart-wrap"><canvas id="c2_monthly"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Cumulative Estimated Revenue Forgone (2015–2024)</div>
+      <div class="chart-sub">USD millions · Minimum estimate (declared data known to be imperfect)</div>
+      <div class="chart-wrap"><canvas id="c2_cumul"></canvas></div>
+    </div>
+  </div>
+  <div style="background:rgba(200,150,10,0.08);border:1px solid rgba(200,150,10,0.2);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;font-size:14px;color:'var(--text-muted)';line-height:1.65">
+    ⚠️ <strong style="color:#7A5800">Accuracy note:</strong> The gap shown uses declared export values which are known to be under-reported. The true revenue gap is likely larger. This analysis is intended to establish the order of magnitude and trend direction — both of which are policy-relevant regardless of absolute accuracy.
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M2_PriceGapAnalysis')">📥 DOWNLOAD — Price Gap Financial Analysis (.xlsx)</button>
+</div>
+
+<!-- TAB 3: HR DISTRIBUTION -->
+<div class="tab-content" id="t3">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">HR & Revenue Distribution</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Salary band distribution, payroll analysis, and added-value waterfall</p>
+  <div class="filter-bar">
+    <span class="filter-label">Year:</span>
+    <div class="year-tabs" id="year-tabs"></div>
+  </div>
+  <div class="kpi-row" id="kpi-row3"></div>
+  <div style="margin-bottom:20px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:12px">Salary Band Configuration (Dynamic per Year)</div>
+    <div class="band-grid" id="band-grid"></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Employee Distribution by Salary Band</div>
+      <div class="chart-sub">Number of declared employees per band · Selected year</div>
+      <div class="chart-wrap"><canvas id="c3_bands"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Payroll Distribution by Band (RWF millions)</div>
+      <div class="chart-sub">Gross salary · Tax withheld · Net pay</div>
+      <div class="chart-wrap"><canvas id="c3_payroll"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title">Added Value Distribution Waterfall (2024)</div>
+      <div class="chart-sub">Of each USD of declared export revenue — where does it go?</div>
+      <div class="chart-wrap"><canvas id="c3_waterfall"></canvas></div>
+    </div>
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M3_HRDistribution')">📥 DOWNLOAD — HR & Revenue Distribution (.xlsx)</button>
+</div>
+
+<!-- TAB 4: CROSS-SOURCE -->
+<div class="tab-content" id="t4">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Cross-Source Analytics</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Anomaly detection and multi-source consistency flags — investigation leads, not accusations</p>
+  <div class="kpi-row" id="kpi-row4"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Revenue per Employee (USD) by Company (2024)</div>
+      <div class="chart-sub">Sector average shown as dashed line</div>
+      <div class="chart-wrap"><canvas id="c4_rpe"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Export vs. Production Reconciliation (2024)</div>
+      <div class="chart-sub">Cassiterite MT — gap = unreconciled volume</div>
+      <div class="chart-wrap"><canvas id="c4_recon"></canvas></div>
+    </div>
+  </div>
+  <div style="margin-top:8px;margin-bottom:20px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:14px">Anomaly Flags — Ranked by Confidence Score</div>
+    <div id="anomaly-list"></div>
+    <p style="font-size:12px;color:'var(--text-muted)';margin-top:10px;font-family:var(--font-m)">⚠️ Flags are statistical signals requiring human investigation. They do not constitute findings of wrongdoing.</p>
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M4_CrossSourceAnalytics')">📥 DOWNLOAD — Cross-Source Analytics (.xlsx)</button>
+</div>
+
+<!-- TAB 5: ENERGY -->
+<div class="tab-content" id="t5">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Energy Financial Intelligence Module</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Energy cost structure, carbon intensity, competitiveness scenarios, and clean premium opportunity</p>
+  <div class="kpi-row" id="kpi-row5"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Energy Cost as % of Operating Costs (by Company, 2024)</div>
+      <div class="chart-sub">Global benchmark range: 25–40%</div>
+      <div class="chart-wrap"><canvas id="c5_ecost"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Carbon Intensity by Company (kgCO₂e per tonne mineral)</div>
+      <div class="chart-sub">EU clean-premium threshold: &lt; 0.15 kgCO₂e/kWh equivalent</div>
+      <div class="chart-wrap"><canvas id="c5_carbon"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title">Energy Cost Sensitivity — Sector EBITDA Impact of Tariff Change</div>
+      <div class="chart-sub">% change in estimated sector EBITDA vs. energy tariff change (3 energy mix scenarios)</div>
+      <div class="chart-wrap tall"><canvas id="c5_sensitivity"></canvas></div>
+    </div>
+  </div>
+  <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:600;color:#6FD19A;margin-bottom:8px">🌿 Clean Premium Opportunity (2024 Estimate)</div>
+    <div style="font-size:14px;color:'var(--text-muted)';line-height:1.65">Based on demo data: <strong style="color:#7A5800">3 of 8 companies</strong> already qualify for EU clean-mineral sourcing premiums based on their grid electricity intensity. Estimated additional annual revenue if premiums are actively marketed: <strong style="color:var(--g-deep)">USD 4.2M</strong> (sector-wide, 2024 volumes, 12% premium applied). <em>This is fictive demo data.</em></div>
+  </div>
+  <a href="energy.html" class="btn btn-outline" style="margin-right:12px;font-size:13px">⚡ Full Energy Module Analysis →</a>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M5_EnergyIntelligence')">📥 DOWNLOAD — Energy Financial Intelligence (.xlsx)</button>
+</div>
+
+<!-- FOOTER -->
+<footer class="rmb-footer" style="margin-top:0">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Proposal</a>
+    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">RMB-FinIntel Demo Platform<br>April 2026 · Fictive Data Only</div>
+</footer>
+</div>
+
+<style>
+.demo-banner {
+  background: rgba(200,150,10,0.12); border: 1px solid rgba(200,150,10,0.35);
+  border-left: 4px solid var(--gold); border-radius: 0;
+  padding: 12px 24px; display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: var(--text-muted);
+  position: sticky; top: 58px; z-index: 150;
+}
+.demo-banner strong { color: var(--gold); }
+
+/* Tab bar */
+.demo-tabs { display: flex; gap: 4px; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.08); background: var(--g-char); overflow-x: auto; }
+.demo-tab {
+  padding: 14px 22px; font-size: 13px; font-weight: 600; cursor: pointer;
+  border-bottom: 3px solid transparent; color: var(--text-muted);
+  white-space: nowrap; transition: all 0.2s; border-top-left-radius: 4px; border-top-right-radius: 4px;
+  background: rgba(255,255,255,0.03); margin-bottom: -1px;
+}
+.demo-tab:hover { color: var(--text-muted); background: rgba(255,255,255,0.06); }
+.demo-tab.active { border-bottom-color: var(--gold); color: var(--white); background: rgba(200,150,10,0.1); }
+
+/* Tab content */
+.tab-content { display: none; padding: 40px; background: rgba(255,255,255,0.02); }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* KPI row */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 14px; margin-bottom: 32px; }
+.kpi {
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: var(--radius); padding: 20px 18px; text-align: center;
+}
+.kpi-val { font-family: var(--font-d); font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.kpi-label { font-size: 12px; color: var(--text-muted); }
+.kpi-delta { font-size: 12px; font-family: var(--font-m); margin-top: 4px; }
+.kpi-up { color: var(--g-deep); } .kpi-down { color: var(--red); }
+
+/* Chart containers */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+.chart-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: var(--radius); padding: 24px; }
+.chart-box.full { grid-column: 1 / -1; }
+.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.chart-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; font-family: var(--font-m); }
+.chart-wrap { position: relative; height: 260px; }
+.chart-wrap.tall { height: 320px; }
+
+/* Filter bar */
+.filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 24px; flex-wrap: wrap; }
+.filter-select {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--white); padding: 8px 14px; border-radius: 5px; font-size: 13px;
+  font-family: var(--font-b); cursor: pointer; outline: none;
+}
+.filter-select:focus { border-color: var(--gold); }
+.filter-label { font-size: 13px; color: var(--text-muted); }
+
+/* Anomaly table */
+.anomaly-row { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.anomaly-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+.anomaly-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.anomaly-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.anomaly-score { margin-left: auto; flex-shrink: 0; }
+
+/* Download btn */
+.dl-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(26,92,56,0.2); border: 1px solid rgba(26,92,56,0.4);
+  color: var(--g-deep); padding: 8px 16px; border-radius: 5px; font-size: 13px;
+  font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: var(--font-b);
+  text-decoration: none;
+}
+.dl-btn:hover { background: rgba(26,92,56,0.35); border-color: var(--g-deep); }
+
+/* Salary band */
+.band-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; margin-bottom: 24px; }
+.band-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 16px; text-align: center; }
+.band-label { font-family: var(--font-m); font-size: 20px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.band-range { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; font-family: var(--font-m); }
+.band-count { font-size: 22px; font-weight: 700; font-family: var(--font-d); margin-bottom: 2px; }
+.band-pct { font-size: 12px; color: var(--text-muted); }
+
+/* Year selector */
+.year-tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+.year-tab { padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); color: var(--text-muted); background: rgba(255,255,255,0.04); transition: all 0.2s; font-family: var(--font-m); }
+.year-tab:hover { color: var(--white); border-color: var(--text-muted); }
+.year-tab.active { background: var(--g-deep); border-color: var(--g-deep); color: var(--white); }
+
+@media(max-width:860px){
+  .chart-grid{grid-template-columns:1fr;}
+  .chart-box.full{grid-column:1;}
+  .band-grid{grid-template-columns:repeat(3,1fr);}
+  .demo-tabs{padding:0 16px;}
+  .tab-content{padding:24px 16px;}
+}
+
+/* Light theme overrides */
+.demo-banner { background: var(--gold-pale); border: 1px solid #E8CC80; border-left: 4px solid var(--gold); color: var(--text-body); }
+.demo-banner strong { color: #7A5800; }
+.demo-tabs { background: var(--surface-1); border-bottom: 2px solid var(--border-md); }
+.demo-tab { color: var(--text-muted); background: #FFFFFF; border: 1px solid var(--border-lt); border-bottom: none; }
+.demo-tab:hover { color: var(--g-deep); background: var(--g-xpale); }
+.demo-tab.active { color: var(--g-deep); background: var(--g-pale); border-bottom: 3px solid var(--g-deep); font-weight: 700; }
+.tab-content { background: #FFFFFF; }
+.kpi { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.kpi-label { color: var(--text-muted); }
+.kpi-val { color: var(--g-deep); }
+.chart-box { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.chart-title { color: var(--text-head); }
+.chart-sub { color: var(--text-muted); }
+.filter-label { color: var(--text-muted); }
+.filter-select { background: #FFFFFF; border: 1px solid var(--border-md); color: var(--text-body); }
+.anomaly-title { color: var(--text-head); }
+.anomaly-desc { color: var(--text-muted); }
+.anomaly-row { border-bottom: 1px solid var(--border-lt); }
+.band-card { background: #FFFFFF; border: 1px solid var(--border-lt); }
+.band-range { color: var(--text-muted); }
+.band-pct { color: var(--text-muted); }
+.year-tab { color: var(--text-muted); background: #FFFFFF; border: 1px solid var(--border-md); }
+.year-tab:hover { color: var(--g-deep); border-color: var(--g-deep); }
+.year-tab.active { background: var(--g-deep); border-color: var(--g-deep); color: #FFFFFF; }
+.dl-btn { background: var(--g-pale); border: 1px solid var(--g-lt); color: var(--g-deep); }
+.dl-btn:hover { background: var(--g-lt); border-color: var(--g-deep); }
+
+</style>
+</head>
+<body>
+
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="architecture.html">Architecture</a>
+    <div class="nav-divider"></div>
+    <a href="energy.html">⚡ Energy Module</a>
+    <div class="nav-divider"></div>
+    <a href="demo.html" class="active nav-demo">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  <span>⚠️</span>
+  <span><strong>DEMO MODE</strong> — Fictive data loaded for illustration purposes. All company names, values, and figures are synthetic. Upload real data files in the Streamlit application to begin live analysis.</span>
+  <a href="architecture.html" style="margin-left:auto;color:'var(--gold)';text-decoration:none;font-size:12px;white-space:nowrap">Learn how it works →</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" style="min-height:38vh;padding:48px 40px 32px">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Interactive Demo — Fictive Data</div>
+    <h1 class="hero-title fade-up au-2" style="font-size:clamp(26px,3vw,38px)">RMB-FinIntel <span class="accent">Demo Platform</span></h1>
+    <p class="hero-lead fade-up au-3" style="font-size:15px">Navigate through all five analytical modules using synthetic Rwanda mining sector data. This is the financial intelligence that would be generated from real declared data.</p>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="demo-tabs">
+  <div class="demo-tab active" data-tab="t0">🏠 Overview</div>
+  <div class="demo-tab" data-tab="t1">📦 Export Intelligence</div>
+  <div class="demo-tab" data-tab="t2">💰 Price Gap Analysis</div>
+  <div class="demo-tab" data-tab="t3">👥 HR Distribution</div>
+  <div class="demo-tab" data-tab="t4">🔀 Cross-Source Analytics</div>
+  <div class="demo-tab" data-tab="t5">⚡ Energy Module</div>
+</div>
+
+<!-- TAB 0: OVERVIEW -->
+<div class="tab-content active" id="t0">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Sector Overview Dashboard</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:28px">Demo data: 8 fictive companies, 10 years (2015–2024), 4 minerals (Cassiterite, Coltan, Wolframite, Gold)</p>
+  <div class="kpi-row" id="kpi-row0"></div>
+  <div class="chart-grid">
+    <div class="chart-box full">
+      <div class="chart-title">Total Declared Export Value by Mineral (2015–2024)</div>
+      <div class="chart-sub">USD millions · Stacked by mineral · Fictive data</div>
+      <div class="chart-wrap tall"><canvas id="c0_overview"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Export Value Share by Mineral (2024)</div>
+      <div class="chart-sub">% of total declared exports</div>
+      <div class="chart-wrap"><canvas id="c0_pie"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Top 5 Export Destinations (2024)</div>
+      <div class="chart-sub">% of declared export value</div>
+      <div class="chart-wrap"><canvas id="c0_dest"></canvas></div>
+    </div>
+  </div>
+  <div style="margin-top:8px"><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_Overview_SectorDashboard')">📥 DOWNLOAD — Sector Overview (.xlsx)</button></div>
+</div>
+
+<!-- TAB 1: EXPORT INTELLIGENCE -->
+<div class="tab-content" id="t1">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Export Financial Intelligence</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Volume trends, implied unit prices, and buyer concentration analysis</p>
+  <div class="filter-bar">
+    <span class="filter-label">Mineral:</span>
+    <select class="filter-select" id="mineral-select" onchange="updateExportCharts()">
+      <option value="0">Cassiterite (Tin)</option>
+      <option value="1">Coltan (Tantalum)</option>
+      <option value="2">Wolframite (Tungsten)</option>
+      <option value="3">Gold</option>
+    </select>
+  </div>
+  <div class="kpi-row" id="kpi-row1"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title" id="export-vol-title">Cassiterite — Export Volume (MT, 2015–2024)</div>
+      <div class="chart-sub">Declared metric tonnes · Annual · Fictive data</div>
+      <div class="chart-wrap"><canvas id="c1_vol"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title" id="export-val-title">Cassiterite — Declared Export Value (USD, 2015–2024)</div>
+      <div class="chart-sub">USD thousands · Annual · Fictive data</div>
+      <div class="chart-wrap"><canvas id="c1_val"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title" id="export-price-title">Cassiterite — Implied Declared Unit Price (USD/MT)</div>
+      <div class="chart-sub">Declared value ÷ declared volume · Note: known to be underestimated vs. LME</div>
+      <div class="chart-wrap"><canvas id="c1_price"></canvas></div>
+    </div>
+  </div>
+  <div><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_T1_ExportIntelligence')">📥 DOWNLOAD — Export Financial Intelligence (.xlsx)</button></div>
+</div>
+
+<!-- TAB 2: PRICE GAP -->
+<div class="tab-content" id="t2">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Price Gap Financial Analysis</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Rwanda declared price vs. LME/LBMA benchmark — the revenue intelligence indicator</p>
+  <div class="filter-bar">
+    <span class="filter-label">Mineral:</span>
+    <select class="filter-select" id="gap-mineral" onchange="updateGapChart()">
+      <option value="0">Cassiterite (Tin) — LME benchmark</option>
+      <option value="1">Coltan (Tantalum) — benchmark price</option>
+      <option value="2">Wolframite (Tungsten) — benchmark price</option>
+      <option value="3">Gold — LBMA benchmark</option>
+    </select>
+  </div>
+  <div class="kpi-row" id="kpi-row2"></div>
+  <div class="chart-grid">
+    <div class="chart-box full">
+      <div class="chart-title" id="gap-title">Cassiterite — Rwanda Declared Price vs. LME Benchmark (USD/MT)</div>
+      <div class="chart-sub">Gap area (amber) = estimated revenue not captured · Fictive data for illustration</div>
+      <div class="chart-wrap tall"><canvas id="c2_gap"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Monthly Gap (USD/MT) — Last 12 Months</div>
+      <div class="chart-sub">Positive = Rwanda price below benchmark</div>
+      <div class="chart-wrap"><canvas id="c2_monthly"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Cumulative Estimated Revenue Forgone (2015–2024)</div>
+      <div class="chart-sub">USD millions · Minimum estimate (declared data known to be imperfect)</div>
+      <div class="chart-wrap"><canvas id="c2_cumul"></canvas></div>
+    </div>
+  </div>
+  <div style="background:rgba(200,150,10,0.08);border:1px solid rgba(200,150,10,0.2);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;font-size:14px;color:'var(--text-muted)';line-height:1.65">
+    ⚠️ <strong style="color:#7A5800">Accuracy note:</strong> The gap shown uses declared export values which are known to be under-reported. The true revenue gap is likely larger. This analysis is intended to establish the order of magnitude and trend direction — both of which are policy-relevant regardless of absolute accuracy.
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M2_PriceGapAnalysis')">📥 DOWNLOAD — Price Gap Financial Analysis (.xlsx)</button>
+</div>
+
+<!-- TAB 3: HR DISTRIBUTION -->
+<div class="tab-content" id="t3">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">HR & Revenue Distribution</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Salary band distribution, payroll analysis, and added-value waterfall</p>
+  <div class="filter-bar">
+    <span class="filter-label">Year:</span>
+    <div class="year-tabs" id="year-tabs"></div>
+  </div>
+  <div class="kpi-row" id="kpi-row3"></div>
+  <div style="margin-bottom:20px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:12px">Salary Band Configuration (Dynamic per Year)</div>
+    <div class="band-grid" id="band-grid"></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Employee Distribution by Salary Band</div>
+      <div class="chart-sub">Number of declared employees per band · Selected year</div>
+      <div class="chart-wrap"><canvas id="c3_bands"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Payroll Distribution by Band (RWF millions)</div>
+      <div class="chart-sub">Gross salary · Tax withheld · Net pay</div>
+      <div class="chart-wrap"><canvas id="c3_payroll"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title">Added Value Distribution Waterfall (2024)</div>
+      <div class="chart-sub">Of each USD of declared export revenue — where does it go?</div>
+      <div class="chart-wrap"><canvas id="c3_waterfall"></canvas></div>
+    </div>
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M3_HRDistribution')">📥 DOWNLOAD — HR & Revenue Distribution (.xlsx)</button>
+</div>
+
+<!-- TAB 4: CROSS-SOURCE -->
+<div class="tab-content" id="t4">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Cross-Source Analytics</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Anomaly detection and multi-source consistency flags — investigation leads, not accusations</p>
+  <div class="kpi-row" id="kpi-row4"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Revenue per Employee (USD) by Company (2024)</div>
+      <div class="chart-sub">Sector average shown as dashed line</div>
+      <div class="chart-wrap"><canvas id="c4_rpe"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Export vs. Production Reconciliation (2024)</div>
+      <div class="chart-sub">Cassiterite MT — gap = unreconciled volume</div>
+      <div class="chart-wrap"><canvas id="c4_recon"></canvas></div>
+    </div>
+  </div>
+  <div style="margin-top:8px;margin-bottom:20px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:14px">Anomaly Flags — Ranked by Confidence Score</div>
+    <div id="anomaly-list"></div>
+    <p style="font-size:12px;color:'var(--text-muted)';margin-top:10px;font-family:var(--font-m)">⚠️ Flags are statistical signals requiring human investigation. They do not constitute findings of wrongdoing.</p>
+  </div>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M4_CrossSourceAnalytics')">📥 DOWNLOAD — Cross-Source Analytics (.xlsx)</button>
+</div>
+
+<!-- TAB 5: ENERGY -->
+<div class="tab-content" id="t5">
+  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Energy Financial Intelligence Module</h2>
+  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Energy cost structure, carbon intensity, competitiveness scenarios, and clean premium opportunity</p>
+  <div class="kpi-row" id="kpi-row5"></div>
+  <div class="chart-grid">
+    <div class="chart-box">
+      <div class="chart-title">Energy Cost as % of Operating Costs (by Company, 2024)</div>
+      <div class="chart-sub">Global benchmark range: 25–40%</div>
+      <div class="chart-wrap"><canvas id="c5_ecost"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">Carbon Intensity by Company (kgCO₂e per tonne mineral)</div>
+      <div class="chart-sub">EU clean-premium threshold: &lt; 0.15 kgCO₂e/kWh equivalent</div>
+      <div class="chart-wrap"><canvas id="c5_carbon"></canvas></div>
+    </div>
+    <div class="chart-box full">
+      <div class="chart-title">Energy Cost Sensitivity — Sector EBITDA Impact of Tariff Change</div>
+      <div class="chart-sub">% change in estimated sector EBITDA vs. energy tariff change (3 energy mix scenarios)</div>
+      <div class="chart-wrap tall"><canvas id="c5_sensitivity"></canvas></div>
+    </div>
+  </div>
+  <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px">
+    <div style="font-size:14px;font-weight:600;color:#6FD19A;margin-bottom:8px">🌿 Clean Premium Opportunity (2024 Estimate)</div>
+    <div style="font-size:14px;color:'var(--text-muted)';line-height:1.65">Based on demo data: <strong style="color:#7A5800">3 of 8 companies</strong> already qualify for EU clean-mineral sourcing premiums based on their grid electricity intensity. Estimated additional annual revenue if premiums are actively marketed: <strong style="color:var(--g-deep)">USD 4.2M</strong> (sector-wide, 2024 volumes, 12% premium applied). <em>This is fictive demo data.</em></div>
+  </div>
+  <a href="energy.html" class="btn btn-outline" style="margin-right:12px;font-size:13px">⚡ Full Energy Module Analysis →</a>
+  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M5_EnergyIntelligence')">📥 DOWNLOAD — Energy Financial Intelligence (.xlsx)</button>
+</div>
+
+<!-- FOOTER -->
+<footer class="rmb-footer" style="margin-top:0">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Proposal</a>
+    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">RMB-FinIntel Demo Platform<br>April 2026 · Fictive Data Only</div>
+</footer>
+</div>
+
+<script>
+// ── GLOBALS & DUMMY DATA ──
+const YEARS = [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024];
+const COMPANIES = ['MineralTech RW','Kigali Metals','Kivu Mining Co.','Eastern Ore Ltd','NorthRift Corp','AfriMin SARL','RwandaGold Ltd','Summit Extracts'];
+const MINERALS = ['Cassiterite','Coltan','Wolframite','Gold'];
+const MONTHS12 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// Seeded random for consistency
+function sr(seed){ let s=seed; return ()=>{ s=(s*1664525+1013904223)&0xffffffff; return (s>>>0)/0xffffffff; }; }
+
+// Declared export volumes (MT) per mineral per year — cassiterite largest
+const R = sr(42);
+const declVol = {
+  0: YEARS.map(()=> 800 + Math.round(R()*400)),  // cassiterite
+  1: YEARS.map(()=> 180 + Math.round(R()*120)),  // coltan
+  2: YEARS.map(()=> 240 + Math.round(R()*160)),  // wolframite
+  3: YEARS.map(()=> 1.2 + R()*0.8),              // gold (tonnes)
+};
+// LME reference prices (USD/MT or USD/troy oz)
+const lmeRef = {
+  0: [13200,13800,14100,16200,17500,15800,18200,21500,19800,21000], // tin $/MT
+  1: [105,110,120,130,145,125,155,175,160,172],  // tantalum $/kg → in $/MT equiv
+  2: [18000,19000,21000,24000,22000,20000,26000,32000,28000,30000], // tungsten $/MT
+  3: [1060,1160,1240,1260,1390,1740,1780,1800,1820,2050], // gold $/troy oz
+};
+// Declared prices = LME * discount factor (0.55–0.72 to simulate gap)
+const discF = sr(7);
+const declPrice = Object.fromEntries([0,1,2,3].map(m=>[m, lmeRef[m].map(p=>Math.round(p*(0.55+discF()*0.17)))]));
+
+// Chart defaults — light theme
+Chart.defaults.color = '#6B7B6F';
+Chart.defaults.borderColor = '#D8E8DC';
+const FONT = { family: 'DM Sans, sans-serif', size: 12 };
+
+function mkChart(id, type, data, extraOpts={}){
+  const ctx=document.getElementById(id);
+  if(!ctx) return;
+  if(ctx._chart) ctx._chart.destroy();
+  const baseOpts = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ labels:{ font:FONT, boxWidth:12, color:'#2D3E35' } } },
+    scales: type!=='pie'&&type!=='doughnut' ? {
+      x:{ ticks:{font:FONT, color:'#6B7B6F'}, grid:{color:'#EEF4F1'} },
+      y:{ ticks:{font:FONT, color:'#6B7B6F'}, grid:{color:'#EEF4F1'} }
+    } : {}
+  };
+  if(extraOpts.scales){
+    Object.keys(extraOpts.scales).forEach(k=>{
+      baseOpts.scales[k] = Object.assign({}, baseOpts.scales[k]||{},
+        extraOpts.scales[k],
+        {ticks:Object.assign({font:FONT,color:'#6B7B6F'},
+          (extraOpts.scales[k]||{}).ticks||{})});
+    });
+    delete extraOpts.scales;
+  }
+  ctx._chart = new Chart(ctx, { type, data, options: Object.assign(baseOpts, extraOpts) });
+  return ctx._chart;
+}
+
+// ── TAB SWITCHING ──
+document.querySelectorAll('.demo-tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.demo-tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='t1') initTab1();
+    if(t.dataset.tab==='t2') initTab2();
+    if(t.dataset.tab==='t3') initTab3();
+    if(t.dataset.tab==='t4') initTab4();
+    if(t.dataset.tab==='t5') initTab5();
+  });
+});
+
+// ── KPI HELPERS ──
+function setKPIs(id, kpis){
+  const el=document.getElementById(id); el.innerHTML='';
+  kpis.forEach(k=>{
+    el.innerHTML+=`<div class="kpi"><div class="kpi-val" style="color:${k.color||'var(--gold)'}">${k.val}</div><div class="kpi-label">${k.label}</div>${k.delta?`<div class="kpi-delta ${k.up?'kpi-up':'kpi-down'}">${k.delta}</div>`:''}</div>`;
+  });
+}
+
+// ── TAB 1: EXPORT ──
+function initTab1(){
+  const m=parseInt(document.getElementById('mineral-select').value);
+  setKPIs('kpi-row1',[
+    {val:declVol[m][9].toFixed(m===3?1:0)+(m===3?' t':' MT'),label:'2024 Declared Volume',delta:'↑ +5.1% vs 2023',up:true},
+    {val:'$'+Math.round(declVol[m][9]*declPrice[m][9]/1000)+'k',label:'2024 Declared Value',color:'var(--gold)'},
+    {val:'$'+declPrice[m][9]+'/MT',label:'2024 Implied Unit Price'},
+    {val:'$'+lmeRef[m][9]+'/MT',label:'LME Reference 2024',color:'var(--g-deep)'},
+  ]);
+  document.getElementById('export-vol-title').textContent=MINERALS[m]+' — Export Volume (2015–2024)';
+  document.getElementById('export-val-title').textContent=MINERALS[m]+' — Declared Export Value (USD, 2015–2024)';
+  document.getElementById('export-price-title').textContent=MINERALS[m]+' — Implied Declared Unit Price vs. LME (USD/MT)';
+  mkChart('c1_vol','bar',{labels:YEARS,datasets:[{label:'Volume',data:declVol[m],backgroundColor:'rgba(27,108,168,0.7)',borderRadius:3}]},{});
+  mkChart('c1_val','bar',{labels:YEARS,datasets:[{label:'USD',data:declVol[m].map((v,y)=>Math.round(v*declPrice[m][y]/1000)),backgroundColor:'rgba(200,150,10,0.7)',borderRadius:3}]},{});
+  mkChart('c1_price','line',{labels:YEARS,datasets:[
+    {label:'Declared unit price',data:declPrice[m],borderColor:'rgba(200,150,10,0.9)',backgroundColor:'rgba(200,150,10,0.1)',fill:false,tension:0.3,pointRadius:4},
+    {label:'LME/LBMA benchmark',data:lmeRef[m],borderColor:'rgba(26,92,56,0.9)',backgroundColor:'rgba(26,92,56,0.1)',fill:false,tension:0.3,borderDash:[6,3],pointRadius:4},
+  ]},{});
+}
+window.updateExportCharts=initTab1;
+
+// Price scale multipliers to get to $/MT equivalent for gap calc
+// Cassiterite: $/MT direct, Coltan: $/kg → *1000, Wolframite: $/MT direct, Gold: $/troy oz → *32150
+const priceScale=[1,1000,1,32150];
+
+// ── TAB 2: PRICE GAP ──
+function initTab2(){
+  const m=parseInt(document.getElementById('gap-mineral').value);
+  const gap2024=lmeRef[m][9]-declPrice[m][9];
+  const vol2024=declVol[m][9];
+  const scale=priceScale[m];
+  // Revenue forgone = gap($/unit) * scale(to get $/MT) * vol(MT) / 1e6 (→ USD M)
+  // For gold: vol is in tonnes, price in $/troy oz, 32150 troy oz/tonne
+  const gapUSD = m===3
+    ? Math.round(gap2024*32150*vol2024/1e6*10)/10
+    : Math.round(gap2024*scale*vol2024/1e6*10)/10;
+  const cumGap = m===3
+    ? Math.round(YEARS.reduce((acc,_,y)=>acc+(lmeRef[m][y]-declPrice[m][y])*32150*declVol[m][y]/1e6,0)*10)/10
+    : Math.round(YEARS.reduce((acc,_,y)=>acc+(lmeRef[m][y]-declPrice[m][y])*scale*declVol[m][y]/1e6,0)*10)/10;
+  setKPIs('kpi-row2',[
+    {val:'$'+gap2024+'/MT',label:'2024 Price Gap (Declared vs. LME)',color:'var(--red)',delta:'↓ Gap persists',up:false},
+    {val:'$'+gapUSD+'M',label:'2024 Est. Revenue Forgone',color:'var(--red)'},
+    {val:'$'+Math.round(cumGap)+'M',label:'10-yr Cumulative Gap Est.',color:'var(--gold)'},
+    {val:Math.round((gap2024/lmeRef[m][9])*100)+'%',label:'Gap as % of Benchmark',color:'var(--red)'},
+  ]);
+  document.getElementById('gap-title').textContent=MINERALS[m]+' — Rwanda Declared Price vs. Benchmark (USD/MT)';
+  mkChart('c2_gap','line',{labels:YEARS,datasets:[
+    {label:'LME/LBMA Benchmark',data:lmeRef[m],borderColor:'#6FD19A',backgroundColor:'rgba(26,92,56,0.15)',fill:'-1',tension:0.3,pointRadius:3},
+    {label:'Rwanda Declared Price',data:declPrice[m],borderColor:'rgba(200,150,10,0.9)',backgroundColor:'rgba(200,150,10,0.12)',fill:true,tension:0.3,pointRadius:3},
+  ]},{});
+  mkChart('c2_monthly','bar',{labels:MONTHS12,datasets:[{label:'Gap USD/MT',data:MONTHS12.map((_,i)=>Math.round(gap2024*(0.85+sr(m*12+i)()*0.3))),backgroundColor:'rgba(200,80,80,0.65)',borderRadius:3}]},{});
+  mkChart('c2_cumul','line',{labels:YEARS,datasets:[{label:'Cumulative USD M',data:YEARS.map((_,y)=>Math.round(YEARS.slice(0,y+1).reduce((a,_,i)=>a+(lmeRef[m][i]-declPrice[m][i])*declVol[m][i]/1e6,0)*10)/10),borderColor:'rgba(200,80,80,0.8)',backgroundColor:'rgba(200,80,80,0.1)',fill:true,tension:0.3}]},{});
+}
+window.updateGapChart=initTab2;
+
+// ── TAB 3: HR ──
+const salaryBands = {
+  2015:{A:[1,30000],B:[30001,60000],C:[60001,200000],D:[200001,500000],E:[500001,99999999]},
+  2020:{A:[1,45000],B:[45001,90000],C:[90001,250000],D:[250001,600000],E:[600001,99999999]},
+  2024:{A:[1,60000],B:[60001,100000],C:[100001,300000],D:[300001,600000],E:[600001,99999999]},
+};
+const bandCounts2024=[320,180,95,42,18]; // fictive
+const bandColors=['rgba(200,80,80,0.7)','rgba(200,150,10,0.7)','rgba(27,108,168,0.7)','rgba(26,92,56,0.7)','rgba(150,100,200,0.7)'];
+let selectedYear=2024;
+function initTab3(yr){
+  if(yr) selectedYear=yr;
+  // Year tabs
+  const ytDiv=document.getElementById('year-tabs'); ytDiv.innerHTML='';
+  [2015,2018,2020,2022,2024].forEach(y=>{
+    ytDiv.innerHTML+=`<div class="year-tab ${y===selectedYear?'active':''}" onclick="initTab3(${y})">${y}</div>`;
+  });
+  // Bands
+  const bandConf=salaryBands[selectedYear]||salaryBands[2024];
+  const bgrid=document.getElementById('band-grid'); bgrid.innerHTML='';
+  const scale=selectedYear===2015?0.7:selectedYear===2018?0.85:selectedYear===2020?0.92:selectedYear===2022?0.96:1;
+  ['A','B','C','D','E'].forEach((l,i)=>{
+    const [lo,hi]=bandConf[l]; const count=Math.round(bandCounts2024[i]*scale);
+    const total=bandCounts2024.reduce((a,c,j)=>a+Math.round(c*scale),0);
+    bgrid.innerHTML+=`<div class="band-card"><div class="band-label">${l}</div><div class="band-range">${lo.toLocaleString()} – ${hi>=99999999?'∞':hi.toLocaleString()} RWF</div><div class="band-count" style="color:${bandColors[i]}">${count}</div><div class="band-pct">${Math.round(count/total*100)}% of workforce</div></div>`;
+  });
+  const total=bandCounts2024.reduce((a,c,j)=>a+Math.round(c*(selectedYear===2015?0.7:selectedYear===2018?0.85:selectedYear===2020?0.92:selectedYear===2022?0.96:1)),0);
+  setKPIs('kpi-row3',[
+    {val:total,label:'Total Declared Employees '+selectedYear},
+    {val:'RWF 4.2B',label:'Total Gross Payroll (Annual)',color:'var(--gold)'},
+    {val:'RWF 186k',label:'Average Monthly Salary',color:'var(--gold)'},
+    {val:'34%',label:'Payroll as % of Export Revenue'},
+    {val:'31%',label:'Revenue in Band A+B (lowest)',color:'var(--red)',delta:'↑ High low-pay concentration',up:false},
+  ]);
+  const sc=selectedYear===2015?0.7:selectedYear===2018?0.85:selectedYear===2020?0.92:selectedYear===2022?0.96:1;
+  // Employee distribution — doughnut pie
+  var empData = bandCounts2024.map(function(c){ return Math.round(c*sc); });
+  mkChart('c3_bands','doughnut',{
+    labels:['Band A','Band B','Band C','Band D','Band E'],
+    datasets:[{
+      data: empData,
+      backgroundColor: bandColors,
+      borderWidth: 3,
+      borderColor: '#FFFFFF',
+      hoverOffset: 8
+    }]
+  },{plugins:{legend:{position:'right',labels:{font:FONT,color:'#2D3E35',padding:14,boxWidth:14}}}});
+
+  // Gross payroll share — doughnut pie
+  const grossByBand=[320,480,760,1200,1800].map(v=>Math.round(v*sc));
+  mkChart('c3_payroll','doughnut',{
+    labels:['Band A','Band B','Band C','Band D','Band E'],
+    datasets:[{
+      data: grossByBand,
+      backgroundColor: bandColors,
+      borderWidth: 3,
+      borderColor: '#FFFFFF',
+      hoverOffset: 8
+    }]
+  },{plugins:{legend:{position:'right',labels:{font:FONT,color:'#2D3E35',padding:14,boxWidth:14}}}});
+  mkChart('c3_waterfall','bar',{
+    labels:['Export Revenue','→ Payroll (net)','→ Income Tax','→ Social Security','→ Royalties','→ Energy Costs','→ Other Costs','Residual Margin'],
+    datasets:[{label:'USD millions',data:[100,-34,-10,-4.8,-8,-12,-15,16.2],backgroundColor:['rgba(26,92,56,0.8)','rgba(200,150,10,0.7)','rgba(200,150,10,0.5)','rgba(200,150,10,0.4)','rgba(27,108,168,0.6)','rgba(245,166,35,0.7)','rgba(150,150,150,0.5)','rgba(26,92,56,0.9)'],borderRadius:3}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'USD per 100 of export revenue',font:FONT}}}});
+}
+
+// ── TAB 4: CROSS-SOURCE ──
+function initTab4(){
+  setKPIs('kpi-row4',[
+    {val:'6',label:'Anomaly Flags Generated',color:'var(--red)'},
+    {val:'3',label:'High Confidence Flags',color:'var(--red)',delta:'↑ Require investigation',up:false},
+    {val:'HHI 2,840',label:'Company Concentration (Export)',color:'var(--gold)'},
+    {val:'23%',label:'Unexplained Prod-Export Gap (Avg)',color:'var(--gold)'},
+  ]);
+  mkChart('c4_rpe','bar',{
+    labels:COMPANIES,
+    datasets:[{label:'Revenue/Employee (USD)',data:[142000,98000,215000,87000,312000,76000,188000,105000],backgroundColor:COMPANIES.map((_,i)=>i===4?'rgba(200,80,80,0.8)':i===5?'rgba(200,80,80,0.6)':'rgba(27,108,168,0.7)'),borderRadius:3}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'USD',font:FONT}}}});
+  mkChart('c4_recon','bar',{
+    labels:COMPANIES.slice(0,6),
+    datasets:[
+      {label:'Declared Production (MT)',data:[285,190,340,165,410,142],backgroundColor:'rgba(26,92,56,0.7)',stack:'a'},
+      {label:'Declared Exports (MT)',data:[310,178,298,182,385,168],backgroundColor:'rgba(200,80,80,0.65)',stack:'b'},
+    ]
+  },{scales:{y:{title:{display:true,text:'MT Cassiterite',font:FONT}}}});
+  const anomalies=[
+    {icon:'🔴',title:'Summit Extracts — Export > Production (Cassiterite)',desc:'Declared 410 MT exported vs. 385 MT produced in 2024. Difference of 25 MT unaccounted for in production records. Could indicate carry-over stock not declared, sub-contracting, or reporting error.',score:'HIGH',sc:'badge-red'},
+    {icon:'🔴',title:'NorthRift Corp — Revenue/Employee Outlier',desc:'Revenue per employee (USD 312,000) is 2.2× the sector average. Either revenues are overstated, headcount is under-declared, or the company has an unusually capital-intensive operation justifying the ratio.',score:'HIGH',sc:'badge-red'},
+    {icon:'🟡',title:'Kigali Metals — Payroll-Headcount Inconsistency',desc:'Declared 240 employees in production report but payroll data implies 180 employees at average declared salary. 60-person discrepancy requires reconciliation.',score:'MEDIUM',sc:'badge-gold'},
+    {icon:'🟡',title:'AfriMin SARL — Revenue/Employee Below Threshold',desc:'Revenue per employee (USD 76,000) is 46% below sector average. Suggests potential over-declaration of headcount or under-declaration of export revenues.',score:'MEDIUM',sc:'badge-gold'},
+    {icon:'🟢',title:'MineralTech RW — 2023-2024 Revenue Decline (-18%)',desc:'Year-on-year export value decline of 18% while volume only dropped 3%. Implies significant unit price decline not aligned with LME movement. Within statistical range but warrants monitoring.',score:'LOW',sc:'badge-green'},
+    {icon:'🟢',title:'Eastern Ore Ltd — Export vs. Production Variance (+10%)',desc:'Exports 10% above production — within range explained by carry-over inventory. Flagged for completeness. Not a priority investigation item.',score:'LOW',sc:'badge-green'},
+  ];
+  const al=document.getElementById('anomaly-list');
+  anomalies.forEach(a=>{
+    al.innerHTML+=`<div class="anomaly-row"><div class="anomaly-icon">${a.icon}</div><div><div class="anomaly-title">${a.title} <span class="badge ${a.sc}" style="margin-left:8px">${a.score}</span></div><div class="anomaly-desc">${a.desc}</div></div></div>`;
+  });
+}
+
+// ── TAB 5: ENERGY ──
+function initTab5(){
+  setKPIs('kpi-row5',[
+    {val:'31%',label:'Avg Energy as % OpEx (2024)',color:'#F5A623'},
+    {val:'0.21',label:'Avg Carbon Intensity (kgCO₂e/kWh)',color:'#F5A623'},
+    {val:'3 / 8',label:'Companies Meeting Clean Premium Threshold',color:'var(--g-deep)'},
+    {val:'$4.2M',label:'Est. Annual Clean Premium Opportunity',color:'var(--g-deep)',delta:'↑ If actively marketed',up:true},
+  ]);
+  const energyPcts=[28,35,24,39,31,44,27,33];
+  mkChart('c5_ecost','bar',{
+    labels:COMPANIES,
+    datasets:[{label:'Energy % OpEx',data:energyPcts,backgroundColor:energyPcts.map(v=>v>38?'rgba(200,80,80,0.75)':v<30?'rgba(26,92,56,0.75)':'rgba(200,150,10,0.7)'),borderRadius:3}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'% of operating costs',font:FONT},max:55}}});
+  const carbonI=[0.12,0.19,0.09,0.28,0.15,0.42,0.11,0.22];
+  mkChart('c5_carbon','bar',{
+    labels:COMPANIES,
+    datasets:[{label:'kgCO₂e/kWh equiv.',data:carbonI,backgroundColor:carbonI.map(v=>v<0.15?'rgba(26,92,56,0.8)':v>0.3?'rgba(200,80,80,0.8)':'rgba(200,150,10,0.7)'),borderRadius:3}]
+  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'kgCO₂e/kWh equivalent',font:FONT}}}});
+  const tariffChanges=[-30,-20,-10,0,10,20,30,40,50];
+  mkChart('c5_sensitivity','line',{labels:tariffChanges.map(v=>(v>=0?'+':'')+v+'%'),datasets:[
+    {label:'Grid-dominant (current)',data:tariffChanges.map(v=>Math.round(-v*0.31*10)/10),borderColor:'#6FD19A',tension:0.3,fill:false},
+    {label:'Solar hybrid (40% on-site)',data:tariffChanges.map(v=>Math.round(-v*0.18*10)/10),borderColor:'rgba(200,150,10,0.9)',tension:0.3,fill:false},
+    {label:'Diesel-heavy (off-grid)',data:tariffChanges.map(v=>Math.round(-v*0.44*10)/10),borderColor:'rgba(200,80,80,0.9)',tension:0.3,fill:false,borderDash:[5,3]},
+  ]},{scales:{y:{title:{display:true,text:'% EBITDA impact',font:FONT}},x:{title:{display:true,text:'Energy tariff change',font:FONT}}}});
+}
+
+// ── DOWNLOAD SIMULATION ──
+function fakeDownload(base){
+  const now=new Date();
+  const stamp=`V${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  const name=`${base}__${stamp}.xlsx`;
+  // In the Streamlit app this triggers a real Excel download via openpyxl
+  // In this demo we just show the filename that would be generated
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#1A5C38;color:white;padding:14px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);max-width:380px';
+  toast.innerHTML=`<strong>📥 Demo download triggered</strong><br><span style="font-family:monospace;font-size:11px;color:var(--text-muted)">${name}</span><br><span style="color:var(--text-muted);font-size:12px">Real downloads available in the Streamlit application</span>`;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),4500);
+}
+
+// ── INIT ──
+// Wrap in DOMContentLoaded to ensure canvas elements exist
+document.addEventListener('DOMContentLoaded', function() {
+  initTab3(2024);
+  // Tab 0 charts (always visible)
+  setTimeout(function(){
+    setKPIs('kpi-row0',[
+      {val:'$312M',label:'Total Declared Exports 2024',delta:'↑ +8.2% vs 2023',up:true},
+      {val:'8',label:'Active Mining Companies'},
+      {val:'4',label:'Mineral Categories'},
+      {val:'10 yrs',label:'Historical Data Range'},
+      {val:'HHI 2,840',label:'Market Concentration 2024',color:'var(--red)',delta:'↑ High concentration',up:false},
+    ]);
+    buildOverviewCharts();
+  }, 100);
+});
+
+function buildOverviewCharts(){
+  const R2=sr(99);
+  mkChart('c0_overview','bar',{
+    labels:YEARS,
+    datasets:MINERALS.map((m,i)=>({
+      label:m, stack:'s',
+      data:declVol[i].map((v,y)=>+(v*(declPrice[i][y]/1000)/1000).toFixed(2)),
+      backgroundColor:['rgba(27,108,168,0.75)','rgba(184,134,11,0.75)','rgba(26,92,56,0.75)','rgba(192,0,0,0.65)'][i],
+    }))
+  },{scales:{y:{stacked:true,title:{display:true,text:'USD millions',font:FONT}},x:{stacked:true}}});
+
+  mkChart('c0_pie','doughnut',{
+    labels:MINERALS,
+    datasets:[{data:[48,22,18,12],
+      backgroundColor:['rgba(27,108,168,0.8)','rgba(184,134,11,0.8)','rgba(26,92,56,0.8)','rgba(192,0,0,0.7)'],
+      borderWidth:2,borderColor:'#FFFFFF'}]
+  },{plugins:{legend:{position:'right'}}});
+
+  mkChart('c0_dest','bar',{
+    labels:['Belgium','Germany','United Kingdom','China','UAE'],
+    datasets:[{label:'% of export value',data:[34,22,18,15,11],
+      backgroundColor:'rgba(26,92,56,0.7)',borderRadius:4}]
+  },{indexAxis:'y',plugins:{legend:{display:false}},
+    scales:{x:{max:40,title:{display:true,text:'% share',font:FONT}}}});
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

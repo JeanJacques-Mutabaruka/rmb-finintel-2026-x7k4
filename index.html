@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RMB-FinIntel — Technical Offer</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ── PAGE-SPECIFIC ── */
+.layer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.layer-card { padding: 40px 32px; position: relative; overflow: hidden; cursor: default; transition: transform 0.3s; }
+.layer-card:hover { transform: translateY(-3px); }
+.layer-card::after { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.lc-1 { background: rgba(27,108,168,0.1); } .lc-1::after { background: #1B6CA8; }
+.lc-2 { background: rgba(200,150,10,0.08); } .lc-2::after { background: var(--gold); }
+.lc-3 { background: rgba(26,92,56,0.14); } .lc-3::after { background: var(--g-deep); }
+.layer-num { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
+.layer-name { font-family: var(--font-d); font-size: 20px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
+.layer-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 20px; }
+.layer-refs { font-family: var(--font-m); font-size: 11px; padding: 5px 12px; border-radius: 4px; display: inline-block; }
+.lc-1 .layer-refs { background: rgba(27,108,168,0.2); color: #7EC8F0; }
+.lc-2 .layer-refs { background: rgba(200,150,10,0.18); color: var(--gold); }
+.lc-3 .layer-refs { background: rgba(26,92,56,0.28); color: #6FD19A; }
+
+/* Responsibility table */
+.resp-ref { font-family: var(--font-m); font-size: 13px; font-weight: 600; color: var(--gold); }
+.resp-text { font-size: 14px; line-height: 1.6; }
+.resp-phase { font-family: var(--font-m); font-size: 12px; color: rgba(255,255,255,0.45); }
+.resp-deliv { font-size: 13px; color: rgba(255,255,255,0.65); font-style: italic; }
+.layer-badges { display: flex; flex-direction: column; gap: 5px; }
+
+/* Gantt */
+.gantt-wrap { overflow-x: auto; }
+.gantt { min-width: 820px; width: 100%; border-collapse: collapse; }
+.gantt th { padding: 9px 6px; font-size: 11px; font-family: var(--font-m); letter-spacing: 0.8px; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: center; }
+.gantt th.g-task { text-align: left; width: 240px; }
+.gantt td { padding: 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.gantt td.g-label { padding: 9px 12px 9px 0; font-size: 13px; color: rgba(255,255,255,0.8); white-space: nowrap; }
+.gantt td.g-label.g-ph { font-family: var(--font-m); font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 600; padding-top: 18px; padding-bottom: 4px; border-bottom: none; }
+.g-cell { height: 36px; position: relative; }
+.g-bar { position: absolute; top: 7px; bottom: 7px; border-radius: 3px; opacity: 0.82; transition: opacity 0.2s; }
+.g-bar:hover { opacity: 1; }
+.b1 { background: #1B6CA8; } .b2 { background: var(--gold); } .b3 { background: var(--g-deep); }
+.gantt-legend { display: flex; gap: 24px; margin-top: 20px; flex-wrap: wrap; }
+.gl-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.55); }
+.gl-dot { width: 11px; height: 11px; border-radius: 2px; }
+
+/* SMART deliverables */
+.deliv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.dc { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 24px; transition: all 0.22s; cursor: default; position: relative; overflow: hidden; }
+.dc:hover { border-color: rgba(200,150,10,0.28); transform: translateY(-2px); }
+.dc::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; }
+.dc.p1::before { background: #1B6CA8; } .dc.p2::before { background: var(--gold); } .dc.p3::before { background: var(--g-deep); }
+.dc-phase { font-family: var(--font-m); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.dc.p1 .dc-phase { color: #7EC8F0; } .dc.p2 .dc-phase { color: var(--gold); } .dc.p3 .dc-phase { color: #6FD19A; }
+.dc-name { font-size: 14px; font-weight: 600; margin-bottom: 10px; line-height: 1.35; }
+.dc-smart { font-size: 13px; color: rgba(255,255,255,0.52); line-height: 1.55; margin-bottom: 14px; }
+.dc-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.dc-time { font-family: var(--font-m); font-size: 12px; padding: 3px 10px; border-radius: 4px; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55); }
+.dc-out { font-size: 12px; color: rgba(255,255,255,0.38); font-style: italic; }
+
+/* Agency cards */
+.agency-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 14px; }
+.ag { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--radius); padding: 24px; transition: all 0.22s; }
+.ag:hover { border-color: rgba(26,92,56,0.4); background: rgba(26,92,56,0.06); }
+.ag-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.ag-abbr { font-family: var(--font-m); font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 14px; }
+.ag-data { font-size: 13px; color: rgba(255,255,255,0.58); margin-bottom: 12px; line-height: 1.55; }
+.ag-value { font-size: 13px; color: #6FD19A; font-style: italic; line-height: 1.5; }
+
+/* Vision pillars */
+.vision-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; margin-top: 44px; }
+.vp { padding: 36px 28px; background: rgba(0,0,0,0.22); border-top: 3px solid transparent; transition: background 0.25s; }
+.vp:hover { background: rgba(0,0,0,0.35); }
+.vp-a { border-color: #7EC8F0; } .vp-b { border-color: var(--gold); } .vp-c { border-color: #A8E6C0; }
+.vp-label { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; opacity: 0.6; }
+.vp-title { font-family: var(--font-d); font-size: 19px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+.vp-desc { font-size: 14px; color: rgba(255,255,255,0.72); line-height: 1.62; margin-bottom: 14px; }
+.vp-target { font-family: var(--font-m); font-size: 12px; color: rgba(255,255,255,0.45); font-style: italic; }
+
+@media(max-width:860px){
+  .layer-grid,.vision-grid{grid-template-columns:1fr;gap:2px;}
+}
+/* Light theme overrides */
+/* Light theme overrides for page-specific dark colors */
+.lc-1 { background: #EEF4FB; border: 1px solid #B8D4EE; }
+.lc-2 { background: var(--gold-pale); border: 1px solid #E8CC80; }
+.lc-3 { background: var(--g-xpale); border: 1px solid var(--g-lt); }
+.layer-num { color: var(--text-muted); }
+.layer-name { color: var(--text-head); }
+.layer-desc { color: var(--text-muted); }
+.resp-text { color: var(--text-body); }
+.resp-phase { color: var(--text-muted); }
+.resp-deliv { color: var(--text-muted); }
+.resp-ref { color: var(--g-deep); }
+.gantt td.g-label { color: var(--text-body); }
+.gantt td.g-label.g-ph { color: var(--text-head); opacity: 1; }
+.gantt th { color: var(--text-muted); border-bottom: 1px solid var(--border-md); }
+.gantt td { border-bottom: 1px solid var(--border-lt); }
+.dc { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.dc:hover { border-color: var(--g-lt); box-shadow: var(--shadow-md); }
+.dc-name { color: var(--text-head); }
+.dc-smart { color: var(--text-muted); }
+.dc-time { background: var(--surface-1); color: var(--text-muted); }
+.dc-out { color: var(--text-light); }
+.ag { background: #FFFFFF; border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm); }
+.ag:hover { border-color: var(--g-lt); background: var(--g-xpale); }
+.ag-name { color: var(--text-head); }
+.ag-abbr { color: var(--g-deep); }
+.ag-data { color: var(--text-muted); }
+.ag-value { color: var(--g-mid); }
+.gl-item { color: var(--text-muted); }
+.gantt-legend { border-top: 1px solid var(--border-lt); padding-top: 16px; margin-top: 16px; }
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.2.9/css/responsive.dataTables.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html" class="active">Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="architecture.html">Architecture</a>
+    <div class="nav-divider"></div>
+    <a href="energy.html">⚡ Energy Module</a>
+    <div class="nav-divider"></div>
+    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- HERO -->
+<div class="hero" style="min-height:60vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Rwanda Mines, Petroleum and Gas Board</div>
+    <h1 class="hero-title fade-up au-2" style="font-size:clamp(24px,3.8vw,44px);white-space:nowrap;">
+      Financial Market <span class="accent">Intelligence</span> Expert
+    </h1>
+    <p class="hero-lead fade-up au-3">Establishing a structured, AI-powered mineral financial intelligence function to strengthen Rwanda's competitiveness in international markets and position RMB as a regional authority.</p>
+    <p class="hero-meta fade-up au-4">Jean Jacques Mutabaruka &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Technical Offer</p>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;" class="fade-up au-5">
+      <a href="#layers" class="btn btn-gold">Explore the Proposal ↓</a>
+      <a href="architecture.html" class="btn btn-outline">View Tool Architecture</a>
+      <a href="demo.html" class="btn btn-green">▶ Live Demo</a>
+    </div>
+  </div>
+  <div class="stats-bar fade-up au-5">
+    <div class="stat"><div class="stat-n">3</div><div class="stat-l">Strategic Layers</div></div>
+    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Month Programme</div></div>
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">SMART Deliverables</div></div>
+    <div class="stat"><div class="stat-n">5+</div><div class="stat-l">Inter-Agency Partners</div></div>
+    <div class="stat"><div class="stat-n">3Ts+Au</div><div class="stat-l">Minerals Covered</div></div>
+  </div>
+</div>
+
+<!-- SECTION: LAYERS -->
+<section id="layers" class="section section-alt">
+  <div class="eyebrow">Strategic Architecture</div>
+  <h2 class="section-title">Three Interdependent Layers</h2>
+  <p class="section-lead">The mandate progresses from financial intelligence production to strategic advisory to institutional embedding — each layer reinforcing the others.</p>
+  <div class="layer-grid">
+    <div class="layer-card lc-1">
+      <div class="layer-num">Layer 01</div>
+      <div class="layer-name">Market Financial Intelligence<br>& Analytics</div>
+      <p class="layer-desc">Market monitoring, pricing and valuation methodologies, risk registers, AI-powered data-driven dashboards, and forward-looking mineral financial outlooks. The analytical engine of RMB.</p>
+      <span class="layer-refs">ToR: R1, R2, R5, R6</span>
+    </div>
+    <div class="layer-card lc-2">
+      <div class="layer-num">Layer 02</div>
+      <div class="layer-name">Strategic<br>Advisory</div>
+      <p class="layer-desc">Trade diversification strategy, mining finance instruments, ESG-linked financing, energy policy impact modelling, partnership negotiation financial intelligence. Protects Rwanda's long-term fiscal interests.</p>
+      <span class="layer-refs">ToR: R3, R4</span>
+    </div>
+    <div class="layer-card lc-3">
+      <div class="layer-num">Layer 03</div>
+      <div class="layer-name">Institutional<br>Embedding</div>
+      <p class="layer-desc">Capacity building, inter-agency collaboration protocols, tool and methodology handover. Ensures the financial intelligence function operates independently and sustainably beyond the engagement.</p>
+      <span class="layer-refs">ToR: R6, R7</span>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION: ToR MAPPING -->
+<section id="tor" class="section">
+  <div class="eyebrow">ToR Compliance</div>
+  <h2 class="section-title">Responsibilities Mapped to Layers</h2>
+  <p class="section-lead">Each responsibility reproduced verbatim from the ToR — mapped to its strategic layer, phase, and primary deliverable.</p>
+  <table class="data-table" id="tor-table">
+    <thead>
+      <tr>
+        <th style="width:48px">Ref</th>
+        <th style="width:42%">ToR Responsibility (verbatim)</th>
+        <th style="width:22%">Strategic Layer(s)</th>
+        <th style="width:9%">Phase</th>
+        <th>Key Deliverable</th>
+      </tr>
+    </thead>
+    <tbody id="tor-tbody"></tbody>
+  </table>
+</section>
+
+<!-- SECTION: GANTT -->
+<section id="roadmap" class="section section-alt">
+  <div class="eyebrow">Implementation Roadmap</div>
+  <h2 class="section-title">12-Month Gantt Chart</h2>
+  <p class="section-lead">Three phases guide the transition from diagnostic assessment to a fully institutionalised, self-sustaining mineral financial intelligence function. On small screens, tap the <strong style="color:var(--g-deep)">+</strong> to expand each row.</p>
+  <div style="overflow-x:auto">
+    <table id="gantt-dt" class="display" style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:var(--surface-1)">
+          <th style="text-align:left;padding:10px 12px;font-family:var(--font-m);font-size:11px;letter-spacing:1px;color:var(--text-muted);border-bottom:2px solid var(--border-md);white-space:nowrap">Task / Milestone</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M1</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M2</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M3</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M4</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M5</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M6</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M7</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M8</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M9</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M10</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M11</th>
+          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M12</th>
+        </tr>
+      </thead>
+      <tbody id="gantt-body"></tbody>
+    </table>
+  </div>
+  <div class="gantt-legend" style="margin-top:20px">
+    <div class="gl-item"><div class="gl-dot" style="background:#1B6CA8"></div>Phase 1 — Diagnostic &amp; Framework (M1–2)</div>
+    <div class="gl-item"><div class="gl-dot" style="background:var(--gold)"></div>Phase 2 — Operationalisation (M3–6)</div>
+    <div class="gl-item"><div class="gl-dot" style="background:var(--g-deep)"></div>Phase 3 — Institutionalisation (M7–12)</div>
+  </div>
+</section>
+
+<!-- SECTION: SMART DELIVERABLES -->
+<section id="deliverables" class="section">
+  <div class="eyebrow">SMART Deliverables</div>
+  <h2 class="section-title">Measurable Outputs by Phase</h2>
+  <p class="section-lead">Nine concrete deliverables with Specific, Measurable, Achievable, Relevant, and Time-bound criteria.</p>
+  <div class="deliv-grid" id="deliv-grid"></div>
+</section>
+
+<!-- SECTION: INTER-AGENCY -->
+<section id="interagency" class="section section-alt">
+  <div class="eyebrow">Collaboration Architecture</div>
+  <h2 class="section-title">Inter-Agency Framework</h2>
+  <p class="section-lead">The financial intelligence function is designed with formal data-sharing protocols across Rwanda's key public institutions — creating a whole-of-government mineral financial intelligence ecosystem.</p>
+  <div class="agency-grid" id="agency-grid"></div>
+</section>
+
+<!-- SECTION: VISION -->
+<section id="vision" class="section section-green">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 85% 50%,rgba(200,150,10,0.13) 0%,transparent 60%);pointer-events:none"></div>
+  <div style="position:relative;z-index:2">
+    <div class="eyebrow">Beyond the ToR</div>
+    <h2 class="section-title">Rwanda as a Regional Hub of Excellence</h2>
+    <p class="section-lead">The geopolitical context of 2025–2026 creates a once-in-a-generation window. Three strategic pillars transform this engagement from a consulting assignment into the foundation of Rwanda's positioning in the global critical minerals economy.</p>
+    <div class="vision-grid">
+      <div class="vp vp-a">
+        <div class="vp-label">Pillar A</div>
+        <div class="vp-title">Negotiation Financial Intelligence</div>
+        <p class="vp-desc">Pre-brief analytical packages for GoR negotiators before every major mineral sector agreement. Eliminates the information asymmetry that has historically disadvantaged African states in extractive sector deals. Includes offtake assessment framework and partnership red-flags guide.</p>
+        <div class="vp-target">Target: Zero predatory contracts post-function launch</div>
+      </div>
+      <div class="vp vp-b">
+        <div class="vp-label">Pillar B</div>
+        <div class="vp-title">Energy–Minerals Financial Nexus</div>
+        <p class="vp-desc">Rwanda's clean energy mix as a premium differentiator. Low-carbon minerals command 10–20% price premiums with EU and North American buyers. The energy cost structure of mining operations is the single most controllable variable in sector competitiveness — and a critical input to all financial intelligence modelling.</p>
+        <div class="vp-target">Target: First low-carbon minerals premium agreement with European buyer by M18</div>
+      </div>
+      <div class="vp vp-c">
+        <div class="vp-label">Pillar C</div>
+        <div class="vp-title">Regional Financial Intelligence Hub</div>
+        <p class="vp-desc">Position RMB as the EAC's leading mineral financial intelligence authority — offering advisory services and data products to neighbouring regulators. Transforms a regulatory cost centre into a revenue-generating regional resource and governance benchmark.</p>
+        <div class="vp-target">Target: MoU with 2 EAC mineral regulators by M18</div>
+      </div>
+    </div>
+    <div style="margin-top:44px;padding:28px 32px;background:rgba(0,0,0,0.25);border-radius:var(--radius);border-left:4px solid var(--gold);max-width:780px">
+      <p style="font-size:16px;font-weight:500;line-height:1.7;color:var(--text-muted)">The EU Critical Raw Materials Act mandates 10% of strategic minerals from trusted partners by 2030. The US Minerals Security Partnership creates financing incentives for verified responsible-sourcing practices. Rwanda — with its stability, governance track record, ITSCI-certified supply chains, and now a mineral financial intelligence infrastructure — is uniquely positioned to capture this premium demand.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture →</a>
+    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">Technical Offer — RMB Financial Market Intelligence Expert<br>April 2026 · V1.0</div>
+</footer>
+</div><!-- /page-wrap -->
+
+<script>
+// ── ToR DATA ──
+const torData = [
+  { ref:'R1', text:'Monitor and analyze global and regional mineral markets, including price trends, demand–supply balances, and strategic mineral policies relevant to Rwanda.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.1–3\nongoing', deliv:'Monthly market briefs; Annual Outlook Report' },
+  { ref:'R2', text:'Analyze pricing methodologies for Rwanda\'s key minerals and support the development of reference pricing and valuation guidance for regulatory, fiscal, and export purposes.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'},{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.1', deliv:'Pricing Reference Guide; Valuation Framework' },
+  { ref:'R3', text:'Assess mineral trade routes, buyer profiles, and export destinations; identify opportunities for market diversification and reduced dependency on single buyers or markets.', layers:[{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.4', deliv:'Trade Diversification Report; Buyer Mapping' },
+  { ref:'R4', text:'Track trends in mining finance and investment, including offtake-linked financing and ESG-driven instruments, and assess implications for access to capital and cost of financing.', layers:[{t:'Strategic Advisory',c:'badge-gold'},{t:'Institutional',c:'badge-green'}], phase:'Ph.3\nP3.3', deliv:'Mining Finance Trend Report; ESG Finance Note' },
+  { ref:'R5', text:'Identify key market risks and develop short-, medium-, and long-term market outlooks for priority minerals, proposing mitigation strategies where appropriate.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nP2.5, P3.5', deliv:'Risk Register; Scenario Outlook Dashboard' },
+  { ref:'R6', text:'Produce periodic market intelligence reports, briefs, and dashboards for RMB senior management and policymakers.', layers:[{t:'Institutional',c:'badge-green'},{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nongoing', deliv:'Quarterly Reports; Executive Dashboard' },
+  { ref:'R7', text:'Support institutional capacity-building by training RMB staff on mineral market analysis, pricing concepts, and interpretation of market intelligence outputs.', layers:[{t:'Institutional',c:'badge-green'}], phase:'Ph.2–3\nP2.6, P3.6', deliv:'2 Training Modules; Handover Manual' },
+];
+const tbody = document.getElementById('tor-tbody');
+torData.forEach(r => {
+  const tr = document.createElement('tr');
+  tr.className = 'resp-row';
+  tr.innerHTML = `
+    <td><span class="resp-ref">${r.ref}</span></td>
+    <td class="resp-text">${r.text}</td>
+    <td><div class="layer-badges">${r.layers.map(l=>`<span class="badge ${l.c}" style="font-size:11px;white-space:normal">${l.t}</span>`).join('')}</div></td>
+    <td class="resp-phase" style="white-space:pre-line">${r.phase}</td>
+    <td class="resp-deliv">${r.deliv}</td>`;
+  tbody.appendChild(tr);
+});
+
+// ── GANTT ──
+// ── GANTT DATA ──
+var ganttData = [
+  {ph:1,hdr:true, label:'PHASE 1 — Diagnostic & Framework', phase:'Phase 1', months:'M1–M2'},
+  {ph:1,hdr:false,label:'P1.1 — Diagnostic & Data Audit',              phase:'Phase 1', months:'M1–M2', s:0,   d:1.5},
+  {ph:1,hdr:false,label:'P1.2 — MI Framework Design',                   phase:'Phase 1', months:'M1–M2', s:0.5, d:1.5},
+  {ph:1,hdr:false,label:'P1.3 — Stakeholder & Inter-Agency Mapping',    phase:'Phase 1', months:'M2',    s:1,   d:1},
+  {ph:2,hdr:true, label:'PHASE 2 — Operationalisation',                 phase:'Phase 2', months:'M3–M6'},
+  {ph:2,hdr:false,label:'P2.1 — Pricing & Valuation System',            phase:'Phase 2', months:'M3–M4', s:2,   d:2},
+  {ph:2,hdr:false,label:'P2.2 — Data Harmonisation Engine',             phase:'Phase 2', months:'M3–M5', s:2,   d:3},
+  {ph:2,hdr:false,label:'P2.3 — Cost Structure Models',                 phase:'Phase 2', months:'M3–M5', s:2.5, d:2.5},
+  {ph:2,hdr:false,label:'P2.4 — Trade & Market Access Analysis',        phase:'Phase 2', months:'M4–M5', s:3,   d:2},
+  {ph:2,hdr:false,label:'P2.5 — First Quarterly Report + Dashboard',    phase:'Phase 2', months:'M5–M6', s:4.5, d:1.5},
+  {ph:2,hdr:false,label:'P2.6 — Staff Training Module 1',               phase:'Phase 2', months:'M5–M6', s:4,   d:2},
+  {ph:3,hdr:true, label:'PHASE 3 — Institutionalisation',               phase:'Phase 3', months:'M7–M12'},
+  {ph:3,hdr:false,label:'P3.1 — AI-Powered Forecasting & Anomaly Detection', phase:'Phase 3', months:'M7–M9',  s:6, d:3},
+  {ph:3,hdr:false,label:'P3.2 — Investor Financial Intelligence Hub',    phase:'Phase 3', months:'M7–M10', s:6, d:4},
+  {ph:3,hdr:false,label:'P3.3 — Mining Finance & ESG Advisory',         phase:'Phase 3', months:'M8–M9',  s:7, d:2},
+  {ph:3,hdr:false,label:'P3.4 — Energy Policy Impact Modelling',        phase:'Phase 3', months:'M8–M9',  s:7, d:2},
+  {ph:3,hdr:false,label:'P3.5 — Annual Market Outlook + Risk Report',   phase:'Phase 3', months:'M10–M11', s:9, d:2},
+  {ph:3,hdr:false,label:'P3.6 — Staff Training Module 2 + Handover',    phase:'Phase 3', months:'M10–M12', s:9, d:3},
+];
+
+var phColors = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38'};
+var phHdr    = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38'};
+
+// Build bar HTML for a row: shows month labels inside the bar
+function buildBarCell(row, m) {
+  if (row.hdr) return '<td></td>';
+  var active = (m + 1 > row.s) && (m < row.s + row.d);
+  if (!active) return '<td style="padding:4px 2px;height:32px"></td>';
+  var ls = Math.max(row.s, m);
+  var le = Math.min(row.s + row.d, m + 1);
+  var leftPct  = (ls - m) * 100;
+  var widthPct = (le - ls) * 100;
+  // Show month label (M{n}) inside bar only if bar covers most of the cell (>60%)
+  var showLabel = widthPct >= 60;
+  var mLabel = showLabel ? ('M' + (m + 1)) : '';
+  var barHtml = '<div style="'
+    + 'position:relative;height:28px;margin:2px 1px;'
+    + 'background:' + phColors[row.ph] + ';'
+    + 'border-radius:3px;'
+    + 'margin-left:' + leftPct + '%;'
+    + 'width:' + widthPct + '%;'
+    + 'display:flex;align-items:center;justify-content:center;'
+    + 'overflow:hidden;'
+    + '">'
+    + (mLabel ? '<span style="font-size:10px;font-family:var(--font-m);color:rgba(255,255,255,0.9);font-weight:600;letter-spacing:0.5px">' + mLabel + '</span>' : '')
+    + '</div>';
+  return '<td style="padding:0 1px;vertical-align:middle">' + barHtml + '</td>';
+}
+
+// Populate tbody
+var gbody = document.getElementById('gantt-body');
+ganttData.forEach(function(row) {
+  var tr = document.createElement('tr');
+  if (row.hdr) {
+    tr.innerHTML = '<td colspan="13" style="'
+      + 'padding:14px 12px 4px;'
+      + 'font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;'
+      + 'text-transform:uppercase;font-weight:700;'
+      + 'color:' + phHdr[row.ph] + ';'
+      + 'border-bottom:1px solid var(--border-lt);'
+      + '">' + row.label + '</td>';
+  } else {
+    var taskCell = '<td style="padding:6px 12px 6px 4px;font-size:13px;color:var(--text-body);white-space:nowrap;border-bottom:1px solid var(--border-lt)">'
+      + row.label + '</td>';
+    var barCells = '';
+    for (var m = 0; m < 12; m++) {
+      barCells += buildBarCell(row, m);
+    }
+    tr.innerHTML = taskCell + barCells;
+  }
+  gbody.appendChild(tr);
+});
+
+// Init DataTable with responsive
+if (typeof $ !== 'undefined' && $.fn.DataTable) {
+  $('#gantt-dt').DataTable({
+    responsive: true,
+    paging: false,
+    searching: false,
+    info: false,
+    ordering: false,
+    columnDefs: [
+      {targets: 0, responsivePriority: 1},
+      {targets: [1,2,3,4,5,6], responsivePriority: 2},
+      {targets: [7,8,9,10,11,12], responsivePriority: 3}
+    ]
+  });
+}
+
+// ── DELIVERABLES ──
+const delivs = [
+  {ph:1,cls:'p1',name:'Diagnostic & Gap Report',smart:'Covers all data source types; quantifies % coverage per mineral; 10 priority gaps with impact scores',time:'End M2',out:'Establishes financial intelligence baseline'},
+  {ph:1,cls:'p1',name:'MI Framework Design Document',smart:'KPI architecture, reporting calendar, governance structure; 5 inter-agency MoU drafts',time:'End M2',out:'Governance blueprint for the function'},
+  {ph:2,cls:'p2',name:'Pricing Reference Guide (3Ts, Gold)',smart:'MTU-based methodology; 4 minerals; tested against 24 months of export data',time:'End M4',out:'Strengthens Rwanda\'s negotiating position'},
+  {ph:2,cls:'p2',name:'Sector Cost Structure Models',smart:'Global benchmark, Rwanda average, shareable company template; energy cost as variable',time:'End M5',out:'Enables fair royalty calibration'},
+  {ph:2,cls:'p2',name:'First Quarterly Report + Dashboard',smart:'All 4 minerals; 15+ KPIs; executive brief for Director General',time:'End M6',out:'Live financial intelligence product for RMB'},
+  {ph:3,cls:'p3',name:'AI Market Financial Intelligence Dashboard',smart:'Price forecasting; anomaly detection; scenario simulator; explainable outputs',time:'End M9',out:'RMB becomes a data-driven regulator'},
+  {ph:3,cls:'p3',name:'Investor Financial Intelligence Hub',smart:'3 audience tiers; ESG scoring; public + authenticated access; co-branded RDB',time:'End M10',out:'Attracts FDI; enables local bank financing'},
+  {ph:3,cls:'p3',name:'Annual Market Outlook Report',smart:'3-year scenarios per mineral; competitive positioning scorecard; peer-reviewed',time:'End M11',out:'Strategic planning tool for RMB & GoR'},
+  {ph:3,cls:'p3',name:'Handover Manual + Staff Certification',smart:'2 training modules; 100% staff trained; formal sign-off by DG',time:'End M12',out:'Fully sustainable independent function'},
+];
+const dgrid=document.getElementById('deliv-grid');
+delivs.forEach(d=>{
+  const el=document.createElement('div'); el.className=`dc ${d.cls}`;
+  el.innerHTML=`<div class="dc-phase">Phase ${d.ph}</div><div class="dc-name">${d.name}</div><div class="dc-smart">${d.smart}</div><div class="dc-footer"><span class="dc-time">${d.time}</span><span class="dc-out">${d.out}</span></div>`;
+  dgrid.appendChild(el);
+});
+
+// ── AGENCIES ──
+const agencies=[
+  {name:'Rwanda Revenue Authority',abbr:'RRA',data:'Tax declarations, eTax filings, export declarations, VAT data from mining companies',value:'Cross-validates declared export values vs. tax filings — detects transfer pricing and under-declaration'},
+  {name:'Ministry of Trade & Industry',abbr:'MINICOM',data:'Trade agreements, export licensing, buyer certification, trade policy frameworks',value:'Aligns financial intelligence with trade policy; supports market diversification strategy'},
+  {name:'Rwanda Development Board',abbr:'RDB',data:'Investor pipeline data, special economic zones, investment climate reports',value:'Feeds Investor Financial Intelligence Hub; joint investor outreach using RMB market data'},
+  {name:'Ministry of Finance',abbr:'MINECOFIN',data:'Budget projections, fiscal data, royalty collection records, national accounts',value:'Calibrates energy and sector cost models to national fiscal planning cycles'},
+  {name:'Energy Regulator',abbr:'REMA / REG',data:'Energy tariffs, grid access data, renewable energy mix statistics',value:'Powers energy policy impact modelling — critical for mining competitiveness and clean-premium positioning'},
+];
+const agrid=document.getElementById('agency-grid');
+agencies.forEach(a=>{
+  const el=document.createElement('div'); el.className='ag';
+  el.innerHTML=`<div class="ag-name">${a.name}</div><div class="ag-abbr">${a.abbr}</div><div class="ag-data">${a.data}</div><div class="ag-value">${a.value}</div>`;
+  agrid.appendChild(el);
+});
+</script>
+<script src="nav.js"></script>
+</body>
+</html>
