@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RMB-FinIntel — Live Demo</title>
+<title>RMB-FinIntel — Tool Mock-up</title>
 <link rel="stylesheet" href="shared.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -132,253 +132,6 @@
 </head>
 <body>
 
-<nav class="rmb-nav">
-  <div class="nav-logo-block">
-    <div class="nav-logo">RMB<br>FI</div>
-    <div class="nav-brand-text">
-      <div class="nav-brand-main">RMB-FinIntel</div>
-      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
-    </div>
-  </div>
-  <div class="nav-links">
-    <a href="index.html">Proposal</a>
-    <div class="nav-divider"></div>
-    <a href="architecture.html">Architecture</a>
-    <div class="nav-divider"></div>
-    <a href="energy.html">⚡ Energy Module</a>
-    <div class="nav-divider"></div>
-    <a href="demo.html" class="active nav-demo">▶ Live Demo</a>
-  </div>
-</nav>
-
-<div class="page-wrap">
-
-<!-- DEMO BANNER -->
-<div class="demo-banner">
-  <span>⚠️</span>
-  <span><strong>DEMO MODE</strong> — Fictive data loaded for illustration purposes. All company names, values, and figures are synthetic. Upload real data files in the Streamlit application to begin live analysis.</span>
-  <a href="architecture.html" style="margin-left:auto;color:'var(--gold)';text-decoration:none;font-size:12px;white-space:nowrap">Learn how it works →</a>
-</div>
-
-<!-- HERO -->
-<div class="hero" style="min-height:38vh;padding:48px 40px 32px">
-  <div class="hero-bg-mesh"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="eyebrow fade-up au-1">Interactive Demo — Fictive Data</div>
-    <h1 class="hero-title fade-up au-2" style="font-size:clamp(26px,3vw,38px)">RMB-FinIntel <span class="accent">Demo Platform</span></h1>
-    <p class="hero-lead fade-up au-3" style="font-size:15px">Navigate through all five analytical modules using synthetic Rwanda mining sector data. This is the financial intelligence that would be generated from real declared data.</p>
-  </div>
-</div>
-
-<!-- TAB BAR -->
-<div class="demo-tabs">
-  <div class="demo-tab active" data-tab="t0">🏠 Overview</div>
-  <div class="demo-tab" data-tab="t1">📦 Export Intelligence</div>
-  <div class="demo-tab" data-tab="t2">💰 Price Gap Analysis</div>
-  <div class="demo-tab" data-tab="t3">👥 HR Distribution</div>
-  <div class="demo-tab" data-tab="t4">🔀 Cross-Source Analytics</div>
-  <div class="demo-tab" data-tab="t5">⚡ Energy Module</div>
-</div>
-
-<!-- TAB 0: OVERVIEW -->
-<div class="tab-content active" id="t0">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Sector Overview Dashboard</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:28px">Demo data: 8 fictive companies, 10 years (2015–2024), 4 minerals (Cassiterite, Coltan, Wolframite, Gold)</p>
-  <div class="kpi-row" id="kpi-row0"></div>
-  <div class="chart-grid">
-    <div class="chart-box full">
-      <div class="chart-title">Total Declared Export Value by Mineral (2015–2024)</div>
-      <div class="chart-sub">USD millions · Stacked by mineral · Fictive data</div>
-      <div class="chart-wrap tall"><canvas id="c0_overview"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Export Value Share by Mineral (2024)</div>
-      <div class="chart-sub">% of total declared exports</div>
-      <div class="chart-wrap"><canvas id="c0_pie"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Top 5 Export Destinations (2024)</div>
-      <div class="chart-sub">% of declared export value</div>
-      <div class="chart-wrap"><canvas id="c0_dest"></canvas></div>
-    </div>
-  </div>
-  <div style="margin-top:8px"><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_Overview_SectorDashboard')">📥 DOWNLOAD — Sector Overview (.xlsx)</button></div>
-</div>
-
-<!-- TAB 1: EXPORT INTELLIGENCE -->
-<div class="tab-content" id="t1">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Export Financial Intelligence</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Volume trends, implied unit prices, and buyer concentration analysis</p>
-  <div class="filter-bar">
-    <span class="filter-label">Mineral:</span>
-    <select class="filter-select" id="mineral-select" onchange="updateExportCharts()">
-      <option value="0">Cassiterite (Tin)</option>
-      <option value="1">Coltan (Tantalum)</option>
-      <option value="2">Wolframite (Tungsten)</option>
-      <option value="3">Gold</option>
-    </select>
-  </div>
-  <div class="kpi-row" id="kpi-row1"></div>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <div class="chart-title" id="export-vol-title">Cassiterite — Export Volume (MT, 2015–2024)</div>
-      <div class="chart-sub">Declared metric tonnes · Annual · Fictive data</div>
-      <div class="chart-wrap"><canvas id="c1_vol"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title" id="export-val-title">Cassiterite — Declared Export Value (USD, 2015–2024)</div>
-      <div class="chart-sub">USD thousands · Annual · Fictive data</div>
-      <div class="chart-wrap"><canvas id="c1_val"></canvas></div>
-    </div>
-    <div class="chart-box full">
-      <div class="chart-title" id="export-price-title">Cassiterite — Implied Declared Unit Price (USD/MT)</div>
-      <div class="chart-sub">Declared value ÷ declared volume · Note: known to be underestimated vs. LME</div>
-      <div class="chart-wrap"><canvas id="c1_price"></canvas></div>
-    </div>
-  </div>
-  <div><button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_T1_ExportIntelligence')">📥 DOWNLOAD — Export Financial Intelligence (.xlsx)</button></div>
-</div>
-
-<!-- TAB 2: PRICE GAP -->
-<div class="tab-content" id="t2">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Price Gap Financial Analysis</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Rwanda declared price vs. LME/LBMA benchmark — the revenue intelligence indicator</p>
-  <div class="filter-bar">
-    <span class="filter-label">Mineral:</span>
-    <select class="filter-select" id="gap-mineral" onchange="updateGapChart()">
-      <option value="0">Cassiterite (Tin) — LME benchmark</option>
-      <option value="1">Coltan (Tantalum) — benchmark price</option>
-      <option value="2">Wolframite (Tungsten) — benchmark price</option>
-      <option value="3">Gold — LBMA benchmark</option>
-    </select>
-  </div>
-  <div class="kpi-row" id="kpi-row2"></div>
-  <div class="chart-grid">
-    <div class="chart-box full">
-      <div class="chart-title" id="gap-title">Cassiterite — Rwanda Declared Price vs. LME Benchmark (USD/MT)</div>
-      <div class="chart-sub">Gap area (amber) = estimated revenue not captured · Fictive data for illustration</div>
-      <div class="chart-wrap tall"><canvas id="c2_gap"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Monthly Gap (USD/MT) — Last 12 Months</div>
-      <div class="chart-sub">Positive = Rwanda price below benchmark</div>
-      <div class="chart-wrap"><canvas id="c2_monthly"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Cumulative Estimated Revenue Forgone (2015–2024)</div>
-      <div class="chart-sub">USD millions · Minimum estimate (declared data known to be imperfect)</div>
-      <div class="chart-wrap"><canvas id="c2_cumul"></canvas></div>
-    </div>
-  </div>
-  <div style="background:rgba(200,150,10,0.08);border:1px solid rgba(200,150,10,0.2);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;font-size:14px;color:'var(--text-muted)';line-height:1.65">
-    ⚠️ <strong style="color:#7A5800">Accuracy note:</strong> The gap shown uses declared export values which are known to be under-reported. The true revenue gap is likely larger. This analysis is intended to establish the order of magnitude and trend direction — both of which are policy-relevant regardless of absolute accuracy.
-  </div>
-  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M2_PriceGapAnalysis')">📥 DOWNLOAD — Price Gap Financial Analysis (.xlsx)</button>
-</div>
-
-<!-- TAB 3: HR DISTRIBUTION -->
-<div class="tab-content" id="t3">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">HR & Revenue Distribution</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Salary band distribution, payroll analysis, and added-value waterfall</p>
-  <div class="filter-bar">
-    <span class="filter-label">Year:</span>
-    <div class="year-tabs" id="year-tabs"></div>
-  </div>
-  <div class="kpi-row" id="kpi-row3"></div>
-  <div style="margin-bottom:20px">
-    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:12px">Salary Band Configuration (Dynamic per Year)</div>
-    <div class="band-grid" id="band-grid"></div>
-  </div>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <div class="chart-title">Employee Distribution by Salary Band</div>
-      <div class="chart-sub">Number of declared employees per band · Selected year</div>
-      <div class="chart-wrap"><canvas id="c3_bands"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Payroll Distribution by Band (RWF millions)</div>
-      <div class="chart-sub">Gross salary · Tax withheld · Net pay</div>
-      <div class="chart-wrap"><canvas id="c3_payroll"></canvas></div>
-    </div>
-    <div class="chart-box full">
-      <div class="chart-title">Added Value Distribution Waterfall (2024)</div>
-      <div class="chart-sub">Of each USD of declared export revenue — where does it go?</div>
-      <div class="chart-wrap"><canvas id="c3_waterfall"></canvas></div>
-    </div>
-  </div>
-  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M3_HRDistribution')">📥 DOWNLOAD — HR & Revenue Distribution (.xlsx)</button>
-</div>
-
-<!-- TAB 4: CROSS-SOURCE -->
-<div class="tab-content" id="t4">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Cross-Source Analytics</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Anomaly detection and multi-source consistency flags — investigation leads, not accusations</p>
-  <div class="kpi-row" id="kpi-row4"></div>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <div class="chart-title">Revenue per Employee (USD) by Company (2024)</div>
-      <div class="chart-sub">Sector average shown as dashed line</div>
-      <div class="chart-wrap"><canvas id="c4_rpe"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Export vs. Production Reconciliation (2024)</div>
-      <div class="chart-sub">Cassiterite MT — gap = unreconciled volume</div>
-      <div class="chart-wrap"><canvas id="c4_recon"></canvas></div>
-    </div>
-  </div>
-  <div style="margin-top:8px;margin-bottom:20px">
-    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:'var(--gold)';margin-bottom:14px">Anomaly Flags — Ranked by Confidence Score</div>
-    <div id="anomaly-list"></div>
-    <p style="font-size:12px;color:'var(--text-muted)';margin-top:10px;font-family:var(--font-m)">⚠️ Flags are statistical signals requiring human investigation. They do not constitute findings of wrongdoing.</p>
-  </div>
-  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M4_CrossSourceAnalytics')">📥 DOWNLOAD — Cross-Source Analytics (.xlsx)</button>
-</div>
-
-<!-- TAB 5: ENERGY -->
-<div class="tab-content" id="t5">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Energy Financial Intelligence Module</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Energy cost structure, carbon intensity, competitiveness scenarios, and clean premium opportunity</p>
-  <div class="kpi-row" id="kpi-row5"></div>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <div class="chart-title">Energy Cost as % of Operating Costs (by Company, 2024)</div>
-      <div class="chart-sub">Global benchmark range: 25–40%</div>
-      <div class="chart-wrap"><canvas id="c5_ecost"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Carbon Intensity by Company (kgCO₂e per tonne mineral)</div>
-      <div class="chart-sub">EU clean-premium threshold: &lt; 0.15 kgCO₂e/kWh equivalent</div>
-      <div class="chart-wrap"><canvas id="c5_carbon"></canvas></div>
-    </div>
-    <div class="chart-box full">
-      <div class="chart-title">Energy Cost Sensitivity — Sector EBITDA Impact of Tariff Change</div>
-      <div class="chart-sub">% change in estimated sector EBITDA vs. energy tariff change (3 energy mix scenarios)</div>
-      <div class="chart-wrap tall"><canvas id="c5_sensitivity"></canvas></div>
-    </div>
-  </div>
-  <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px">
-    <div style="font-size:14px;font-weight:600;color:#6FD19A;margin-bottom:8px">🌿 Clean Premium Opportunity (2024 Estimate)</div>
-    <div style="font-size:14px;color:'var(--text-muted)';line-height:1.65">Based on demo data: <strong style="color:#7A5800">3 of 8 companies</strong> already qualify for EU clean-mineral sourcing premiums based on their grid electricity intensity. Estimated additional annual revenue if premiums are actively marketed: <strong style="color:var(--g-deep)">USD 4.2M</strong> (sector-wide, 2024 volumes, 12% premium applied). <em>This is fictive demo data.</em></div>
-  </div>
-  <a href="energy.html" class="btn btn-outline" style="margin-right:12px;font-size:13px">⚡ Full Energy Module Analysis →</a>
-  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M5_EnergyIntelligence')">📥 DOWNLOAD — Energy Financial Intelligence (.xlsx)</button>
-</div>
-
-<!-- FOOTER -->
-<footer class="rmb-footer" style="margin-top:0">
-  <div>
-    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
-    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
-  </div>
-  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-    <a href="index.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Proposal</a>
-    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture</a>
-  </div>
-  <div class="footer-meta" style="text-align:right">RMB-FinIntel Demo Platform<br>April 2026 · Fictive Data Only</div>
-</footer>
-</div>
-
 <style>
 .demo-banner {
   background: rgba(200,150,10,0.12); border: 1px solid rgba(200,150,10,0.35);
@@ -514,13 +267,17 @@
     </div>
   </div>
   <div class="nav-links">
-    <a href="index.html">Proposal</a>
+    <a href="index.html">Technical Proposal</a>
     <div class="nav-divider"></div>
-    <a href="architecture.html">Architecture</a>
-    <div class="nav-divider"></div>
-    <a href="energy.html">⚡ Energy Module</a>
-    <div class="nav-divider"></div>
-    <a href="demo.html" class="active nav-demo">▶ Live Demo</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger active">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html">🏗 Architecture</a>
+        <a href="energy.html">⚡ Energy Component</a>
+        <a href="demo.html" class="active">🔬 Tool Mock-up</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -530,7 +287,7 @@
 <div class="demo-banner">
   <span>⚠️</span>
   <span><strong>DEMO MODE</strong> — Fictive data loaded for illustration purposes. All company names, values, and figures are synthetic. Upload real data files in the Streamlit application to begin live analysis.</span>
-  <a href="architecture.html" style="margin-left:auto;color:'var(--gold)';text-decoration:none;font-size:12px;white-space:nowrap">Learn how it works →</a>
+  <a href="architecture.html" style="margin-left:auto;color:'var(--gold)';text-decoration:none;font-size:12px;white-space:nowrap">About this mock-up →</a>
 </div>
 
 <!-- HERO -->
@@ -539,8 +296,8 @@
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div class="eyebrow fade-up au-1">Interactive Demo — Fictive Data</div>
-    <h1 class="hero-title fade-up au-2" style="font-size:clamp(26px,3vw,38px)">RMB-FinIntel <span class="accent">Demo Platform</span></h1>
-    <p class="hero-lead fade-up au-3" style="font-size:15px">Navigate through all five analytical modules using synthetic Rwanda mining sector data. This is the financial intelligence that would be generated from real declared data.</p>
+    <h1 class="hero-title fade-up au-2" style="font-size:clamp(26px,3vw,38px)">RMB-FinIntel <span class="accent">Tool Mock-up</span></h1>
+    <p class="hero-lead fade-up au-3" style="font-size:15px">Explore the current situation model through illustrative data. This mock-up demonstrates the financial intelligence that Module 0 (D1.3) will produce from real declared data by end of Month 2.</p>
   </div>
 </div>
 
@@ -551,7 +308,6 @@
   <div class="demo-tab" data-tab="t2">💰 Price Gap Analysis</div>
   <div class="demo-tab" data-tab="t3">👥 HR Distribution</div>
   <div class="demo-tab" data-tab="t4">🔀 Cross-Source Analytics</div>
-  <div class="demo-tab" data-tab="t5">⚡ Energy Module</div>
 </div>
 
 <!-- TAB 0: OVERVIEW -->
@@ -709,35 +465,6 @@
 </div>
 
 <!-- TAB 5: ENERGY -->
-<div class="tab-content" id="t5">
-  <h2 style="font-family:var(--font-d);font-size:22px;font-weight:700;margin-bottom:6px">Energy Financial Intelligence Module</h2>
-  <p style="font-size:14px;color:'var(--text-muted)';margin-bottom:24px">Energy cost structure, carbon intensity, competitiveness scenarios, and clean premium opportunity</p>
-  <div class="kpi-row" id="kpi-row5"></div>
-  <div class="chart-grid">
-    <div class="chart-box">
-      <div class="chart-title">Energy Cost as % of Operating Costs (by Company, 2024)</div>
-      <div class="chart-sub">Global benchmark range: 25–40%</div>
-      <div class="chart-wrap"><canvas id="c5_ecost"></canvas></div>
-    </div>
-    <div class="chart-box">
-      <div class="chart-title">Carbon Intensity by Company (kgCO₂e per tonne mineral)</div>
-      <div class="chart-sub">EU clean-premium threshold: &lt; 0.15 kgCO₂e/kWh equivalent</div>
-      <div class="chart-wrap"><canvas id="c5_carbon"></canvas></div>
-    </div>
-    <div class="chart-box full">
-      <div class="chart-title">Energy Cost Sensitivity — Sector EBITDA Impact of Tariff Change</div>
-      <div class="chart-sub">% change in estimated sector EBITDA vs. energy tariff change (3 energy mix scenarios)</div>
-      <div class="chart-wrap tall"><canvas id="c5_sensitivity"></canvas></div>
-    </div>
-  </div>
-  <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:18px 22px;margin-bottom:20px">
-    <div style="font-size:14px;font-weight:600;color:#6FD19A;margin-bottom:8px">🌿 Clean Premium Opportunity (2024 Estimate)</div>
-    <div style="font-size:14px;color:'var(--text-muted)';line-height:1.65">Based on demo data: <strong style="color:#7A5800">3 of 8 companies</strong> already qualify for EU clean-mineral sourcing premiums based on their grid electricity intensity. Estimated additional annual revenue if premiums are actively marketed: <strong style="color:var(--g-deep)">USD 4.2M</strong> (sector-wide, 2024 volumes, 12% premium applied). <em>This is fictive demo data.</em></div>
-  </div>
-  <a href="energy.html" class="btn btn-outline" style="margin-right:12px;font-size:13px">⚡ Full Energy Module Analysis →</a>
-  <button class="dl-btn" onclick="fakeDownload('RMB-FinIntel_M5_EnergyIntelligence')">📥 DOWNLOAD — Energy Financial Intelligence (.xlsx)</button>
-</div>
-
 <!-- FOOTER -->
 <footer class="rmb-footer" style="margin-top:0">
   <div>
@@ -822,7 +549,6 @@ document.querySelectorAll('.demo-tab').forEach(t=>{
     if(t.dataset.tab==='t2') initTab2();
     if(t.dataset.tab==='t3') initTab3();
     if(t.dataset.tab==='t4') initTab4();
-    if(t.dataset.tab==='t5') initTab5();
   });
 });
 
@@ -987,31 +713,6 @@ function initTab4(){
   });
 }
 
-// ── TAB 5: ENERGY ──
-function initTab5(){
-  setKPIs('kpi-row5',[
-    {val:'31%',label:'Avg Energy as % OpEx (2024)',color:'#F5A623'},
-    {val:'0.21',label:'Avg Carbon Intensity (kgCO₂e/kWh)',color:'#F5A623'},
-    {val:'3 / 8',label:'Companies Meeting Clean Premium Threshold',color:'var(--g-deep)'},
-    {val:'$4.2M',label:'Est. Annual Clean Premium Opportunity',color:'var(--g-deep)',delta:'↑ If actively marketed',up:true},
-  ]);
-  const energyPcts=[28,35,24,39,31,44,27,33];
-  mkChart('c5_ecost','bar',{
-    labels:COMPANIES,
-    datasets:[{label:'Energy % OpEx',data:energyPcts,backgroundColor:energyPcts.map(v=>v>38?'rgba(200,80,80,0.75)':v<30?'rgba(26,92,56,0.75)':'rgba(200,150,10,0.7)'),borderRadius:3}]
-  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'% of operating costs',font:FONT},max:55}}});
-  const carbonI=[0.12,0.19,0.09,0.28,0.15,0.42,0.11,0.22];
-  mkChart('c5_carbon','bar',{
-    labels:COMPANIES,
-    datasets:[{label:'kgCO₂e/kWh equiv.',data:carbonI,backgroundColor:carbonI.map(v=>v<0.15?'rgba(26,92,56,0.8)':v>0.3?'rgba(200,80,80,0.8)':'rgba(200,150,10,0.7)'),borderRadius:3}]
-  },{plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'kgCO₂e/kWh equivalent',font:FONT}}}});
-  const tariffChanges=[-30,-20,-10,0,10,20,30,40,50];
-  mkChart('c5_sensitivity','line',{labels:tariffChanges.map(v=>(v>=0?'+':'')+v+'%'),datasets:[
-    {label:'Grid-dominant (current)',data:tariffChanges.map(v=>Math.round(-v*0.31*10)/10),borderColor:'#6FD19A',tension:0.3,fill:false},
-    {label:'Solar hybrid (40% on-site)',data:tariffChanges.map(v=>Math.round(-v*0.18*10)/10),borderColor:'rgba(200,150,10,0.9)',tension:0.3,fill:false},
-    {label:'Diesel-heavy (off-grid)',data:tariffChanges.map(v=>Math.round(-v*0.44*10)/10),borderColor:'rgba(200,80,80,0.9)',tension:0.3,fill:false,borderDash:[5,3]},
-  ]},{scales:{y:{title:{display:true,text:'% EBITDA impact',font:FONT}},x:{title:{display:true,text:'Energy tariff change',font:FONT}}}});
-}
 
 // ── DOWNLOAD SIMULATION ──
 function fakeDownload(base){
@@ -1022,7 +723,7 @@ function fakeDownload(base){
   // In this demo we just show the filename that would be generated
   const toast=document.createElement('div');
   toast.style.cssText='position:fixed;bottom:24px;right:24px;background:#1A5C38;color:white;padding:14px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.4);max-width:380px';
-  toast.innerHTML=`<strong>📥 Demo download triggered</strong><br><span style="font-family:monospace;font-size:11px;color:var(--text-muted)">${name}</span><br><span style="color:var(--text-muted);font-size:12px">Real downloads available in the Streamlit application</span>`;
+  toast.innerHTML=`<strong>📥 Demo download triggered</strong><br><span style="font-family:monospace;font-size:11px;color:var(--text-muted)">${name}</span><br><span style="color:var(--text-muted);font-size:12px">Real downloads available in the final tool (D1.3)lication</span>`;
   document.body.appendChild(toast);
   setTimeout(()=>toast.remove(),4500);
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RMB-FinIntel — Energy Module</title>
+<title>RMB-FinIntel — Energy Component</title>
 <link rel="stylesheet" href="shared.css">
 <style>
 .energy-hero-accent { color: #F5A623; }
@@ -131,13 +131,17 @@
     </div>
   </div>
   <div class="nav-links">
-    <a href="index.html">Proposal</a>
+    <a href="index.html">Technical Proposal</a>
     <div class="nav-divider"></div>
-    <a href="architecture.html">Architecture</a>
-    <div class="nav-divider"></div>
-    <a href="energy.html" class="active">⚡ Energy Module</a>
-    <div class="nav-divider"></div>
-    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger active">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html">🏗 Architecture</a>
+        <a href="energy.html" class="active">⚡ Energy Component</a>
+        <a href="demo.html">🔬 Tool Mock-up</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -148,9 +152,9 @@
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse 60% 70% at 70% 40%,rgba(245,166,35,0.2) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 20% 70%,rgba(26,92,56,0.25) 0%,transparent 50%)"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="eyebrow fade-up au-1">Energy Financial Intelligence Module</div>
+    <div class="eyebrow fade-up au-1">Energy Financial Intelligence Component</div>
     <h1 class="hero-title fade-up au-2" style="white-space:normal">Energy is not a utility cost.<br><span class="accent">It is a strategic variable.</span></h1>
-    <p class="hero-lead fade-up au-3">In Rwanda's mining sector, energy is the single largest controllable cost component — and in today's geopolitical context, the most volatile. Any mineral financial intelligence framework that ignores energy costs is systematically incomplete.</p>
+    <p class="hero-lead fade-up au-3">In Rwanda's mining sector, energy costs are among the least controllable variables — driven by import dependency, international commodity markets, geopolitical disruptions, and local currency depreciation against USD and trading currencies. Their impact is massive and will intensify as Rwanda transitions from artisanal to semi-industrial and industrial mining, where mechanical energy replaces human labour and energy becomes the dominant operating cost driver.</p>
     <div style="display:flex;gap:14px;flex-wrap:wrap" class="fade-up au-4">
       <a href="#geopolitical" class="btn btn-gold">Explore the Context ↓</a>
       <a href="#module" class="btn btn-outline">See the Module Design</a>
@@ -171,10 +175,10 @@
   <p class="section-lead">Six converging global developments make energy financial intelligence not a "nice to have" but a strategic necessity for Rwanda's mining sector in 2025–2026.</p>
   <div class="geo-grid">
     <div class="geo-card gc-red">
-      <div class="gc-flag">⚔️</div>
-      <div class="gc-title">Russia-Ukraine & Global Energy Disruption</div>
-      <div class="gc-text">Ongoing conflict continues to distort global energy prices, LNG markets, and electricity generation costs. Countries importing energy inputs (diesel, HFO) for off-grid mining operations face persistent cost volatility with no clear resolution timeline.</div>
-      <div class="gc-impact">Impact on Rwanda: diesel-powered artisanal and remote mining operations face unpredictable input cost shocks — often not captured in declared financials.</div>
+      <div class="gc-flag">🌍</div>
+      <div class="gc-title">Middle East Conflicts & Global Energy Disruption</div>
+      <div class="gc-text">The escalating conflicts across the Middle East — disrupting key energy corridors, oil production infrastructure, and LNG shipping routes — are the primary driver of current global energy price volatility. These disruptions propagate far beyond the region, affecting diesel and heavy fuel oil prices globally. Countries dependent on imported energy inputs for off-grid mining face unpredictable cost spikes with no clear resolution timeline, as the conflict dynamics remain structurally unresolved.</div>
+      <div class="gc-impact">Impact on Rwanda: off-grid and remote mining operations face direct diesel cost exposure to Middle East supply disruptions — shocks that propagate through to declared financials with a 2–4 week lag and persist for 6–9 months per disruption cycle.</div>
     </div>
     <div class="geo-card gc-gold">
       <div class="gc-flag">🌍</div>
@@ -288,7 +292,7 @@
 <section class="section section-alt" id="scenarios">
   <div class="eyebrow" style="color:#F5A623">Scenario Modelling</div>
   <h2 class="section-title">36-Scenario Competitiveness Matrix</h2>
-  <p class="section-lead">The Energy Module models 36 scenarios: 3 energy price levels × 3 energy mix configurations × 4 mineral categories. Below are 6 representative scenarios.</p>
+  <p class="section-lead">The Energy Component models 36 scenarios: 3 energy price levels × 3 energy mix configurations × 4 mineral categories. Below are 6 representative scenarios.</p>
   <div class="scenario-matrix" id="sc-matrix"></div>
   <p style="margin-top:16px;font-size:13px;color:var(--text-muted);font-family:var(--font-m)">Full 36-scenario matrix is a deliverable of P3.4 — Energy Policy Impact Modelling (Month 9)</p>
 </section>
@@ -296,8 +300,8 @@
 <!-- MODULE DESIGN -->
 <section class="section" id="module">
   <div class="eyebrow" style="color:#F5A623">Module Design</div>
-  <h2 class="section-title">How the Energy Module is Built</h2>
-  <p class="section-lead">The Energy Financial Intelligence Module integrates into RMB-FinIntel as a standalone analytical layer — fed by the same data templates plus two energy-specific inputs.</p>
+  <h2 class="section-title">How the Energy Component would be Built</h2>
+  <p class="section-lead">The Energy Financial Intelligence Component integrates into RMB-FinIntel as a standalone analytical layer — fed by the same data templates plus two energy-specific inputs.</p>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
     <div>
       <h3 style="font-size:17px;font-weight:600;margin-bottom:20px;color:#F5A623">Additional Data Inputs (Energy-Specific)</h3>
@@ -332,7 +336,7 @@
         <div class="p2-icon">🔮</div>
         <div>
           <div class="p2-label">Phase 2 Addition — Asset Intelligence</div>
-          <div class="p2-text">In Phase 2 of RMB-FinIntel, the Energy Module will be extended with <strong>asset declarations analysis</strong> — mapping declared fixed assets (processing equipment, vehicles, generators) against energy consumption to detect under-reported energy use and identify efficiency investment opportunities. Asset data is acknowledged as less reliable than HR data and will be treated accordingly with appropriate confidence scoring.</div>
+          <div class="p2-text">In Phase 2 of RMB-FinIntel, the Energy Component will be extended with <strong>asset declarations analysis</strong> — mapping declared fixed assets (processing equipment, vehicles, generators) against energy consumption to detect under-reported energy use and identify efficiency investment opportunities. Asset data is acknowledged as less reliable than HR data and will be treated accordingly with appropriate confidence scoring.</div>
         </div>
       </div>
     </div>
@@ -349,7 +353,7 @@
     <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Architecture</a>
     <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
   </div>
-  <div class="footer-meta" style="text-align:right">RMB-FinIntel Energy Module<br>April 2026 · V1.0</div>
+  <div class="footer-meta" style="text-align:right">RMB-FinIntel Energy Component<br>April 2026 · V1.0</div>
 </footer>
 </div>
 

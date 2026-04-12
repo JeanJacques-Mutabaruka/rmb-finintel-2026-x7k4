@@ -208,13 +208,17 @@
     </div>
   </div>
   <div class="nav-links">
-    <a href="index.html">Proposal</a>
+    <a href="index.html">Technical Proposal</a>
     <div class="nav-divider"></div>
-    <a href="architecture.html" class="active">Architecture</a>
-    <div class="nav-divider"></div>
-    <a href="energy.html">⚡ Energy Module</a>
-    <div class="nav-divider"></div>
-    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger active">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html" class="active">🏗 Architecture</a>
+        <a href="energy.html">⚡ Energy Component</a>
+        <a href="demo.html">🔬 Tool Mock-up</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -225,13 +229,13 @@
   <div class="hero-bg-mesh"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="eyebrow fade-up au-1">Tool Architecture</div>
+    <div class="eyebrow fade-up au-1">Current Situation Model — Architecture</div>
     <h1 class="hero-title fade-up au-2">RMB-FinIntel <span class="accent">Interactive Architecture</span></h1>
-    <p class="hero-lead fade-up au-3">Click any module to explore what it does, what data it uses, what financial intelligence it produces, and which stakeholders benefit — without any data being retained.</p>
+    <p class="hero-lead fade-up au-3">This tool does not exist yet. It will be built in the first two months of the programme (Phase 1 — D1.3) to establish the current situation baseline. Once operational, it will capture key data trends, support structured dialogue with companies and decision-makers, and provide the factual foundation for strengthening Rwanda's mining sector financial intelligence. Click any component to explore what it is designed to do.</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-4">
-      <a href="#modules" class="btn btn-gold">Explore Modules ↓</a>
+      <a href="#modules" class="btn btn-gold">Explore Components ↓</a>
       <a href="#stakeholders" class="btn btn-outline">Stakeholder Views</a>
-      <a href="demo.html" class="btn btn-green">▶ Live Demo</a>
+      <a href="demo.html" class="btn btn-green">🔬 Current Situation Modeling Mock-up</a>
     </div>
   </div>
 </div>
@@ -271,7 +275,7 @@
 <!-- MODULES -->
 <section class="section section-alt" id="modules">
   <div class="eyebrow">Interactive Module Explorer</div>
-  <h2 class="section-title">Click Any Module to Explore</h2>
+  <h2 class="section-title">Click Any Component to Explore</h2>
   <p class="section-lead">Six functional modules, each producing distinct financial intelligence outputs. All start from uploaded Excel files — no API, no live connection required.</p>
 
   <div class="modules-grid" id="mod-grid"></div>
@@ -318,7 +322,7 @@
 <section class="section section-alt" id="stakeholders">
   <div class="eyebrow">Stakeholder Views</div>
   <h2 class="section-title">Who Uses What — and How</h2>
-  <p class="section-lead">Click each stakeholder to see their specific access level, the financial intelligence they receive, and the decisions it supports.</p>
+  <p class="section-lead">These are the planned stakeholder profiles the tool is designed to serve. Click each to see the financial intelligence access level and decisions the tool will support once built.</p>
   <div class="stakeholders" id="sh-grid"></div>
   <div class="sh-detail" id="sh-detail"></div>
 </section>
@@ -330,8 +334,8 @@
     <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
   </div>
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-    <a href="energy.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">⚡ Energy Module →</a>
-    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
+    <a href="energy.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">⚡ Energy Component →</a>
+    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">🔬 Current Situation Modeling Mock-up</a>
   </div>
   <div class="footer-meta" style="text-align:right">RMB-FinIntel Architecture<br>April 2026 · V1.0</div>
 </footer>
@@ -429,7 +433,7 @@ modules.forEach(m=>{
 // ── STAKEHOLDERS ──
 const stakeholders=[
   {
-    icon:'🏛️', name:'RMB Leadership', role:'Director General & Senior Management',
+    icon:'🏛️', name:'RMB Leadership', role:'CEO & Senior Management',
     access:['Executive dashboard (read-only)','Quarterly market intelligence reports','Sector-wide anomaly summary','Annual market outlook'],
     decisions:['Royalty and fiscal policy calibration','Sector investment attraction priorities','Regulatory inspection scheduling','Inter-ministerial briefings']
   },
@@ -442,11 +446,6 @@ const stakeholders=[
     icon:'🏦', name:'RRA & MINICOM', role:'Revenue Authority & Trade Ministry',
     access:['Sector-level aggregated outputs only','Cross-source consistency flags (no raw data)','Export destination diversification analysis','Payroll tax contribution trends'],
     decisions:['Tax compliance risk prioritisation','Trade policy alignment','Export certification efficiency','Sector fiscal contribution monitoring']
-  },
-  {
-    icon:'💼', name:'Investors & Banks', role:'FDI investors & local financial institutions',
-    access:['Public investor intelligence hub (curated)','Sector risk profiles (anonymised companies)','ESG compliance status','Market outlook and price scenarios'],
-    decisions:['Investment entry/exit decisions','Mining project financing terms','ESG-linked instrument eligibility','Local bank credit risk assessment']
   },
 ];
 

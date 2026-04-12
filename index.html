@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RMB-FinIntel — Technical Offer</title>
+<title>RMB-FinIntel — Technical Proposal</title>
 <link rel="stylesheet" href="shared.css">
 <style>
 /* ── PAGE-SPECIFIC ── */
@@ -15,12 +15,12 @@
 .lc-2 { background: rgba(200,150,10,0.08); } .lc-2::after { background: var(--gold); }
 .lc-3 { background: rgba(26,92,56,0.14); } .lc-3::after { background: var(--g-deep); }
 .layer-num { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
-.layer-name { font-family: var(--font-d); font-size: 20px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; }
+.layer-name { font-family: var(--font-d); font-size: 18px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; white-space: nowrap; }
 .layer-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 20px; }
 .layer-refs { font-family: var(--font-m); font-size: 11px; padding: 5px 12px; border-radius: 4px; display: inline-block; }
-.lc-1 .layer-refs { background: rgba(27,108,168,0.2); color: #7EC8F0; }
-.lc-2 .layer-refs { background: rgba(200,150,10,0.18); color: var(--gold); }
-.lc-3 .layer-refs { background: rgba(26,92,56,0.28); color: #6FD19A; }
+.lc-1 .layer-refs { background: #1B6CA8; color: #FFFFFF; font-weight: 600; }
+.lc-2 .layer-refs { background: #B8860B; color: #FFFFFF; font-weight: 600; }
+.lc-3 .layer-refs { background: var(--g-deep); color: #FFFFFF; font-weight: 600; }
 
 /* Responsibility table */
 .resp-ref { font-family: var(--font-m); font-size: 13px; font-weight: 600; color: var(--gold); }
@@ -28,6 +28,13 @@
 .resp-phase { font-family: var(--font-m); font-size: 12px; color: rgba(255,255,255,0.45); }
 .resp-deliv { font-size: 13px; color: rgba(255,255,255,0.65); font-style: italic; }
 .layer-badges { display: flex; flex-direction: column; gap: 5px; }
+
+
+/* Hero intro responsive */
+@media (max-width:768px) {
+  .hero-intro-grid { grid-template-columns: 1fr !important; }
+  .phase-row-label { display: block; margin-bottom: 2px; }
+}
 
 /* Gantt */
 .gantt-wrap { overflow-x: auto; }
@@ -113,10 +120,6 @@
 .gantt-legend { border-top: 1px solid var(--border-lt); padding-top: 16px; margin-top: 16px; }
 
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.2.9/css/responsive.dataTables.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/datatables-responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 </head>
 <body>
 
@@ -130,13 +133,17 @@
     </div>
   </div>
   <div class="nav-links">
-    <a href="index.html" class="active">Proposal</a>
+    <a href="index.html" class="active">Technical Proposal</a>
     <div class="nav-divider"></div>
-    <a href="architecture.html">Architecture</a>
-    <div class="nav-divider"></div>
-    <a href="energy.html">⚡ Energy Module</a>
-    <div class="nav-divider"></div>
-    <a href="demo.html" class="nav-demo">▶ Live Demo</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html">🏗 Architecture</a>
+        <a href="energy.html">⚡ Energy Component</a>
+        <a href="demo.html">🔬 Tool Mock-up</a>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -148,21 +155,82 @@
   <div class="hero-grid"></div>
   <div class="hero-content">
     <div class="eyebrow fade-up au-1">Rwanda Mines, Petroleum and Gas Board</div>
-    <h1 class="hero-title fade-up au-2" style="font-size:clamp(24px,3.8vw,44px);white-space:nowrap;">
-      Financial Market <span class="accent">Intelligence</span> Expert
-    </h1>
-    <p class="hero-lead fade-up au-3">Establishing a structured, AI-powered mineral financial intelligence function to strengthen Rwanda's competitiveness in international markets and position RMB as a regional authority.</p>
+    <h1 class="hero-title fade-up au-2" style="text-align:center;white-space:normal">Financial Market <span class="accent">Intelligence</span> Expert</h1>
+
+    <!-- INTRO BLOCK -->
+    <div class="fade-up au-3 hero-intro-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:32px">
+
+      <!-- Left: ToR Context -->
+      <div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">The Assignment</div>
+        <p style="font-size:15px;color:var(--text-body);line-height:1.75;margin-bottom:12px">
+          This document is a <strong>Technical Offer</strong> in response to the Terms of Reference for a
+          <strong>Financial Market Intelligence Expert</strong> issued by the
+          <strong>Rwanda Mines, Petroleum and Gas Board (RMB)</strong>.
+        </p>
+        <p style="font-size:14px;color:var(--text-muted);line-height:1.75;margin-bottom:12px">
+          RMB requires an expert to establish a structured, data-driven mineral financial intelligence
+          function — enabling the Board to monitor global mineral markets, analyse pricing and valuation
+          methodologies, assess trade routes and buyer profiles, track mining finance trends, and produce
+          periodic intelligence reports for senior management and policymakers.
+        </p>
+        <p style="font-size:14px;color:var(--text-muted);line-height:1.75">
+          The mandate covers Rwanda's four priority minerals —
+          <strong>cassiterite, coltan, wolframite, and gold</strong> — in a context of accelerating
+          global demand for critical minerals, increasing regulatory requirements from key buyer markets
+          (EU, US), and an urgent need to transition from artisanal to semi-industrial and industrial
+          mining.
+        </p>
+      </div>
+
+      <!-- Right: This Offer -->
+      <div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">This Technical Offer</div>
+        <p style="font-size:14px;color:var(--blue);line-height:1.75;margin-bottom:14px">
+          This offer proposes an <strong>18-month programme in 4 phases</strong>, built on a
+          company-centric financial intelligence philosophy and grounded in Rwanda's data realities.
+          It delivers not only analytical outputs — but a <strong>permanent institutional capability</strong>
+          that RMB will own and operate independently beyond the engagement.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px">
+            <span style="color:var(--g-deep);font-weight:700;white-space:nowrap">Phase 1 (M1–M2)</span>
+            <span style="color:#1B6CA8">Diagnostic, data audit, financial intelligence framework design, and delivery of the first working analytical tool (Current Situation Model).</span>
+            <span style="color:#B8860B;font-weight:700;white-space:nowrap">Phase 2 (M3–M6)</span>
+            <span style="color:#1B6CA8">Pricing reference guide, cost structure models, demand-offer-price dynamic modeling, logistics and policy cost frameworks, first quarterly report.</span>
+            <span style="color:var(--g-deep);font-weight:700;white-space:nowrap">Phase 3 (M7–M12)</span>
+            <span style="color:#1B6CA8">Automated intelligence dashboard, investor hub, full costs modeling framework, market access cost framework, annual outlook, staff training.</span>
+            <span style="color:#5B2C6F;font-weight:700;white-space:nowrap">Phase 4 (M10–M18)</span>
+            <span style="color:#1B6CA8">Company portal, multi-market integration model, complete financial flows modeling, full platform launch, regional hub roadmap.</span>
+          </div>
+          <style>
+            @media (max-width:600px) {
+              .phase-grid { grid-template-columns: 1fr !important; }
+              .phase-grid span:nth-child(odd) { margin-top: 8px; }
+            }
+          </style>
+        </div>
+      </div>
+    </div>
+
     <p class="hero-meta fade-up au-4">Jean Jacques Mutabaruka &nbsp;·&nbsp; April 2026 &nbsp;·&nbsp; Technical Offer</p>
-    <div style="display:flex;gap:14px;flex-wrap:wrap;" class="fade-up au-5">
+    <div class="fade-up au-5" style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
       <a href="#layers" class="btn btn-gold">Explore the Proposal ↓</a>
-      <a href="architecture.html" class="btn btn-outline">View Tool Architecture</a>
-      <a href="demo.html" class="btn btn-green">▶ Live Demo</a>
+      <div style="background:#FFFFFF;border:1px solid var(--border-md);border-radius:var(--radius);padding:12px 18px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)">Current Situation Model — Automated Tool</div>
+        <div style="display:flex;gap:10px">
+          <a href="architecture.html" class="btn btn-outline" style="padding:8px 18px;font-size:12px">View Tool Architecture</a>
+          <a href="demo.html" class="btn btn-green" style="padding:8px 18px;font-size:12px">🔬 Tool Mock-up</a>
+        </div>
+      </div>
     </div>
   </div>
   <div class="stats-bar fade-up au-5">
     <div class="stat"><div class="stat-n">3</div><div class="stat-l">Strategic Layers</div></div>
-    <div class="stat"><div class="stat-n">12</div><div class="stat-l">Month Programme</div></div>
-    <div class="stat"><div class="stat-n">9</div><div class="stat-l">SMART Deliverables</div></div>
+    <div class="stat"><div class="stat-n">18</div><div class="stat-l">Month Programme</div></div>
+    <div class="stat"><div class="stat-n">4</div><div class="stat-l">Phases</div></div>
+    <div class="stat"><div class="stat-n">18</div><div class="stat-l">Deliverables</div></div>
+    <div class="stat"><div class="stat-n">5</div><div class="stat-l">FI Principles</div></div>
     <div class="stat"><div class="stat-n">5+</div><div class="stat-l">Inter-Agency Partners</div></div>
     <div class="stat"><div class="stat-n">3Ts+Au</div><div class="stat-l">Minerals Covered</div></div>
   </div>
@@ -176,25 +244,132 @@
   <div class="layer-grid">
     <div class="layer-card lc-1">
       <div class="layer-num">Layer 01</div>
-      <div class="layer-name">Market Financial Intelligence<br>& Analytics</div>
+      <div class="layer-name">Market Financial Intelligence & Analytics</div>
       <p class="layer-desc">Market monitoring, pricing and valuation methodologies, risk registers, AI-powered data-driven dashboards, and forward-looking mineral financial outlooks. The analytical engine of RMB.</p>
       <span class="layer-refs">ToR: R1, R2, R5, R6</span>
     </div>
     <div class="layer-card lc-2">
       <div class="layer-num">Layer 02</div>
-      <div class="layer-name">Strategic<br>Advisory</div>
-      <p class="layer-desc">Trade diversification strategy, mining finance instruments, ESG-linked financing, energy policy impact modelling, partnership negotiation financial intelligence. Protects Rwanda's long-term fiscal interests.</p>
+      <div class="layer-name">Strategic Advisory</div>
+      <p class="layer-desc">Trade diversification strategy, mining finance instruments, ESG-linked financing, energy policy impact modelling, partnership negotiation financial intelligence. Protects Rwanda\'s long-term fiscal interests.</p>
       <span class="layer-refs">ToR: R3, R4</span>
     </div>
     <div class="layer-card lc-3">
       <div class="layer-num">Layer 03</div>
-      <div class="layer-name">Institutional<br>Embedding</div>
+      <div class="layer-name">Institutional Embedding</div>
       <p class="layer-desc">Capacity building, inter-agency collaboration protocols, tool and methodology handover. Ensures the financial intelligence function operates independently and sustainably beyond the engagement.</p>
       <span class="layer-refs">ToR: R6, R7</span>
     </div>
   </div>
 </section>
 
+
+<!-- SECTION: FI FRAMEWORK -->
+<section id="fi-framework" class="section">
+  <div class="eyebrow">Financial Intelligence Framework</div>
+  <h2 class="section-title">The 3×3 Framework: Three Interlocking Triangles</h2>
+  <p class="section-lead">Effective mineral financial intelligence is built on three interlocking frameworks — each with three dimensions — that together define a coherent and complete analytical architecture. Click any triangle to expand.</p>
+
+  <!-- THREE TRIANGLES -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px">
+    <div style="background:var(--blue-lt);border:2px solid var(--blue);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri1')">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:12px">ToR Mandate</div>
+      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+        <polygon points="60,8 8,96 112,96" fill="rgba(27,108,168,0.12)" stroke="#1B6CA8" stroke-width="2.5"/>
+        <text x="60" y="30" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Intelligence</text>
+        <text x="22" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Strategic</text>
+        <text x="97" y="92" text-anchor="middle" font-size="9" fill="#1B6CA8" font-weight="700">Institutional</text>
+      </svg>
+      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Strategic Layers</div>
+      <div style="font-size:12px;color:var(--text-muted)">Intelligence · Strategic Advisory · Institutional</div>
+      <div style="margin-top:12px;font-size:11px;color:var(--blue);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+    </div>
+    <div style="background:var(--gold-pale);border:2px solid var(--gold);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri2')">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:12px">Markets</div>
+      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+        <polygon points="60,8 8,96 112,96" fill="rgba(184,134,11,0.1)" stroke="#B8860B" stroke-width="2.5"/>
+        <line x1="60" y1="20" x2="25" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="60" y1="20" x2="95" y2="82" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="30" y1="88" x2="90" y2="88" stroke="#B8860B" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="60" y="30" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">PRICE</text>
+        <text x="18" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">DEMAND</text>
+        <text x="100" y="92" text-anchor="middle" font-size="9" fill="#B8860B" font-weight="700">OFFER</text>
+      </svg>
+      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 Market Dimensions</div>
+      <div style="font-size:12px;color:var(--text-muted)">Demand · Offer · Price</div>
+      <div style="margin-top:12px;font-size:11px;color:var(--gold);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+    </div>
+    <div style="background:var(--g-pale);border:2px solid var(--g-deep);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s" onclick="toggleTriangle('tri3')">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:12px">Financial Intelligence</div>
+      <svg viewBox="0 0 120 104" style="width:90px;height:78px;margin:0 auto 12px;display:block">
+        <polygon points="60,8 8,96 112,96" fill="rgba(26,92,56,0.1)" stroke="#1A5C38" stroke-width="2.5"/>
+        <text x="60" y="26" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Company</text>
+        <text x="60" y="36" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Centric</text>
+        <text x="16" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Dynamic</text>
+        <text x="16" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Markets</text>
+        <text x="102" y="88" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Full Costs</text>
+        <text x="102" y="97" text-anchor="middle" font-size="8" fill="#1A5C38" font-weight="700">Modeling</text>
+      </svg>
+      <div style="font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--text-head);margin-bottom:6px">3 FI Principles</div>
+      <div style="font-size:12px;color:var(--text-muted)">Company · Markets · Full Costs Modeling</div>
+      <div style="margin-top:12px;font-size:11px;color:var(--g-deep);font-family:var(--font-m)">TAP TO EXPAND ↓</div>
+    </div>
+  </div>
+
+  <!-- EXPAND PANELS -->
+  <div id="tri1" style="display:none;margin-bottom:20px;background:var(--blue-lt);border:1px solid var(--blue);border-radius:var(--radius);padding:28px 32px">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Strategic Layers — Mapping to FI Principles</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 1 — Intelligence & Analytics</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Dynamic Markets</strong> principle: monitoring demand-offer-price dynamics, price gap analysis, and market outlook.</div></div>
+      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 2 — Strategic Advisory</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Full Costs (Financial) Modeling</strong> principle: trade diversification, finance instruments, energy policy, logistics and market access costs.</div></div>
+      <div style="background:#FFFFFF;border-radius:6px;padding:16px"><div style="font-weight:700;color:var(--blue);margin-bottom:8px;font-size:13px">Layer 3 — Institutional Embedding</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Feeds the <strong>Company-Centric</strong> principle: capacity building ensures companies and regulators independently use financial intelligence.</div></div>
+    </div>
+  </div>
+
+  <div id="tri2" style="display:none;margin-bottom:20px;background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius);padding:28px 32px">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:8px">Markets as Dynamic Systems: The Demand-Offer-Price Triangle</div>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.7">Markets must be understood across three interactive dimensions — on both the selling side and the production side (energy, raw materials, investment capital, machinery).</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">📉</div><div style="font-weight:700;font-size:12px;color:#7A5800">DEMAND</div></div>
+          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">🏭</div><div style="font-weight:700;font-size:12px;color:#7A5800">OFFER</div></div>
+          <div style="background:#FFFFFF;border-top:3px solid var(--gold);border-radius:6px;padding:12px;text-align:center"><div style="font-size:16px;margin-bottom:4px">💰</div><div style="font-weight:700;font-size:12px;color:#7A5800">PRICE</div></div>
+        </div>
+        <div style="background:#FFFFFF;border-radius:6px;padding:14px;font-size:13px;color:var(--text-body);line-height:1.7">
+          → Confrontation of demand and offer <strong>determines price</strong><br>
+          → Price signals <strong>influence demand and offer</strong> in return<br>
+          → Demand-offer gap <strong>drives investment decisions</strong><br>
+          → Investment increases future offer → impacts future prices
+        </div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:6px;padding:18px">
+        <div style="font-size:24px;text-align:center;margin-bottom:8px">🚲</div>
+        <div style="font-weight:700;color:#7A5800;margin-bottom:8px;font-size:14px;text-align:center">The Bicycle Equilibrium</div>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.7">Market equilibrium is dynamic — like a bicycle: <strong>without movement one falls</strong>, but <strong>excessive speed without control leads to a crash</strong>. Mastering it requires knowing the destination, reading the road, and continuously calibrating speed. This is what mineral financial intelligence must do: <strong>ride the market — not fall off it</strong>.</p>
+      </div>
+    </div>
+    <div style="background:#FFFFFF;border-radius:6px;padding:14px;border-left:4px solid var(--gold);margin-top:14px">
+      <strong style="color:#7A5800;font-size:13px">⚠️ Production-Side Markets — Often Overlooked: </strong>
+      <span style="font-size:13px;color:var(--text-muted)">Markets also exist on the production side — energy, raw materials, investment capital, machinery — each with their own demand-offer-price dynamics. A disruption in any of these directly impacts production costs and competitive positioning on the selling side.</span>
+    </div>
+  </div>
+
+  <div id="tri3" style="display:none;margin-bottom:20px;background:var(--g-pale);border:1px solid var(--g-deep);border-radius:var(--radius);padding:28px 32px">
+    <div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--text-head);margin-bottom:16px">3 Financial Intelligence Principles</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🏢</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 1 — Company-Centric</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">The company is the unit of analysis. Any policy that does not take into account companies' interests and their business environments is destined to fail.</div></div>
+      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">🚲</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 2 — Dynamic Markets</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">Markets analysed across three interactive dimensions on both the selling side and production side. Market equilibrium is dynamic — like the bicycle 🚲.</div></div>
+      <div style="background:#FFFFFF;border-top:3px solid var(--g-deep);border-radius:6px;padding:18px"><div style="font-size:18px;margin-bottom:8px">📐</div><div style="font-weight:700;color:var(--g-deep);margin-bottom:8px;font-size:13px">Principle 3 — Full Costs (Financial) Modeling</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6">All costs modeled: production, policy compliance, logistics, market access, and complete financial flows (assets, inventory, receivables, payables, cashflow, financing).</div></div>
+    </div>
+  </div>
+
+  <!-- 5 CORE PRINCIPLES EXPANDABLE CARDS -->
+  <div style="margin-top:24px">
+    <div style="font-family:var(--font-m);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:16px">Five Core Analytical Dimensions — Click to Expand</div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="principles-list"></div>
+  </div>
+</section>
 <!-- SECTION: ToR MAPPING -->
 <section id="tor" class="section">
   <div class="eyebrow">ToR Compliance</div>
@@ -217,32 +392,19 @@
 <!-- SECTION: GANTT -->
 <section id="roadmap" class="section section-alt">
   <div class="eyebrow">Implementation Roadmap</div>
-  <h2 class="section-title">12-Month Gantt Chart</h2>
-  <p class="section-lead">Three phases guide the transition from diagnostic assessment to a fully institutionalised, self-sustaining mineral financial intelligence function. On small screens, tap the <strong style="color:var(--g-deep)">+</strong> to expand each row.</p>
-  <div style="overflow-x:auto">
-    <table id="gantt-dt" class="display" style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead>
-        <tr style="background:var(--surface-1)">
-          <th style="text-align:left;padding:10px 12px;font-family:var(--font-m);font-size:11px;letter-spacing:1px;color:var(--text-muted);border-bottom:2px solid var(--border-md);white-space:nowrap">Task / Milestone</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M1</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M2</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M3</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M4</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M5</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M6</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M7</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M8</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M9</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M10</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M11</th>
-          <th style="text-align:center;padding:10px 6px;font-family:var(--font-m);font-size:11px;color:var(--text-muted);border-bottom:2px solid var(--border-md)">M12</th>
-        </tr>
-      </thead>
-      <tbody id="gantt-body"></tbody>
-    </table>
+  <h2 class="section-title">18-Month Implementation Roadmap</h2>
+  <p class="section-lead">Four phases over 18 months guide the transition from diagnostic assessment to a fully integrated, self-sustaining mineral financial intelligence platform. On small screens, tap <strong style="color:var(--g-deep)">+</strong> to expand rows.</p>
+  <div class="gantt-wrap">
+    <table class="gantt" id="gantt-dt"><thead><tr>
+      <th class="g-task">Task / Milestone</th>
+      <th>M1</th><th>M2</th><th>M3</th><th>M4</th><th>M5</th><th>M6</th>
+      <th>M7</th><th>M8</th><th>M9</th><th>M10</th><th>M11</th><th>M12</th>
+      <th>M13</th><th>M14</th><th>M15</th><th>M16</th><th>M17</th><th>M18</th>
+    </tr></thead>
+    <tbody id="gantt-body"></tbody></table>
   </div>
-  <div class="gantt-legend" style="margin-top:20px">
-    <div class="gl-item"><div class="gl-dot" style="background:#1B6CA8"></div>Phase 1 — Diagnostic &amp; Framework (M1–2)</div>
+  <div class="gantt-legend">
+    <div class="gl-item"><div class="gl-dot" style="background:#1B6CA8"></div>Phase 1 — Diagnostic & Framework (M1–2)</div>
     <div class="gl-item"><div class="gl-dot" style="background:var(--gold)"></div>Phase 2 — Operationalisation (M3–6)</div>
     <div class="gl-item"><div class="gl-dot" style="background:var(--g-deep)"></div>Phase 3 — Institutionalisation (M7–12)</div>
   </div>
@@ -250,17 +412,17 @@
 
 <!-- SECTION: SMART DELIVERABLES -->
 <section id="deliverables" class="section">
-  <div class="eyebrow">SMART Deliverables</div>
-  <h2 class="section-title">Measurable Outputs by Phase</h2>
-  <p class="section-lead">Nine concrete deliverables with Specific, Measurable, Achievable, Relevant, and Time-bound criteria.</p>
-  <div class="deliv-grid" id="deliv-grid"></div>
+  <div class="eyebrow">Deliverables by Platform Module</div>
+  <h2 class="section-title">18 Measurable Deliverables — Grouped by Module</h2>
+  <p class="section-lead">Each deliverable is precisely specified: what it contains, which companies and stakeholders it serves, how frequently it is produced, what measures define completion, which ToR responsibilities it addresses, and which financial intelligence principle it embodies. Click any module card to expand its deliverables.</p>
+  <div id="module-cards-grid" style="display:flex;flex-direction:column;gap:10px"></div>
 </section>
 
 <!-- SECTION: INTER-AGENCY -->
 <section id="interagency" class="section section-alt">
   <div class="eyebrow">Collaboration Architecture</div>
   <h2 class="section-title">Inter-Agency Framework</h2>
-  <p class="section-lead">The financial intelligence function is designed with formal data-sharing protocols across Rwanda's key public institutions — creating a whole-of-government mineral financial intelligence ecosystem.</p>
+  <p class="section-lead">The financial intelligence function is designed with formal data-sharing protocols across Rwanda\'s key public institutions — creating a whole-of-government mineral financial intelligence ecosystem.</p>
   <div class="agency-grid" id="agency-grid"></div>
 </section>
 
@@ -270,7 +432,7 @@
   <div style="position:relative;z-index:2">
     <div class="eyebrow">Beyond the ToR</div>
     <h2 class="section-title">Rwanda as a Regional Hub of Excellence</h2>
-    <p class="section-lead">The geopolitical context of 2025–2026 creates a once-in-a-generation window. Three strategic pillars transform this engagement from a consulting assignment into the foundation of Rwanda's positioning in the global critical minerals economy.</p>
+    <p class="section-lead">The geopolitical context of 2025–2026 creates a once-in-a-generation window. Three strategic pillars transform this engagement from a consulting assignment into the foundation of Rwanda\'s positioning in the global critical minerals economy.</p>
     <div class="vision-grid">
       <div class="vp vp-a">
         <div class="vp-label">Pillar A</div>
@@ -281,7 +443,7 @@
       <div class="vp vp-b">
         <div class="vp-label">Pillar B</div>
         <div class="vp-title">Energy–Minerals Financial Nexus</div>
-        <p class="vp-desc">Rwanda's clean energy mix as a premium differentiator. Low-carbon minerals command 10–20% price premiums with EU and North American buyers. The energy cost structure of mining operations is the single most controllable variable in sector competitiveness — and a critical input to all financial intelligence modelling.</p>
+        <p class="vp-desc">Rwanda\'s clean energy mix as a premium differentiator. Low-carbon minerals command 10–20% price premiums with EU and North American buyers. The energy cost structure of mining operations is the single most controllable variable in sector competitiveness — and a critical input to all financial intelligence modelling.</p>
         <div class="vp-target">Target: First low-carbon minerals premium agreement with European buyer by M18</div>
       </div>
       <div class="vp vp-c">
@@ -305,7 +467,7 @@
   </div>
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
     <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture →</a>
-    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">▶ Live Demo</a>
+    <a href="demo.html" class="btn btn-gold" style="font-size:12px;padding:8px 18px">🔬 Tool Mock-up</a>
   </div>
   <div class="footer-meta" style="text-align:right">Technical Offer — RMB Financial Market Intelligence Expert<br>April 2026 · V1.0</div>
 </footer>
@@ -314,13 +476,13 @@
 <script>
 // ── ToR DATA ──
 const torData = [
-  { ref:'R1', text:'Monitor and analyze global and regional mineral markets, including price trends, demand–supply balances, and strategic mineral policies relevant to Rwanda.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.1–3\nongoing', deliv:'Monthly market briefs; Annual Outlook Report' },
-  { ref:'R2', text:'Analyze pricing methodologies for Rwanda\'s key minerals and support the development of reference pricing and valuation guidance for regulatory, fiscal, and export purposes.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'},{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.1', deliv:'Pricing Reference Guide; Valuation Framework' },
-  { ref:'R3', text:'Assess mineral trade routes, buyer profiles, and export destinations; identify opportunities for market diversification and reduced dependency on single buyers or markets.', layers:[{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.4', deliv:'Trade Diversification Report; Buyer Mapping' },
-  { ref:'R4', text:'Track trends in mining finance and investment, including offtake-linked financing and ESG-driven instruments, and assess implications for access to capital and cost of financing.', layers:[{t:'Strategic Advisory',c:'badge-gold'},{t:'Institutional',c:'badge-green'}], phase:'Ph.3\nP3.3', deliv:'Mining Finance Trend Report; ESG Finance Note' },
-  { ref:'R5', text:'Identify key market risks and develop short-, medium-, and long-term market outlooks for priority minerals, proposing mitigation strategies where appropriate.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nP2.5, P3.5', deliv:'Risk Register; Scenario Outlook Dashboard' },
-  { ref:'R6', text:'Produce periodic market intelligence reports, briefs, and dashboards for RMB senior management and policymakers.', layers:[{t:'Institutional',c:'badge-green'},{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nongoing', deliv:'Quarterly Reports; Executive Dashboard' },
-  { ref:'R7', text:'Support institutional capacity-building by training RMB staff on mineral market analysis, pricing concepts, and interpretation of market intelligence outputs.', layers:[{t:'Institutional',c:'badge-green'}], phase:'Ph.2–3\nP2.6, P3.6', deliv:'2 Training Modules; Handover Manual' },
+  { ref:'R1', text:'Monitor and analyze global and regional mineral markets, including price trends, demand–supply balances, and strategic mineral policies relevant to Rwanda.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.1–3\nongoing', deliv:'→ Module 1: D2.3 (Demand-Offer-Price Model); → Module 6: D3.1 (Automated Dashboard), D3.5 (Annual Outlook)' },
+  { ref:'R2', text:'Analyze pricing methodologies for Rwanda\'s key minerals and support the development of reference pricing and valuation guidance for regulatory, fiscal, and export purposes.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'},{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.1', deliv:'→ Module 1: D2.1 (Pricing Reference Guide); → Module 2: D2.2 (Cost Structure Models), D3.4 (Full Costs Modeling)' },
+  { ref:'R3', text:'Assess mineral trade routes, buyer profiles, and export destinations; identify opportunities for market diversification and reduced dependency on single buyers or markets.', layers:[{t:'Strategic Advisory',c:'badge-gold'}], phase:'Ph.2\nP2.4', deliv:'→ Module 3: D2.4 (Logistics Model); → Module 3: D3.2 (Market Access Framework)' },
+  { ref:'R4', text:'Track trends in mining finance and investment, including offtake-linked financing and ESG-driven instruments, and assess implications for access to capital and cost of financing.', layers:[{t:'Strategic Advisory',c:'badge-gold'},{t:'Institutional',c:'badge-green'}], phase:'Ph.3\nP3.3', deliv:'→ Module 7: D3.3 (Mining Finance Report), D4.3 (Financial Flows Model); → Module 3: D3.2 (Market Access Framework)' },
+  { ref:'R5', text:'Identify key market risks and develop short-, medium-, and long-term market outlooks for priority minerals, proposing mitigation strategies where appropriate.', layers:[{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nP2.5, P3.5', deliv:'→ Module 1: D2.3 (Demand-Offer-Price Model); → Module 2: D3.4 (Full Costs Modeling); → Module 6: D3.1 (Automated Dashboard), D3.5 (Annual Outlook)' },
+  { ref:'R6', text:'Produce periodic market intelligence reports, briefs, and dashboards for RMB senior management and policymakers.', layers:[{t:'Institutional',c:'badge-green'},{t:'Financial Intelligence & Analytics',c:'badge-blue'}], phase:'Ph.2–3\nongoing', deliv:'→ Module 1: D2.6 (Quarterly Reports); → Module 6: D3.1 (Automated Dashboard); → Module 7: D4.1 (Company Portal)' },
+  { ref:'R7', text:'Support institutional capacity-building by training RMB staff on mineral market analysis, pricing concepts, and interpretation of market intelligence outputs.', layers:[{t:'Institutional',c:'badge-green'}], phase:'Ph.2–3\nP2.6, P3.6', deliv:'→ Cross-cutting: D2.7 (Training Module 1); → Cross-cutting: D3.6 (Training Module 2 + Handover)' },
 ];
 const tbody = document.getElementById('tor-tbody');
 torData.forEach(r => {
@@ -331,120 +493,515 @@ torData.forEach(r => {
     <td class="resp-text">${r.text}</td>
     <td><div class="layer-badges">${r.layers.map(l=>`<span class="badge ${l.c}" style="font-size:11px;white-space:normal">${l.t}</span>`).join('')}</div></td>
     <td class="resp-phase" style="white-space:pre-line">${r.phase}</td>
-    <td class="resp-deliv">${r.deliv}</td>`;
+    <td class="resp-deliv">${r.deliv.replace(/; →/g, "<br>→")}</td>`;
   tbody.appendChild(tr);
 });
 
 // ── GANTT ──
-// ── GANTT DATA ──
 var ganttData = [
-  {ph:1,hdr:true, label:'PHASE 1 — Diagnostic & Framework', phase:'Phase 1', months:'M1–M2'},
-  {ph:1,hdr:false,label:'P1.1 — Diagnostic & Data Audit',              phase:'Phase 1', months:'M1–M2', s:0,   d:1.5},
-  {ph:1,hdr:false,label:'P1.2 — MI Framework Design',                   phase:'Phase 1', months:'M1–M2', s:0.5, d:1.5},
-  {ph:1,hdr:false,label:'P1.3 — Stakeholder & Inter-Agency Mapping',    phase:'Phase 1', months:'M2',    s:1,   d:1},
-  {ph:2,hdr:true, label:'PHASE 2 — Operationalisation',                 phase:'Phase 2', months:'M3–M6'},
-  {ph:2,hdr:false,label:'P2.1 — Pricing & Valuation System',            phase:'Phase 2', months:'M3–M4', s:2,   d:2},
-  {ph:2,hdr:false,label:'P2.2 — Data Harmonisation Engine',             phase:'Phase 2', months:'M3–M5', s:2,   d:3},
-  {ph:2,hdr:false,label:'P2.3 — Cost Structure Models',                 phase:'Phase 2', months:'M3–M5', s:2.5, d:2.5},
-  {ph:2,hdr:false,label:'P2.4 — Trade & Market Access Analysis',        phase:'Phase 2', months:'M4–M5', s:3,   d:2},
-  {ph:2,hdr:false,label:'P2.5 — First Quarterly Report + Dashboard',    phase:'Phase 2', months:'M5–M6', s:4.5, d:1.5},
-  {ph:2,hdr:false,label:'P2.6 — Staff Training Module 1',               phase:'Phase 2', months:'M5–M6', s:4,   d:2},
-  {ph:3,hdr:true, label:'PHASE 3 — Institutionalisation',               phase:'Phase 3', months:'M7–M12'},
-  {ph:3,hdr:false,label:'P3.1 — AI-Powered Forecasting & Anomaly Detection', phase:'Phase 3', months:'M7–M9',  s:6, d:3},
-  {ph:3,hdr:false,label:'P3.2 — Investor Financial Intelligence Hub',    phase:'Phase 3', months:'M7–M10', s:6, d:4},
-  {ph:3,hdr:false,label:'P3.3 — Mining Finance & ESG Advisory',         phase:'Phase 3', months:'M8–M9',  s:7, d:2},
-  {ph:3,hdr:false,label:'P3.4 — Energy Policy Impact Modelling',        phase:'Phase 3', months:'M8–M9',  s:7, d:2},
-  {ph:3,hdr:false,label:'P3.5 — Annual Market Outlook + Risk Report',   phase:'Phase 3', months:'M10–M11', s:9, d:2},
-  {ph:3,hdr:false,label:'P3.6 — Staff Training Module 2 + Handover',    phase:'Phase 3', months:'M10–M12', s:9, d:3},
+  // PHASE 1
+  {ph:1,hdr:true, label:'PHASE 1 — Diagnostic & Framework'},
+  {ph:1,label:'P1.1 — Diagnostic & Data Audit',                              s:0,   d:1.5},
+  {ph:1,label:'P1.2 — Financial Intelligence Framework Design',              s:0.5, d:1.5},
+  {ph:1,label:'P1.3 — Stakeholder & Inter-Agency Mapping',                   s:1,   d:1},
+  // PHASE 2
+  {ph:2,hdr:true, label:'PHASE 2 — Operationalisation'},
+  {ph:2,label:'P2.1 — Pricing & Valuation System',                           s:2,   d:2},
+  {ph:2,label:'P2.2 — Data Harmonisation Engine',                            s:2,   d:3},
+  {ph:2,label:'P2.3 — Cost Structure Models',                                s:2.5, d:2.5},
+  {ph:2,label:'P2.4 — Trade & Market Access Analysis',                       s:3,   d:2},
+  {ph:2,label:'P2.5 — First Quarterly Report + Dashboard',                   s:4.5, d:1.5},
+  {ph:2,label:'P2.6 — Staff Training Module 1',                              s:4,   d:2},
+  {ph:2,label:'P2.7 — Demand-Offer-Price Dynamic Model',                     s:1,   d:3},
+  {ph:2,label:'P2.8 — Production-Side Markets Analysis',                     s:1,   d:2},
+  {ph:2,label:'P2.9 — Policy Cost Integration Framework',                    s:2,   d:3},
+  {ph:2,label:'P2.10 — Logistics Cost Impact Model ↺',                  s:2,   d:9,  note:'Monthly recalibration M3–M12'},
+  // PHASE 3
+  {ph:3,hdr:true, label:'PHASE 3 — Institutionalisation'},
+  {ph:3,label:'P3.1 — Automated Forecasting & Anomaly Detection',            s:6,   d:3},
+  {ph:3,label:'P3.2 — Investor Financial Intelligence Hub',                  s:6,   d:4},
+  {ph:3,label:'P3.3 — Mining Finance & Responsible Investment',              s:7,   d:2},
+  {ph:3,label:'P3.4 — Energy Policy Impact Modelling',                       s:7,   d:2},
+  {ph:3,label:'P3.5 — Annual Market Outlook + Risk Report',                  s:9,   d:2},
+  {ph:3,label:'P3.6 — Staff Training Module 2 + Handover',                   s:9,   d:3},
+  {ph:3,label:'P3.7 — Market Access & Segmentation Cost Framework',          s:4,   d:3},
+  {ph:3,label:'P3.8 — Full Costs (Financial) Modeling Framework ↺',    s:2,   d:9,  note:'Monthly recalibration M3–M12'},
+  // PHASE 4
+  {ph:4,hdr:true, label:'PHASE 4 — Advanced Modeling & Integration'},
+  {ph:4,label:'P4.1 — Company Financial Intelligence Portal',                s:9,   d:4},
+  {ph:4,label:'P4.2 — Multi-Market Integration Model',                       s:11,  d:4},
+  {ph:4,label:'P4.3 — Financial Flows Model (assets/cashflow/financing)',    s:5,   d:11},
+  {ph:4,label:'P4.4 — Rwanda Mineral Financial Intelligence Platform',       s:14,  d:2},
+  {ph:4,label:'P4.5 — Programme Evaluation & Regional Hub Roadmap',          s:16,  d:1},
 ];
 
-var phColors = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38'};
-var phHdr    = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38'};
+var phColors = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38', 4:'#5B2C6F'};
+var phHdr    = {1:'#1B6CA8', 2:'#B8860B', 3:'#1A5C38', 4:'#5B2C6F'};
+var MONTHS   = 18;
 
-// Build bar HTML for a row: shows month labels inside the bar
-function buildBarCell(row, m) {
-  if (row.hdr) return '<td></td>';
+function buildGanttCell(row, m) {
+  if (row.hdr) return '';
   var active = (m + 1 > row.s) && (m < row.s + row.d);
-  if (!active) return '<td style="padding:4px 2px;height:32px"></td>';
+  if (!active) return '<td style="padding:0 1px;height:30px;border-bottom:1px solid var(--border-lt)"></td>';
   var ls = Math.max(row.s, m);
   var le = Math.min(row.s + row.d, m + 1);
   var leftPct  = (ls - m) * 100;
   var widthPct = (le - ls) * 100;
-  // Show month label (M{n}) inside bar only if bar covers most of the cell (>60%)
-  var showLabel = widthPct >= 60;
+  var showLabel = widthPct >= 55;
   var mLabel = showLabel ? ('M' + (m + 1)) : '';
-  var barHtml = '<div style="'
-    + 'position:relative;height:28px;margin:2px 1px;'
-    + 'background:' + phColors[row.ph] + ';'
-    + 'border-radius:3px;'
-    + 'margin-left:' + leftPct + '%;'
-    + 'width:' + widthPct + '%;'
-    + 'display:flex;align-items:center;justify-content:center;'
-    + 'overflow:hidden;'
-    + '">'
-    + (mLabel ? '<span style="font-size:10px;font-family:var(--font-m);color:rgba(255,255,255,0.9);font-weight:600;letter-spacing:0.5px">' + mLabel + '</span>' : '')
-    + '</div>';
-  return '<td style="padding:0 1px;vertical-align:middle">' + barHtml + '</td>';
+  var isRecalib = row.label && row.label.indexOf('↺') >= 0;
+  var bg = isRecalib
+    ? 'repeating-linear-gradient(45deg,' + phColors[row.ph] + ',' + phColors[row.ph] + ' 4px,rgba(255,255,255,0.18) 4px,rgba(255,255,255,0.18) 8px)'
+    : phColors[row.ph];
+  return '<td style="padding:0 1px;border-bottom:1px solid var(--border-lt);vertical-align:middle">'
+    + '<div style="background:' + bg + ';height:24px;margin:3px 0 3px ' + leftPct + '%;width:' + widthPct + '%;border-radius:3px;display:flex;align-items:center;justify-content:center;overflow:hidden">'
+    + (mLabel ? '<span style="font-size:9px;font-family:monospace;color:rgba(255,255,255,0.95);font-weight:700">' + mLabel + '</span>' : '')
+    + '</div></td>';
 }
 
-// Populate tbody
 var gbody = document.getElementById('gantt-body');
-ganttData.forEach(function(row) {
-  var tr = document.createElement('tr');
-  if (row.hdr) {
-    tr.innerHTML = '<td colspan="13" style="'
-      + 'padding:14px 12px 4px;'
-      + 'font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;'
-      + 'text-transform:uppercase;font-weight:700;'
-      + 'color:' + phHdr[row.ph] + ';'
-      + 'border-bottom:1px solid var(--border-lt);'
-      + '">' + row.label + '</td>';
-  } else {
-    var taskCell = '<td style="padding:6px 12px 6px 4px;font-size:13px;color:var(--text-body);white-space:nowrap;border-bottom:1px solid var(--border-lt)">'
-      + row.label + '</td>';
-    var barCells = '';
-    for (var m = 0; m < 12; m++) {
-      barCells += buildBarCell(row, m);
+if (gbody) {
+  ganttData.forEach(function(row) {
+    var tr = document.createElement('tr');
+    if (row.hdr) {
+      var td = document.createElement('td');
+      td.colSpan = MONTHS + 1;
+      td.style.cssText = 'padding:14px 12px 4px;font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:' + phHdr[row.ph] + ';border-bottom:2px solid ' + phHdr[row.ph] + ';background:rgba(0,0,0,0.02)';
+      td.textContent = row.label;
+      tr.appendChild(td);
+    } else {
+      var cells = '<td style="padding:5px 10px 5px 4px;font-size:12px;color:var(--text-body);white-space:nowrap;border-bottom:1px solid var(--border-lt);min-width:240px">'
+        + row.label
+        + (row.note ? '<br><span style="font-size:10px;color:var(--text-muted);font-style:italic">' + row.note + '</span>' : '')
+        + '</td>';
+      for (var m = 0; m < MONTHS; m++) { cells += buildGanttCell(row, m); }
+      tr.innerHTML = cells;
     }
-    tr.innerHTML = taskCell + barCells;
-  }
-  gbody.appendChild(tr);
-});
-
-// Init DataTable with responsive
-if (typeof $ !== 'undefined' && $.fn.DataTable) {
-  $('#gantt-dt').DataTable({
-    responsive: true,
-    paging: false,
-    searching: false,
-    info: false,
-    ordering: false,
-    columnDefs: [
-      {targets: 0, responsivePriority: 1},
-      {targets: [1,2,3,4,5,6], responsivePriority: 2},
-      {targets: [7,8,9,10,11,12], responsivePriority: 3}
-    ]
+    gbody.appendChild(tr);
   });
 }
 
+
 // ── DELIVERABLES ──
-const delivs = [
-  {ph:1,cls:'p1',name:'Diagnostic & Gap Report',smart:'Covers all data source types; quantifies % coverage per mineral; 10 priority gaps with impact scores',time:'End M2',out:'Establishes financial intelligence baseline'},
-  {ph:1,cls:'p1',name:'MI Framework Design Document',smart:'KPI architecture, reporting calendar, governance structure; 5 inter-agency MoU drafts',time:'End M2',out:'Governance blueprint for the function'},
-  {ph:2,cls:'p2',name:'Pricing Reference Guide (3Ts, Gold)',smart:'MTU-based methodology; 4 minerals; tested against 24 months of export data',time:'End M4',out:'Strengthens Rwanda\'s negotiating position'},
-  {ph:2,cls:'p2',name:'Sector Cost Structure Models',smart:'Global benchmark, Rwanda average, shareable company template; energy cost as variable',time:'End M5',out:'Enables fair royalty calibration'},
-  {ph:2,cls:'p2',name:'First Quarterly Report + Dashboard',smart:'All 4 minerals; 15+ KPIs; executive brief for Director General',time:'End M6',out:'Live financial intelligence product for RMB'},
-  {ph:3,cls:'p3',name:'AI Market Financial Intelligence Dashboard',smart:'Price forecasting; anomaly detection; scenario simulator; explainable outputs',time:'End M9',out:'RMB becomes a data-driven regulator'},
-  {ph:3,cls:'p3',name:'Investor Financial Intelligence Hub',smart:'3 audience tiers; ESG scoring; public + authenticated access; co-branded RDB',time:'End M10',out:'Attracts FDI; enables local bank financing'},
-  {ph:3,cls:'p3',name:'Annual Market Outlook Report',smart:'3-year scenarios per mineral; competitive positioning scorecard; peer-reviewed',time:'End M11',out:'Strategic planning tool for RMB & GoR'},
-  {ph:3,cls:'p3',name:'Handover Manual + Staff Certification',smart:'2 training modules; 100% staff trained; formal sign-off by DG',time:'End M12',out:'Fully sustainable independent function'},
+// ── MODULE DELIVERABLES ──────────────────────────────────────────────────────
+var modules = [
+  {
+    id:'mod0', icon:'🔍', phase:'Phase 1 — M1–M2', phaseColor:'#1B6CA8',
+    title:'Module 0 — Foundations & Framework',
+    summary:'The analytical and institutional foundation for the entire financial intelligence programme. Includes the first working tool delivered to RMB at end of Month 2.',
+    deliverables:[
+      {
+        id:'D1.1', name:'Sector Data Diagnostic Report',
+        what:'Inventory of all existing data sources across RMB, RRA, and mining companies. Documents data gaps, quality scores, and coverage by mineral and company type.',
+        scope:'All active mining companies in Rwanda. All 6 data source categories (company reports, export declarations, financial statements, payroll data, production records, market price references).',
+        frequency:'One report — delivered End M2.',
+        measures:'Covers 100% of active companies; quantifies % data coverage per mineral; lists minimum 10 priority data gaps with impact scores; maps 5+ inter-agency data-sharing opportunities.',
+        tor:'R1, R6', principle:'Company-Centric',
+        outcome:'Establishes the financial intelligence baseline and identifies quick wins for data quality improvement.'
+      },
+      {
+        id:'D1.2', name:'Financial Intelligence Framework Design Document',
+        what:'Methodology document defining the governance structure, indicator architecture (15–20 key indicators), reporting calendar, data collection protocols, and 5 draft inter-agency data-sharing agreements.',
+        scope:'RMB + RRA + RDB + MINECOFIN + REG/REMA.',
+        frequency:'One document — delivered End M2, signed off by RMB CEO.',
+        measures:'Defines 15–20 measurable indicators; specifies reporting frequency for each intelligence product; includes 5 draft inter-agency agreements ready for legal review.',
+        tor:'R6, R7', principle:'Company-Centric + Institutional',
+        outcome:'Governance blueprint for the financial intelligence function — ensures sustainability beyond the engagement.',
+        demo:false
+      },
+      {
+        id:'D1.3', name:'Module 1 — Current Financial Intelligence Tool',
+        what:'First working analytical tool covering: (1) export volume and value trends by mineral over 10 years, (2) price gap analysis comparing Rwanda declared export prices to London Metal Exchange and London Bullion Market Association benchmarks, (3) human resources and revenue distribution analysis by salary band.',
+        scope:'All exporting companies. 4 mineral categories: cassiterite, coltan, wolframite, gold. Historical data 2015–2024.',
+        frequency:'Working tool delivered End M2. Monthly data updates from M3 onwards.',
+        measures:'Processes full 10-year dataset; generates price gap analysis for all 4 minerals; salary band distribution for all declared employees; downloadable outputs per company and sector aggregate.',
+        tor:'R1, R2, R5', principle:'Company-Centric + Dynamic Markets',
+        outcome:'RMB has its first data-driven financial intelligence tool operational at end of Month 2.',
+        demo:true
+      }
+    ]
+  },
+  {
+    id:'mod1', icon:'📦', phase:'Phase 2 — M2–M6', phaseColor:'#B8860B',
+    title:'Module 1 — Export & Price Financial Intelligence',
+    summary:'Deep analysis of Rwanda\'s mineral export performance vs. international benchmarks. Core of the demand-offer-price dynamic modeling.',
+    deliverables:[
+      {
+        id:'D2.1', name:'Mineral Pricing Reference Guide',
+        what:'Methodology explaining pricing mechanisms for Rwanda\'s key minerals: metric tonne unit-based pricing, treatment charges, refining charges, payable percentages, moisture and penalty deductions, calibrated against London Metal Exchange and London Bullion Market Association benchmarks.',
+        scope:'Cassiterite (tin), coltan (tantalum), wolframite (tungsten), gold. All exporting companies.',
+        frequency:'One reference guide — delivered End M4. Updated annually.',
+        measures:'Covers 4 minerals; tested against 24 months of historical export declarations; pricing model flags shipments declared below benchmark threshold.',
+        tor:'R2', principle:'Dynamic Markets + Full Costs Modeling',
+        outcome:'Strengthens Rwanda\'s negotiating position with international traders and smelters.'
+      },
+      {
+        id:'D2.3', name:'Demand-Offer-Price Dynamic Model',
+        what:'Analytical framework modeling the three interactive market dimensions on both selling side (mineral exports) and production side (energy, raw materials, investment capital, machinery). Includes investment timing analysis relative to demand-offer gaps and 4 monthly market update briefs.',
+        scope:'4 mineral categories. Production-side markets: energy, key consumables, capital markets.',
+        frequency:'Working model End M5. Monthly market update briefs from M3 (4 briefs by End M6).',
+        measures:'Monthly briefs cover all 4 minerals; demand-offer gap quantified with investment signal threshold; production-side cost drivers tracked.',
+        tor:'R1, R5', principle:'Dynamic Markets',
+        outcome:'Provides the analytical framework for understanding market dynamics — on both selling and production sides.'
+      },
+      {
+        id:'D2.6', name:'First Quarterly Financial Intelligence Report',
+        what:'Comprehensive quarterly report: price trends for all 4 minerals, demand-offer balance analysis, Rwanda sector performance versus international benchmarks, top 5 risks and opportunities, 3-month outlook.',
+        scope:'Sector-wide. All active exporting companies (anonymised). 4 mineral categories.',
+        frequency:'First report End M6. Then quarterly (4 reports per year). Executive summary distributed to RMB CEO, relevant ministries, and inter-agency partners.',
+        measures:'Covers all 4 minerals; minimum 15 indicators tracked; executive summary suitable for CEO and inter-ministerial distribution.',
+        tor:'R1, R5, R6', principle:'Dynamic Markets + Company-Centric',
+        outcome:'RMB\'s first published mineral financial intelligence product — establishes credibility as a data-driven regulator.'
+      }
+    ]
+  },
+  {
+    id:'mod2', icon:'💰', phase:'Phase 2–3 — M3–M12', phaseColor:'#1A5C38',
+    title:'Module 2 — Cost Structure & Full Costs Modeling',
+    summary:'Complete financial cost modeling framework — from production benchmarks to policy compliance costs — continuously recalibrated to reflect live market and geopolitical conditions.',
+    deliverables:[
+      {
+        id:'D2.2', name:'Sector Cost Structure Models',
+        what:'Three-level cost modeling: (a) international benchmarks for comparable sub-Saharan African mining operations, (b) Rwanda sector average by mining type (artisanal, semi-industrial, industrial), (c) shareable company-level template.',
+        scope:'(a) Global: top 10 comparable producers. (b) Rwanda: all operating companies by category. (c) Company template: piloted with minimum 3 companies across extracting, processing, and exporting categories.',
+        frequency:'Delivered End M5. Company templates distributed to all active companies. Annual update.',
+        measures:'3 mining type categories modeled; energy cost as explicit variable with sensitivity analysis; company template validated with minimum 3 pilot companies.',
+        tor:'R2, R5', principle:'Full Costs Modeling',
+        outcome:'Enables fair royalty calibration, investment viability screening, and evidence-based fiscal policy.'
+      },
+      {
+        id:'D2.5', name:'Policy Cost Integration Framework',
+        what:'Methodology for quantifying both direct costs (taxes, duties, royalties) and indirect costs (certification, reporting, environmental compliance obligations) imposed on mining companies by applicable policies.',
+        scope:'All active mining and export policies applicable to Rwanda\'s 4 key minerals.',
+        frequency:'One framework document — delivered End M6. Updated when significant policy changes occur.',
+        measures:'Minimum 15 policies mapped; direct and indirect costs quantified per policy; impact on company-level unit costs calculated.',
+        tor:'R4, R5', principle:'Full Costs Modeling',
+        outcome:'Enables RMB to assess the full financial impact of regulatory decisions on company viability.'
+      },
+      {
+        id:'D3.4', name:'Full Costs (Financial) Modeling Framework',
+        what:'Integrated financial modeling framework capturing all cost dimensions at company level: production costs, policy compliance, logistics, market access, and financial flows (long-term asset depreciation, inventory financing, receivables, payables, cashflow optimization, financing costs). Continuously recalibrated monthly during disruption period.',
+        scope:'All active mining companies by category — extracting, processing, exporting, integrated operators.',
+        frequency:'Framework delivered End M9. Monthly recalibration M3–M12 (9 monthly updates). Annual comprehensive update.',
+        measures:'Covers all 5 cost dimensions; company-level models validated with minimum 5 companies; monthly recalibration delivered within 10 working days of month-end.',
+        tor:'R2, R4, R5', principle:'Full Costs Modeling + Dynamic Markets',
+        outcome:'The most comprehensive financial intelligence product — enables every stakeholder to understand the true economics of Rwanda\'s mining sector.'
+      }
+    ]
+  },
+  {
+    id:'mod3', icon:'🚢', phase:'Phase 2–3 — M3–M12', phaseColor:'#C55A11',
+    title:'Module 3 — Logistics & Market Access',
+    summary:'Quantitative modeling of logistics costs and market access conditions — two dimensions that directly determine effective export price and competitiveness, continuously recalibrated during geopolitical disruption cycles.',
+    deliverables:[
+      {
+        id:'D2.4', name:'Logistics Cost Impact Model',
+        what:'Quantitative model of logistics costs affecting Rwanda\'s mineral export flows — freight rates, insurance premiums, transit times, port access costs — and their impact on effective export prices. Continuously recalibrated monthly given ongoing geopolitical disruptions (6–9 month disruption cycles).',
+        scope:'All mineral export routes from Rwanda to top 5 buyer countries per mineral.',
+        frequency:'Initial model End M4. Monthly recalibration reports M3–M12 (9 monthly updates).',
+        measures:'Logistics cost quantified as percentage of declared export value per route; disruption impact measured against 2022 baseline; monthly update delivered within 5 working days of month-end.',
+        tor:'R3, R5', principle:'Full Costs Modeling',
+        outcome:'Quantifies the real cost of logistics on export profitability — critical during current Middle East disruption cycle.'
+      },
+      {
+        id:'D3.2', name:'Market Access & Segmentation Cost Framework',
+        what:'Comprehensive mapping of market access conditions and costs — licenses, minimum/maximum transaction volumes, quality certifications (physical, chemical, concentration standards), product origin rules, sanctions and business restrictions, accepted payment currencies and terms.',
+        scope:'Top 10 buyer markets for each of Rwanda\'s 4 key minerals.',
+        frequency:'One framework document — delivered End M8. Annual update.',
+        measures:'Minimum 10 buyer markets mapped per mineral; access cost quantified in USD per tonne for each condition category; payment condition risk scored.',
+        tor:'R3, R4', principle:'Full Costs Modeling',
+        outcome:'Defines who can access which markets under which conditions — the hidden cost layer that most proposals ignore.'
+      }
+    ]
+  },
+  {
+    id:'mod4', icon:'👥', phase:'Phase 1–2 — M2–M6', phaseColor:'#1B6CA8',
+    title:'Module 4 — Human Resources & Revenue Distribution',
+    summary:'Analysis of how mining revenues distribute across the workforce — salary band structure, payroll composition, social contributions, and added-value waterfall from export revenue to company residual margin.',
+    deliverables:[
+      {
+        id:'D1.3b', name:'Human Resources & Revenue Distribution Tool',
+        what:'Analytical tool covering: (1) employee distribution by dynamic salary band (thresholds reconfigurable per year), (2) gross payroll share by band, (3) income tax and social security contributions by band, (4) added-value waterfall showing how each unit of export revenue distributes across payroll, taxes, social security, operating costs, and residual margin.',
+        scope:'All active mining companies with declared payroll data. All employee categories. Salary bands dynamic per year to reflect minimum wage changes.',
+        frequency:'Tool delivered End M2 as part of Module 0. Annual salary band reconfiguration. Monthly data updates from M3.',
+        measures:'Covers all declared employees across all active companies; salary band thresholds configurable per year; waterfall chart produced for sector aggregate and by company category.',
+        tor:'R5, R6', principle:'Company-Centric + Full Costs Modeling',
+        outcome:'Reveals how Rwanda\'s mining sector distributes value across its workforce — informs HR policy, investment incentive design, and socio-economic impact assessment.',
+        demo:true
+      }
+    ]
+  },
+  {
+    id:'mod5', icon:'⚡', phase:'Phase 3–4 — M7–M18', phaseColor:'#B8860B',
+    title:'Module 5 — Energy Financial Intelligence',
+    summary:'Analysis of energy costs, carbon intensity, and competitiveness scenarios across the energy-mining nexus. Includes the clean-energy premium opportunity quantification.',
+    deliverables:[
+      {
+        id:'D3.4e', name:'Energy Financial Intelligence Module',
+        what:'Dedicated analytical layer covering: energy cost as percentage of total operating costs by company and mining type, energy source mix per operation (grid vs. diesel vs. renewable), carbon intensity per tonne of mineral produced, and 36-scenario competitiveness matrix (3 energy price levels × 3 energy mix configurations × 4 mineral categories).',
+        scope:'All active mining companies with declared energy consumption data. 4 mineral categories. 3 mining types.',
+        frequency:'Module delivered End M9. Monthly energy cost tracking M7–M18. Annual competitiveness matrix update.',
+        measures:'36 scenarios modeled; carbon intensity below 0.15 kgCO₂e/kWh equivalent qualifies for clean-premium; monthly energy cost tracking per company; clean-premium revenue opportunity quantified in USD.',
+        tor:'R4, R5', principle:'Full Costs Modeling + Dynamic Markets',
+        outcome:'Positions Rwanda to capture 10–20% price premiums from European and North American buyers requiring low-carbon certified minerals.',
+        link:'energy.html'
+      }
+    ]
+  },
+  {
+    id:'mod6', icon:'🤖', phase:'Phase 3 — M7–M12', phaseColor:'#1A5C38',
+    title:'Module 6 — Automated Financial Intelligence & Forecasting',
+    summary:'Automated intelligence systems replacing manual analysis with continuous monitoring, anomaly detection, and forward-looking scenario modeling.',
+    deliverables:[
+      {
+        id:'D3.1', name:'Automated Financial Intelligence Dashboard',
+        what:'Real-time monitoring dashboard with: automated price forecasting for all 4 minerals, anomaly detection in company declarations, scenario simulation tool (policy-makers input assumptions and model generates impact scenarios), and early warning alerts when any tracked indicator crosses pre-defined thresholds. All outputs include plain-language interpretation designed for non-technical regulatory decision-making.',
+        scope:'All 4 minerals. All active companies. 5 production-side cost drivers.',
+        frequency:'Dashboard live End M9. Weekly automated alerts. Monthly scenario updates.',
+        measures:'Price forecast accuracy tested against 12-month holdout data; anomaly detection reduces manual review workload by minimum 50%; all outputs include plain-language interpretation.',
+        tor:'R1, R5, R6', principle:'Dynamic Markets + Company-Centric',
+        outcome:'Transforms RMB from a periodic reporting regulator into a continuous real-time financial intelligence authority.'
+      },
+      {
+        id:'D3.5', name:'Annual Mineral Market Outlook Report',
+        what:'Rwanda\'s comprehensive annual mineral market outlook: price performance review, demand-offer evolution, trade flow changes, investment trends, Rwanda competitive positioning scorecard, 3-year forward scenarios (base, upside, downside) per mineral, priority recommendations for RMB and Government of Rwanda.',
+        scope:'All 4 key minerals. Rwanda versus top 5 competing supply countries. 3-year forward horizon.',
+        frequency:'Annual — first edition End M11. Public executive summary + restricted full report for RMB and government stakeholders.',
+        measures:'3 scenarios per mineral with quantified probability weightings; minimum 10 policy recommendations; peer-reviewed by 2 external mineral economists before publication.',
+        tor:'R1, R5, R6', principle:'Dynamic Markets + Full Costs Modeling',
+        outcome:'Strategic planning tool for RMB, Government of Rwanda, and international investors — Rwanda\'s first independent mineral market outlook publication.'
+      }
+    ]
+  },
+  {
+    id:'mod7', icon:'🏢', phase:'Phase 3–4 — M9–M17', phaseColor:'#5B2C6F',
+    title:'Module 7 — Company Intelligence Portal & Financial Flows',
+    summary:'Company-facing financial intelligence services — individual dashboards, mining finance advisory, and complete financial flows modeling from export revenue to financing costs.',
+    deliverables:[
+      {
+        id:'D3.3', name:'Mining Finance & Responsible Investment Report',
+        what:'Analysis of mining finance trends — offtake-linked financing, streaming and royalty models, responsible sourcing-linked instruments, green bonds. Includes offtake agreement assessment framework and partnership red-flags guide for Government of Rwanda negotiators.',
+        scope:'Rwanda\'s mining sector. International comparators (top 5 competing supply countries).',
+        frequency:'One comprehensive report — delivered End M9. Quarterly finance intelligence briefs thereafter.',
+        measures:'Minimum 5 financing instruments assessed for Rwanda eligibility; offtake assessment framework covers 8 contractual risk dimensions; red-flags guide reviewed by RMB legal team.',
+        tor:'R4', principle:'Full Costs Modeling + Company-Centric',
+        outcome:'Protects Rwanda\'s long-term fiscal interests in mineral sector negotiations — eliminates information asymmetry.'
+      },
+      {
+        id:'D4.1', name:'Company Financial Intelligence Portal',
+        what:'Dedicated portal allowing individual mining companies to access their own financial intelligence — price gap versus benchmark, cost structure versus sector average, data quality score, market access cost profile — without seeing other companies\' raw data.',
+        scope:'All active mining companies with valid RMB license. 4 mineral categories.',
+        frequency:'Portal launched End M14. Monthly data refresh per company.',
+        measures:'All active licensed companies onboarded; data remains confidential (only sector benchmarks visible cross-company); minimum 5 intelligence indicators per company dashboard.',
+        tor:'R6, R7', principle:'Company-Centric',
+        outcome:'Makes financial intelligence directly actionable at company level — the ultimate expression of company-centric design.'
+      },
+      {
+        id:'D4.3', name:'Financial Flows Model',
+        what:'Company-level financial flows modeling: long-term asset investment and depreciation cycles (linked to production scale and energy consumption), inventory and stock management (impacted by logistics constraints), receivables and payables (linked to payment conditions and market access terms), cashflow forecasting, and financing cost optimization.',
+        scope:'All company categories — extracting, processing, exporting, integrated operators. Individual company models plus sector aggregates.',
+        frequency:'Framework delivered End M12 (starts M6). Individual company models M13–M17. Annual update cycle from M18.',
+        measures:'Covers all 5 financial flow dimensions; individual models built for minimum 8 companies across all categories; cashflow model validated against 3 years of historical data.',
+        tor:'R4, R5', principle:'Full Costs Modeling + Company-Centric',
+        outcome:'Completes the financial intelligence picture — from market signal to company balance sheet and financing structure.'
+      }
+    ]
+  },
+  {
+    id:'mod8', icon:'🌍', phase:'Phase 4 — M12–M18', phaseColor:'#5B2C6F',
+    title:'Module 8 — Multi-Market Integration & Full Platform',
+    summary:'The culmination of the programme — full integration of all modules into a unified platform serving all stakeholders, plus the strategic roadmap for Rwanda\'s regional hub ambition.',
+    deliverables:[
+      {
+        id:'D4.2', name:'Multi-Market Integration Model',
+        what:'Integrated model linking Rwanda\'s mineral selling-side markets with production-side markets — modeling how energy price shocks, machinery supply constraints, capital market conditions, and raw material costs interact with and impact export competitiveness and pricing.',
+        scope:'4 mineral categories. Production-side: energy (3 scenarios), machinery and assets (2 categories), capital markets (local and international).',
+        frequency:'Model delivered End M16. Quarterly scenario updates.',
+        measures:'Minimum 12 cross-market interaction scenarios modeled; quantified impact of production-side shocks on export price competitiveness; validated against 2022–2024 historical disruption data.',
+        tor:'R1, R4, R5', principle:'Dynamic Markets + Full Costs Modeling',
+        outcome:'Rwanda\'s most comprehensive mineral financial intelligence model — no comparable tool exists in the region.'
+      },
+      {
+        id:'D4.4', name:'Rwanda Mineral Financial Intelligence Platform — Full Integration',
+        what:'Complete integrated platform bringing together all modules: export intelligence, price gap analysis, human resources and revenue distribution, automated forecasting dashboard, investor intelligence hub, company portal, multi-market integration model, and financial flows model — serving all stakeholders simultaneously from a single unified platform.',
+        scope:'All stakeholders: RMB leadership, individual mining companies, RRA, RDB, MINECOFIN, local financial institutions, international investors.',
+        frequency:'Full platform launch End M17. Continuous operation thereafter. Minimum 3 months parallel operation with manual processes before full handover.',
+        measures:'All modules operational; all stakeholder tiers accessible; minimum 99% uptime during parallel operation; formal acceptance sign-off by RMB CEO.',
+        tor:'R1–R7 (all)', principle:'All 3 Principles',
+        outcome:'The ultimate deliverable — Rwanda\'s first fully integrated mineral financial intelligence platform.'
+      },
+      {
+        id:'D4.5', name:'Programme Evaluation & Regional Hub Roadmap',
+        what:'Comprehensive evaluation of the 18-month programme plus strategic roadmap for positioning RMB as a regional mineral financial intelligence hub — offering data products and advisory services to neighbouring regulators.',
+        scope:'Full programme scope. Regional benchmarking against Tanzania, Uganda, Democratic Republic of Congo, Zambia.',
+        frequency:'One report — delivered End M18.',
+        measures:'Evaluation covers all 18 deliverables; regional hub roadmap includes minimum 3 concrete partnership opportunities with quantified revenue potential; presented to RMB CEO and relevant government ministries.',
+        tor:'R6, R7', principle:'All 3 Principles',
+        outcome:'Positions RMB as the East Africa Community\'s leading mineral financial intelligence authority.'
+      }
+    ]
+  },
+  {
+    id:'modX', icon:'🎓', phase:'Phase 2–3 — M5–M12', phaseColor:'#1A5C38',
+    title:'Cross-Cutting — Capacity Building & Institutional',
+    summary:'Training programmes serving RMB staff, selected mining company personnel, and key inter-agency partner staff — ensuring the financial intelligence function operates independently after the engagement.',
+    deliverables:[
+      {
+        id:'D2.7', name:'Training Module 1 — Financial Intelligence Fundamentals',
+        what:'Training programme on mineral market analysis fundamentals: pricing mechanisms, reading market data, understanding demand-offer-price dynamics, interpreting financial intelligence outputs, data quality principles.',
+        scope:'RMB technical and analytical staff. Selected staff from mining companies (extracting, processing, and exporting companies — minimum 2 staff per company). Relevant staff from inter-agency partners (RRA, RDB, MINECOFIN).',
+        frequency:'Delivered M5–M6. Minimum 2 full-day sessions. Training materials retained permanently for future onboarding.',
+        measures:'100% of target RMB staff complete Module 1; post-training assessment administered; training materials documented; minimum 10 company staff trained.',
+        tor:'R7', principle:'Company-Centric + Institutional',
+        outcome:'Builds the human capital foundation for a sustainable financial intelligence function across all stakeholder organisations.'
+      },
+      {
+        id:'D3.6', name:'Training Module 2 — Advanced Analytics & Institutional Handover',
+        what:'Advanced training: operating the data harmonisation engine, running the automated dashboard, maintaining the investor platform, producing quarterly reports independently. Complete technical documentation package and formal institutional handover signed off by RMB CEO.',
+        scope:'All RMB target staff. Selected staff from mining companies and inter-agency partners. All tools and systems built during the engagement.',
+        frequency:'Training M10–M11. Formal handover sign-off End M12.',
+        measures:'100% of staff complete Module 2; staff independently produce minimum 1 quarterly report before End M12; all documentation reviewed and approved; formal sign-off by RMB CEO.',
+        tor:'R7', principle:'Company-Centric + Institutional',
+        outcome:'Guarantees that the financial intelligence function operates fully independently — no ongoing dependency on external consultants.'
+      }
+    ]
+  }
 ];
-const dgrid=document.getElementById('deliv-grid');
-delivs.forEach(d=>{
-  const el=document.createElement('div'); el.className=`dc ${d.cls}`;
-  el.innerHTML=`<div class="dc-phase">Phase ${d.ph}</div><div class="dc-name">${d.name}</div><div class="dc-smart">${d.smart}</div><div class="dc-footer"><span class="dc-time">${d.time}</span><span class="dc-out">${d.out}</span></div>`;
-  dgrid.appendChild(el);
-});
+
+// Build module cards
+var mcGrid = document.getElementById('module-cards-grid');
+if (mcGrid) {
+  modules.forEach(function(mod, mi) {
+    var card = document.createElement('div');
+    card.style.cssText = 'border:1.5px solid var(--border-md);border-left:5px solid '+mod.phaseColor+';border-radius:var(--radius);overflow:hidden;background:#FFFFFF;box-shadow:var(--shadow-sm)';
+
+    // Header row
+    var header = '<div style="display:flex;align-items:center;gap:16px;padding:18px 24px;cursor:pointer;background:var(--surface-1)" onclick="toggleModule('+mi+')">'
+      + '<div style="font-size:26px">'+mod.icon+'</div>'
+      + '<div style="flex:1">'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:'+mod.phaseColor+';margin-bottom:3px">'+mod.phase+'</div>'
+      + '<div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--text-head)">'+mod.title+'</div>'
+      + '<div style="font-size:13px;color:var(--text-muted);margin-top:3px">'+mod.summary+'</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:10px">'
+      + '<span style="background:'+mod.phaseColor+';color:#fff;font-family:var(--font-m);font-size:11px;padding:3px 10px;border-radius:12px">'+mod.deliverables.length+' deliverable'+(mod.deliverables.length>1?'s':'')+'</span>'
+      + '<div id="mod-arrow-'+mi+'" style="font-size:16px;color:'+mod.phaseColor+';transition:transform 0.25s">▸</div>'
+      + '</div>'
+      + '</div>';
+
+    // Deliverables panel
+    var panel = '<div id="mod-panel-'+mi+'" style="display:none;padding:16px 24px 20px;border-top:1px solid var(--border-lt)">'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px">';
+
+    mod.deliverables.forEach(function(d) {
+      var demoBtn = d.demo ? '<a href="demo.html" class="btn btn-green" style="font-size:12px;padding:6px 14px;margin-top:8px;display:inline-flex">▶ See Live Demo</a>' : '';
+      var linkBtn = d.link ? '<a href="'+d.link+'" class="btn btn-outline" style="font-size:12px;padding:6px 14px;margin-top:8px;display:inline-flex">⚡ See Energy Module</a>' : '';
+      panel += '<div style="background:var(--surface-1);border:1px solid var(--border-lt);border-top:3px solid '+mod.phaseColor+';border-radius:6px;padding:18px">'
+        + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:'+mod.phaseColor+';margin-bottom:6px">'+d.id+'</div>'
+        + '<div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text-head);margin-bottom:12px">'+d.name+'</div>'
+        + '<div style="display:flex;flex-direction:column;gap:8px;font-size:13px">'
+        + '<div><strong style="color:var(--text-head)">What: </strong><span style="color:var(--text-muted)">'+d.what+'</span></div>'
+        + '<div><strong style="color:var(--text-head)">Scope: </strong><span style="color:var(--text-muted)">'+d.scope+'</span></div>'
+        + '<div><strong style="color:var(--text-head)">Frequency: </strong><span style="color:var(--text-muted)">'+d.frequency+'</span></div>'
+        + '<div><strong style="color:var(--text-head)">Measures: </strong><span style="color:var(--text-muted)">'+d.measures+'</span></div>'
+        + '</div>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">'
+        + '<span style="background:var(--blue-lt);color:var(--blue);border:1px solid #B8D4EE;font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px">ToR: '+d.tor+'</span>'
+        + '<span style="background:var(--g-pale);color:var(--g-deep);border:1px solid var(--g-lt);font-size:11px;font-weight:600;padding:3px 9px;border-radius:12px">'+d.principle+'</span>'
+        + '</div>'
+        + '<div style="margin-top:10px;font-size:12px;font-style:italic;color:var(--g-deep);border-top:1px solid var(--border-lt);padding-top:8px">→ '+d.outcome+'</div>'
+        + demoBtn + linkBtn
+        + '</div>';
+    });
+
+    panel += '</div></div>';
+    card.innerHTML = header + panel;
+    mcGrid.appendChild(card);
+  });
+}
+
+function toggleModule(i) {
+  var panel = document.getElementById('mod-panel-'+i);
+  var arrow = document.getElementById('mod-arrow-'+i);
+  if (!panel) return;
+  var open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+
+// ── FI PRINCIPLES ─────────────────────────────────────────────────────────────
+var principles = [
+  {
+    num:'01', icon:'🏢', color:'var(--g-deep)', bg:'var(--g-pale)',
+    title:'Company as the Unit of Analysis',
+    short:'Financial intelligence must start from company-level data and aggregate upward — never the reverse.',
+    detail:'The company is the fundamental unit that carries out business activities on a daily basis. Any financial intelligence framework built top-down — from aggregated sector data without grounding in company realities — produces distorted signals. Critically: any policy that does not take into account companies\' interests and their business environments leads towards failure. Effective financial intelligence must serve companies, regulators, investors and policymakers simultaneously — each receiving the insights relevant to their decisions.'
+  },
+  {
+    num:'02', icon:'🚲', color:'var(--gold)', bg:'var(--gold-pale)',
+    title:'Markets as Dynamic Systems (Demand–Offer–Price)',
+    short:'Markets must be analysed across three interactive dimensions on both selling and production sides.',
+    detail:'The demand-offer-price triangle is a continuously self-adjusting system. Confrontation of demand and offer determines price, but price signals in return influence demand and offer. Investment timing relative to demand-offer gaps is the central financial intelligence challenge. Market equilibrium is like the bicycle 🚲 — without movement one falls, but excessive speed without control leads to a crash. Critically, markets exist on both the selling side (minerals) AND the production side (energy, raw materials, investment capital, machinery).'
+  },
+  {
+    num:'03', icon:'📜', color:'var(--blue)', bg:'var(--blue-lt)',
+    title:'Policy Costs Integration',
+    short:'All policies and their costs — direct and indirect — must be integrated in financial models.',
+    detail:'Policies have a direct impact on one market dimension and indirect impacts on others. Unless for taxes and duties (which are directly financial), other policies create indirect costs measurable as additional direct and indirect expenses for market actors to comply. These include environmental regulations, certification requirements, reporting obligations, labour standards, and trade policy compliance. Financial intelligence must quantify these compliance costs and model their impact on market dynamics.'
+  },
+  {
+    num:'04', icon:'🚢', color:'#C55A11', bg:'#FCE4D6',
+    title:'Logistics as a Market Force',
+    short:'Logistics costs and constraints have a non-negligeable impact on market dynamics.',
+    detail:'Logistics directly impact business flows — volumes of demand and offer, durations between end of production and effective delivery to the client. If logistics constraints persist over relatively long periods, they may lead to demand or offer destruction with lasting impact on market equilibrium. In the current geopolitical context — Middle East conflicts disrupting shipping lanes, US-China tensions affecting freight networks — logistics modeling is an urgent active analytical requirement. Models must be continuously recalibrated as disruption patterns evolve over 6–9 month cycles.'
+  },
+  {
+    num:'05', icon:'📐', color:'#5B2C6F', bg:'#F3E8FF',
+    title:'Full Costs (Financial) Modeling',
+    short:'Complete financial modeling integrates market access costs, financial flows, and long-term asset dynamics.',
+    detail:'Market segmentation determines who and under which conditions an actor can access a given market — implicitly this is the cost of access. All markets are regulated: licenses, volume constraints, certifications, quality requirements, product origin rules, sanctions and business restrictions, payment conditions all carry costs. These must be modeled alongside: long-term assets and investment dynamics, inventory and stock management, receivables and payables, cashflow management, and financial costs modeling. This constitutes the complete financial intelligence picture — from market signal to company balance sheet.'
+  }
+];
+
+var plist = document.getElementById('principles-list');
+if (plist) {
+  principles.forEach(function(p, i) {
+    var card = document.createElement('div');
+    card.style.cssText = 'background:'+p.bg+';border:1px solid '+p.color+';border-left:4px solid '+p.color+';border-radius:var(--radius);overflow:hidden';
+    card.innerHTML = '<div style="display:flex;align-items:center;gap:16px;padding:16px 22px;cursor:pointer" onclick="togglePrinciple('+i+')">'
+      + '<div style="font-size:20px">'+p.icon+'</div>'
+      + '<div style="flex:1">'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:'+p.color+';margin-bottom:2px">Principle '+p.num+'</div>'
+      + '<div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--text-head)">'+p.title+'</div>'
+      + '<div style="font-size:13px;color:var(--text-muted);margin-top:3px">'+p.short+'</div>'
+      + '</div>'
+      + '<div id="p-arrow-'+i+'" style="font-size:16px;color:'+p.color+';transition:transform 0.25s">▸</div>'
+      + '</div>'
+      + '<div id="p-detail-'+i+'" style="display:none;padding:0 22px 18px 58px;font-size:13px;color:var(--text-body);line-height:1.75;border-top:1px solid rgba(0,0,0,0.06)">'+p.detail+'</div>';
+    plist.appendChild(card);
+  });
+}
+
+function togglePrinciple(i) {
+  var d = document.getElementById('p-detail-'+i);
+  var a = document.getElementById('p-arrow-'+i);
+  if (!d) return;
+  var open = d.style.display !== 'none';
+  d.style.display = open ? 'none' : 'block';
+  if (a) a.style.transform = open ? '' : 'rotate(90deg)';
+}
+
+function toggleTriangle(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  ['tri1','tri2','tri3'].forEach(function(t){
+    var e = document.getElementById(t);
+    if (e) e.style.display = 'none';
+  });
+  if (!isOpen) el.style.display = 'block';
+}
 
 // ── AGENCIES ──
 const agencies=[
