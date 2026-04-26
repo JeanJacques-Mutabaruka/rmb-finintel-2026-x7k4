@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mineral Tokenisation — RMB-FinIntel</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+    /* ── PAGE-SPECIFIC STYLES ───────────────────────────────────── */
+
+    /* Geopolitical context banner */
+    .geo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .geo-card {
+      background: #FFFFFF;
+      border: 1px solid #F4B8B8;
+      border-top: 3px solid var(--red);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .geo-card-icon { font-size: 20px; margin-bottom: 6px; }
+    .geo-card-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+    .geo-card-body  { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+
+    /* What / Why / How comparison */
+    .compare-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 24px;
+    }
+    .compare-cell {
+      padding: 20px 24px;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--text-body);
+    }
+    .compare-cell.left  { background: var(--red-lt);  border: 1px solid #F4B8B8; border-radius: var(--radius) 0 0 var(--radius); }
+    .compare-cell.right { background: var(--g-pale);  border: 1px solid var(--g-lt);  border-radius: 0 var(--radius) var(--radius) 0; }
+    .compare-label { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+    .compare-label.red   { color: var(--red); }
+    .compare-label.green { color: var(--g-deep); }
+
+    /* Step flow */
+    .step-flow { display: flex; flex-direction: column; gap: 3px; }
+    .step {
+      display: flex; align-items: flex-start; gap: 16px;
+      background: #FFFFFF; border: 1px solid var(--border-lt);
+      border-radius: var(--radius); padding: 18px 20px;
+      position: relative;
+    }
+    .step::before {
+      content: ''; position: absolute; left: 36px; bottom: -3px;
+      width: 2px; height: 3px; background: var(--border-md); z-index: 1;
+    }
+    .step:last-child::before { display: none; }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-weight: 700; font-size: 15px;
+      color: #FFFFFF; margin-top: 2px;
+    }
+    .step-title { font-size: 14px; font-weight: 700; color: var(--text-head); margin-bottom: 4px; }
+    .step-body  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .step-badge { display: inline-block; font-family: var(--font-m); font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 6px; font-weight: 600; letter-spacing: 0.5px; }
+
+    /* Positioning matrix */
+    .pos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+      gap: 14px;
+    }
+    .pos-card {
+      border-radius: var(--radius);
+      padding: 20px;
+      border: 1px solid var(--border-lt);
+    }
+    .pos-icon  { font-size: 24px; margin-bottom: 10px; }
+    .pos-title { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+    .pos-body  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* FI connection table */
+    .fi-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .fi-table th {
+      text-align: left; padding: 12px 16px;
+      font-family: var(--font-m); font-size: 10px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-muted);
+      background: var(--surface-1); border-bottom: 2px solid var(--border-md);
+    }
+    .fi-table td { padding: 14px 16px; vertical-align: top; border-bottom: 1px solid var(--border-lt); }
+    .fi-table tr:nth-child(even) td { background: var(--surface-1); }
+    .fi-table tr:hover td { background: var(--g-xpale); }
+    .fi-table .req { color: var(--text-body); font-weight: 500; }
+    .fi-table .del { color: var(--g-deep); font-weight: 600; }
+    .fi-table .why { color: var(--text-muted); }
+
+    /* Impact cards */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
+      gap: 14px;
+    }
+    .impact-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      padding: 22px;
+    }
+    .impact-n {
+      font-family: var(--font-d); font-size: 32px; font-weight: 700;
+      color: var(--gold); line-height: 1; margin-bottom: 6px;
+    }
+    .impact-label { font-size: 13px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px; }
+    .impact-body  { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+
+    /* Risk cards */
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px,1fr));
+      gap: 14px;
+    }
+    .risk-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-lt);
+      border-left: 4px solid var(--red);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-sm);
+    }
+    .risk-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); transition: all 0.22s; }
+    .risk-title { font-size: 14px; font-weight: 700; color: var(--text-head); margin-bottom: 8px; }
+    .risk-body  { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+    .risk-mitig { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-lt); font-size: 12px; color: var(--g-deep); }
+    .risk-mitig strong { font-weight: 700; }
+
+    /* Timeline roadmap */
+    .roadmap { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 14px; }
+    .roadmap-phase {
+      border-radius: var(--radius); overflow: hidden;
+      border: 1px solid var(--border-lt); box-shadow: var(--shadow-sm);
+    }
+    .roadmap-header { padding: 14px 16px; font-weight: 700; font-size: 14px; color: #FFFFFF; }
+    .roadmap-body   { padding: 14px 16px; background: #FFFFFF; }
+    .roadmap-period { font-family: var(--font-m); font-size: 10px; letter-spacing: 1px; opacity: 0.8; margin-bottom: 4px; }
+    .roadmap-title  { font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+    .roadmap-items  { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+    .roadmap-items li { list-style: none; padding-left: 14px; position: relative; }
+    .roadmap-items li::before { content: '·'; position: absolute; left: 0; color: inherit; }
+
+    /* Stakeholder coordination */
+    .stakeholder-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px,1fr));
+      gap: 10px;
+    }
+    .stakeholder-card {
+      background: #FFFFFF;
+      border: 1px solid var(--border-lt);
+      border-radius: 6px;
+      padding: 14px;
+    }
+    .stakeholder-name { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+    .stakeholder-role { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+
+    /* Tokenisation Gantt */
+    .tok-gantt-table { min-width:820px; width:100%; border-collapse:collapse; }
+    .tok-gantt-table th { padding:9px 6px; font-size:10px; font-family:var(--font-m); letter-spacing:0.8px; color:var(--text-muted); border-bottom:2px solid var(--border-md); text-align:center; background:var(--surface-1); }
+    .tok-gantt-table th.g-task { text-align:left; min-width:260px; padding-left:12px; }
+    .tok-gantt-table td { padding:0; border-bottom:1px solid var(--border-lt); vertical-align:middle; }
+    .tok-gantt-table td.g-label { padding:7px 12px 7px 12px; font-size:12px; color:var(--text-body); white-space:nowrap; border-bottom:1px solid var(--border-lt); }
+    .tok-gantt-table td.g-label.g-ph { font-family:var(--font-m); font-size:11px; letter-spacing:1.2px; text-transform:uppercase; font-weight:700; padding-top:14px; padding-bottom:4px; border-bottom:none; background:rgba(0,0,0,0.02); }
+    .tok-gantt-table td.g-label small { display:block; font-size:10px; color:var(--text-muted); font-style:italic; font-weight:normal; letter-spacing:0; text-transform:none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .compare-row { grid-template-columns: 1fr; }
+      .compare-cell.left  { border-radius: var(--radius) var(--radius) 0 0; }
+      .compare-cell.right { border-radius: 0 0 var(--radius) var(--radius); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Technical Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="index.html#strategic-horizon" style="color:var(--gold);font-weight:700">🔭 Strategic Horizon</a>
+    <div class="nav-divider"></div>
+    <a href="tokenisation.html" class="active" style="color:var(--g-deep);font-weight:700">🔗 Mineral Tokenisation</a>
+    <div class="nav-divider"></div>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html">🏗 Architecture</a>
+        <a href="energy.html">⚡ Energy Component</a>
+        <a href="demo.html">🔬 Tool Mock-up</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<div class="hero" style="min-height:56vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Strategic Horizon · Digital Asset Innovation</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal">Mineral <span class="accent">Tokenisation</span></h1>
+    <p class="hero-lead fade-up au-3">Transforming Rwanda's certified mineral assets into digitally tradeable, fully collateralised instruments — breaking the prefinancing trap, unlocking new investor pools, and positioning Rwanda as Africa's first regulated mineral token market. A strategic horizon enabled by the RMB-FinIntel financial intelligence infrastructure.</p>
+    <p class="hero-meta fade-up au-4">Strategic Horizon · Beyond the 18-Month Programme · Year 3 Pilot</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-5">
+      <a href="#what-is" class="btn btn-gold">What Is Tokenisation ↓</a>
+      <a href="#rwanda-case" class="btn btn-outline">Rwanda Case ↓</a>
+      <a href="#fi-connection" class="btn btn-green">FI Connection ↓</a>
+    </div>
+
+    <div class="stats-bar fade-up au-5">
+      <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Collateralisation required by law</div></div>
+      <div class="stat"><div class="stat-n">Year 3</div><div class="stat-l">Pilot programme target</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Stakeholders to coordinate</div></div>
+      <div class="stat"><div class="stat-n">$2.56B</div><div class="stat-l">Rwanda mineral exports 2025</div></div>
+      <div class="stat"><div class="stat-n">1st</div><div class="stat-l">Africa — regulated mineral token market</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+════════════════════════════════════════════════════════════ -->
+<section id="toc" class="section" style="padding-top:40px;padding-bottom:40px;background:var(--surface-1);border-bottom:1px solid var(--border-lt)">
+  <div class="eyebrow" style="margin-bottom:14px">Guide — What You Will Find on This Page</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+
+    <a href="#why-now" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--red);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">🌍</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:700">0 — Why Now</div>
+        </div>
+        <div class="card-title">The Geopolitical Shocks That Make This Urgent</div>
+        <div class="card-body">Six converging crises — market fragmentation, currency shifts, rate volatility, critical minerals race, central bank gold strategies, digital finance maturation — that make mineral tokenisation a strategic imperative for Rwanda in 2025–2026.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--red);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#what-is" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--g-deep);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">🔗</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700">1 — Foundations</div>
+        </div>
+        <div class="card-title">What Is Asset Tokenisation?</div>
+        <div class="card-body">The essential distinction between cryptocurrency speculation and physically-backed asset tokens — what Rwanda's draft law actually permits, and the six key properties (fractional ownership, instant transfer, price transparency, 100% collateralisation, global access, programmable rights) that make it powerful.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--g-deep);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#rwanda-case" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--gold);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">🏅</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700">2 — Rwanda Case</div>
+        </div>
+        <div class="card-title">How Tokenisation Would Work: A Rwandan Gold Example</div>
+        <div class="card-body">Before vs after the prefinancing trap, then a 7-step walkthrough — from physical certification through CMA approval and KIFC exchange listing to investor purchase and redemption — showing exactly how a Rwandan gold token is created and traded.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gold);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#why-rwanda" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--blue);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px;font-family:var(--font-b)">🇷🇼</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:700">3 — Unique Positioning</div>
+        </div>
+        <div class="card-title">Why Rwanda — And Why Now</div>
+        <div class="card-body">Six converging advantages that no other EAC country currently holds simultaneously: legal infrastructure (draft Virtual Assets Law), KIFC financial hub, BNR gold reserve strategy, geopolitical first-mover window, $2.56B production scale, and governance track record.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--blue);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#liquidity-diaspora" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--gold);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">📱</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700">4 — Liquidity & Inclusion</div>
+        </div>
+        <div class="card-title">Liquidity, Diaspora Investment & The MoMo Parallel</div>
+        <div class="card-body">How tokenisation transforms liquidity for mining companies and buyers, how it opens Rwanda's minerals to diaspora capital — just as government bonds did — and why the MoMo analogy explains the financial inclusion revolution that fractional mineral tokens can deliver.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--gold);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#fi-connection" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--g-deep);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">📊</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700">5 — FI Connection</div>
+        </div>
+        <div class="card-title">Why Tokenisation Cannot Work Efficiently Without the FI Programme</div>
+        <div class="card-body">An 8-row mapping table connecting every tokenisation requirement — credible valuation, price discovery, traceability, company credit profiles, regulatory reporting, energy transparency, market access costs, annual outlook — to its specific RMB-FinIntel deliverable.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--g-deep);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#impact" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--g-deep);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">📈</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700">6 — Economic Impact</div>
+        </div>
+        <div class="card-title">Expected Impact for Rwanda's Economy</div>
+        <div class="card-body">Six quantified impact dimensions: +12–18% price gap recovery, $300M+ annual value recovery, 5–10x investor pool expansion, FX currency independence, BNR reserve strategy amplification — and Rwanda's positioning to capture EU CRMA and US MSP premium demand simultaneously.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--g-deep);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#risks" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--red);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">⚠️</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:700">7 — Honest Risk Assessment</div>
+        </div>
+        <div class="card-title">Risks to Be Honest About — And How to Mitigate Them</div>
+        <div class="card-body">Six identified risks — collateral integrity, liquidity depth, regulatory coherence, traceability credibility, price peg discipline, and technology/cyber — each with a concrete mitigation strategy. Sound financial intelligence requires naming risks clearly before designing solutions.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--red);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+    <a href="#roadmap" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--blue);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:18px">🗓️</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:700">8 — Roadmap & Stakeholders</div>
+        </div>
+        <div class="card-title">From M2 to M15: The Tokenisation Milestone Roadmap</div>
+        <div class="card-body">An ambitious but realistic Gantt chart from inter-agency MoU (M2) through shadow simulation (M6), CMA licensing (M9), custodian confirmation (M12), to first real gold token pilot (M15) — with the five-institution stakeholder coordination matrix.</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--blue);font-weight:600">Read section →</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     0. WHY NOW — GEOPOLITICAL CONTEXT
+════════════════════════════════════════════════════════════ -->
+<section id="why-now" class="section section-alt">
+  <div class="eyebrow">0 — Why Now</div>
+  <h2 class="section-title">The Geopolitical Shocks That Make This Urgent</h2>
+  <p class="section-lead">Mineral tokenisation is not a technology trend. It is a strategic response to a world that is fracturing along geopolitical, financial, and monetary lines — and where Rwanda's window to capture value is narrowing with every year of delay.</p>
+
+  <div class="geo-grid">
+    <div class="geo-card">
+      <div class="geo-card-icon">🌍</div>
+      <div class="geo-card-title">Commodity Market Fragmentation</div>
+      <div class="geo-card-body">US-China tensions are splitting global commodity markets into competing blocs. Buyers in each bloc are willing to pay premiums for supply chain security — but only from suppliers with transparent, verified financial intelligence. Rwanda cannot capture this premium without the data infrastructure to prove it.</div>
+    </div>
+    <div class="geo-card">
+      <div class="geo-card-icon">💵</div>
+      <div class="geo-card-title">Payment Currency Shifts</div>
+      <div class="geo-card-body">The global share of USD in cross-border commodity transactions is declining. China, Gulf states, and BRICS economies are promoting alternative settlement currencies. Tokenised mineral assets — priced in a neutral digital unit backed by physical gold — provide Rwanda a hedge against forced currency dependency and exchange rate volatility.</div>
+    </div>
+    <div class="geo-card">
+      <div class="geo-card-icon">📈</div>
+      <div class="geo-card-title">Interest Rate Volatility & Collateral Pressure</div>
+      <div class="geo-card-body">Post-2022 rate cycle has made prefinancing more expensive globally. International traders are demanding stronger collateralisation from mining countries. Tokenised assets — by definition 100% collateralised and ring-fenced — align perfectly with tightened financing conditions and reduce Rwanda's exposure to predatory prefinancing terms.</div>
+    </div>
+    <div class="geo-card">
+      <div class="geo-card-icon">⚡</div>
+      <div class="geo-card-title">Critical Minerals Race</div>
+      <div class="geo-card-body">The EU Critical Raw Materials Act (2030), the US Minerals Security Partnership, and Japan's strategic mineral programs are creating fierce institutional demand for responsibly sourced, transparently priced minerals. Tokenisation — with its built-in traceability and price transparency — directly responds to this demand signal.</div>
+    </div>
+    <div class="geo-card">
+      <div class="geo-card-icon">🏅</div>
+      <div class="geo-card-title">Central Banks Returning to Gold</div>
+      <div class="geo-card-body">Global central banks purchased record gold quantities in 2022–2024. BNR joined from July 2025. This structural shift increases demand for physically-backed gold instruments globally — exactly what Rwandan mineral tokenisation would provide through KIFC-listed digital platforms.</div>
+    </div>
+    <div class="geo-card">
+      <div class="geo-card-icon">🔗</div>
+      <div class="geo-card-title">Digital Finance Infrastructure Maturing</div>
+      <div class="geo-card-body">Rwanda's draft Virtual Assets Law (March 2025), KIFC's cross-border transaction framework, and CMA's regulatory mandate for real-world asset tokens converge at precisely the right moment — before markets are captured by other jurisdictions, and while the regulatory playbook is still being written globally.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-left:4px solid var(--red);border-radius:var(--radius);padding:18px 24px;margin-top:8px">
+    <strong style="color:var(--red);font-size:13px">⚠️ The Cost of Inaction:</strong>
+    <span style="font-size:13px;color:var(--text-body)"> Every year that Rwanda exports unpriced, untokenised minerals through prefinancing arrangements, it transfers an estimated portion of mineral value directly to international traders and financiers. The gap between declared export values and international benchmarks — measurable through RMB-FinIntel — is the quantification of this cost. Tokenisation is the structural solution.</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     1. WHAT IS TOKENISATION
+════════════════════════════════════════════════════════════ -->
+<section id="what-is" class="section">
+  <div class="eyebrow">1 — Foundations</div>
+  <h2 class="section-title">What Is Asset Tokenisation? The Essential Distinction</h2>
+  <p class="section-lead">Tokenisation is frequently confused with cryptocurrency speculation. They are fundamentally different instruments — and only one of them is relevant and legal in Rwanda's framework.</p>
+
+  <!-- Crypto vs Token comparison -->
+  <div class="compare-row" style="margin-bottom:32px">
+    <div class="compare-cell left">
+      <div class="compare-label red">❌ Cryptocurrency (Bitcoin, etc.)</div>
+      Backed by <strong>nothing</strong> — or an algorithm. Value derives entirely from market speculation. Extreme volatility. <strong>Explicitly prohibited as legal tender in Rwanda</strong> under the draft Virtual Assets Law. Central banks worldwide have flagged it as a financial stability risk.
+    </div>
+    <div class="compare-cell right">
+      <div class="compare-label green">✅ Asset-Backed Token (What Rwanda Can Issue)</div>
+      Backed by a <strong>real, physical, verified asset</strong> — a kilogram of certified gold, a tonne of cassiterite concentrate. Value tracks the underlying asset. Volatility tied to commodity market, not speculation. <strong>Explicitly enabled by Rwanda's draft law</strong> with 100% collateralisation requirement.
+    </div>
+  </div>
+
+  <!-- Core definition -->
+  <div style="background:var(--g-pale);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:20px 24px;margin-bottom:32px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">Core Definition</div>
+    <p style="font-size:15px;color:var(--text-body);line-height:1.75">Tokenisation is the process of representing ownership of a real-world physical asset as a <strong>programmable digital token on a distributed ledger (blockchain)</strong>. The token carries the rights associated with the underlying asset — ownership, revenue entitlement, redemption rights — and can be held electronically, transferred instantly, divided into fractions, traded on a regulated platform, and verified without a central intermediary.</p>
+  </div>
+
+  <!-- Key properties -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+    <div class="card" style="border-top:3px solid var(--g-deep)">
+      <div class="card-title">🔢 Fractional Ownership</div>
+      <div class="card-body">A 100 kg gold bar worth ~$8.5M can be divided into 10,000 tokens of 10g each (~$850/token). Retail investors, pension funds, and diaspora can all participate — not just large institutional buyers.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="card-title">⚡ Instant Transfer</div>
+      <div class="card-body">Ownership transfers settle in minutes on a blockchain — versus weeks for physical commodity trades. No correspondent banking delays, no clearing house intermediaries, no SWIFT settlement risk.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="card-title">🔍 Price Transparency</div>
+      <div class="card-body">Token prices are visible and discoverable on a regulated exchange in real time. This directly breaks the information asymmetry that enables prefinancers to impose below-market prices on Rwandan exporters.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--g-deep)">
+      <div class="card-title">🛡️ 100% Collateralised</div>
+      <div class="card-body">Under Rwanda's draft law, every token must be backed by 100% of the underlying asset value, ring-fenced, not lent out, and periodically revalued by an accredited authority. Zero leverage — maximum credibility.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="card-title">🌐 Global Accessibility</div>
+      <div class="card-body">Tokens listed on KIFC-regulated platforms are accessible to investors worldwide — European pension funds, Gulf sovereign wealth funds, Asian institutional buyers, African diaspora — without physical commodity logistics.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="card-title">📋 Programmable Rights</div>
+      <div class="card-body">Smart contracts embedded in tokens can automatically execute: revenue distributions, redemption payments, compliance checks, and reporting obligations — reducing administrative costs and counterparty risk.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     2. HOW IT WORKS — RWANDA CASE
+════════════════════════════════════════════════════════════ -->
+<section id="rwanda-case" class="section section-alt">
+  <div class="eyebrow">2 — Rwanda Case</div>
+  <h2 class="section-title">How Tokenisation Would Work: A Rwandan Gold Example</h2>
+  <p class="section-lead">A step-by-step illustration using a Rwandan gold refinery — showing how a physically-backed mineral token breaks the prefinancing trap and captures full market value.</p>
+
+  <!-- Before / After -->
+  <div style="margin-bottom:32px">
+    <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:14px">Before Tokenisation: The Prefinancing Trap</h3>
+    <div class="compare-row">
+      <div class="compare-cell left">
+        <div class="compare-label red">The Current Situation</div>
+        A Rwandan gold refinery holds <strong>100 kg of certified, LBMA-grade gold</strong> (~$8.5M at current prices).<br><br>
+        To fund operations, it accepts a <strong>prefinancing advance</strong> from an international trader — who becomes simultaneously the buyer, the lender, and the price-setter.<br><br>
+        Result: The refinery receives <strong>12–18% below</strong> the international market benchmark. The gap is absorbed as the implicit financing cost. Over 5–10 years, this gap compounds into a structural transfer of value from Rwanda to international trading houses.
+      </div>
+      <div class="compare-cell right">
+        <div class="compare-label green">With Tokenisation</div>
+        The same 100 kg of gold is submitted to an <strong>independent custodian</strong> (ring-fenced, not lent out — as per Rwanda's draft law).<br><br>
+        <strong>10,000 tokens</strong> are issued — each representing 10g of gold (~$850/token) — and listed on a <strong>KIFC-licensed exchange</strong>.<br><br>
+        Result: The refinery receives <strong>full market price</strong> from a diversified pool of buyers. No single buyer controls the price. No prefinancing dependency. Transparent price discovery referenced to LME/LBMA in real time.
+      </div>
+    </div>
+  </div>
+
+  <!-- Step by step flow -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:16px">Step-by-Step: How a Rwandan Mineral Token Is Created & Traded</h3>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step-num" style="background:var(--g-deep)">1</div>
+      <div>
+        <div class="step-title">Physical Asset Certification & Traceability</div>
+        <div class="step-body">The mining company submits gold (or cassiterite/coltan) to RMB's certification process — ITSCI traceability chain, conflict-minerals compliance, purity assay, weight verification. This creates a verifiable, auditable provenance record. <strong>RMB-FinIntel's sector data infrastructure underpins this step.</strong></div>
+        <span class="step-badge" style="background:var(--g-pale);color:var(--g-deep)">RMB + Mining Company</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--blue)">2</div>
+      <div>
+        <div class="step-title">Independent Valuation by Accredited Authority</div>
+        <div class="step-body">An accredited valuation authority determines the asset value — anchored to LME (for 3T minerals) or LBMA (for gold) benchmarks, adjusted for purity, grade, and logistics differentials. Valuation is transparent, periodic, and documented. <strong>RMB-FinIntel Pricing Reference Guide (D2.1) provides the benchmark methodology.</strong></div>
+        <span class="step-badge" style="background:var(--blue-lt);color:var(--blue)">Accredited Valuator + RMB-FinIntel D2.1</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--gold)">3</div>
+      <div>
+        <div class="step-title">Custodian Ring-Fencing</div>
+        <div class="step-body">The physical asset is placed with a regulated custodian — 100% ring-fenced, not lent out, separately audited. In Rwanda's case, BNR's vault infrastructure (built for the national gold reserve strategy from July 2025) provides a natural custodian anchor for gold tokens. For 3T minerals, a licensed warehouse operator fills this role.</div>
+        <span class="step-badge" style="background:var(--gold-lt);color:#7A5800">BNR / Licensed Custodian</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--g-deep)">4</div>
+      <div>
+        <div class="step-title">Token Issuance — CMA Approval</div>
+        <div class="step-body">The token issuer (a licensed entity under Rwanda's draft Virtual Assets Law) applies to CMA for approval to issue tokens representing the ring-fenced asset. CMA verifies: 100% collateralisation, custodian compliance, valuation methodology, issuer capital adequacy, AML/CFT compliance. Tokens are created on a regulated blockchain infrastructure.</div>
+        <span class="step-badge" style="background:var(--g-pale);color:var(--g-deep)">CMA — Regulatory Authority under Draft Law</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--blue)">5</div>
+      <div>
+        <div class="step-title">Listing on KIFC-Licensed Digital Exchange</div>
+        <div class="step-body">Tokens are listed on a KIFC-registered virtual asset exchange — accessible to domestic and international investors. The exchange provides real-time price discovery, secondary market trading, and regulatory reporting. KIFC's passporting agreements (Singapore, Qatar) enable international investor access without complex cross-border legal structures.</div>
+        <span class="step-badge" style="background:var(--blue-lt);color:var(--blue)">KIFC Licensed Exchange</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--gold)">6</div>
+      <div>
+        <div class="step-title">Investors Purchase Tokens — Full Market Price Captured</div>
+        <div class="step-body">Pension funds, diaspora investors, institutional buyers, retail participants — all can acquire fractional ownership of certified Rwandan gold at a transparent, market-referenced price. The mining company or exporter receives full market value upfront — no prefinancing dependency, no bilateral price negotiation from a position of weakness.</div>
+        <span class="step-badge" style="background:var(--gold-lt);color:#7A5800">Domestic + International Investors</span>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:var(--g-deep)">7</div>
+      <div>
+        <div class="step-title">Redemption or Secondary Market Trading</div>
+        <div class="step-body">Token holders can either <strong>redeem physical delivery</strong> of the underlying mineral (in minimum lot sizes) or <strong>sell tokens</strong> on the secondary market at prevailing prices. Smart contracts automate settlement, reducing administrative cost and counterparty risk to near-zero.</div>
+        <span class="step-badge" style="background:var(--g-pale);color:var(--g-deep)">Token Holders — Full Liquidity</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     3. WHY RWANDA IS UNIQUELY POSITIONED
+════════════════════════════════════════════════════════════ -->
+<section id="why-rwanda" class="section">
+  <div class="eyebrow">3 — Unique Positioning</div>
+  <h2 class="section-title">Why Rwanda — And Why Now</h2>
+  <p class="section-lead">Three conditions must converge for mineral tokenisation to be credible: legal infrastructure, financial hub capabilities, and strategic asset quality. No other country in East Africa has all three simultaneously.</p>
+
+  <div class="pos-grid" style="margin-bottom:28px">
+    <div class="pos-card" style="background:var(--blue-lt);border-color:var(--blue)">
+      <div class="pos-icon">⚖️</div>
+      <div class="pos-title" style="color:var(--blue)">1 — Legal Infrastructure: Already Built</div>
+      <div class="pos-body">Rwanda's <strong>draft Virtual Assets Law (BNR/CMA, March 2025)</strong> explicitly provides for real-world asset tokenisation with 100% collateralisation, ring-fencing, and periodic independent valuation. The <strong>2024 Mining Law</strong> establishes RMB's authority over mineral certification, valuation, and export oversight. The regulatory playbook exists — it needs to be activated for minerals.</div>
+    </div>
+    <div class="pos-card" style="background:var(--gold-pale);border-color:#E8CC80">
+      <div class="pos-icon">🏛️</div>
+      <div class="pos-title" style="color:var(--gold)">2 — Financial Hub: KIFC Is Ready</div>
+      <div class="pos-body"><strong>KIFC</strong> already enables structuring of investment funds, cross-border transactions, and digital financial vehicles — with tax incentives, passporting agreements (Singapore, Qatar), and a growing community of fund managers. It is the natural exchange infrastructure for a mineral token market. No other EAC country has an equivalent.</div>
+    </div>
+    <div class="pos-card" style="background:var(--g-pale);border-color:var(--g-lt)">
+      <div class="pos-icon">🏅</div>
+      <div class="pos-title" style="color:var(--g-deep)">3 — Strategic Asset: BNR Anchors Gold</div>
+      <div class="pos-body">From <strong>July 2025, BNR officially buys gold as a national reserve asset</strong> — creating an institutional buyer anchoring the market. This eliminates the "no buyer" risk for gold tokens and provides unprecedented credibility: the central bank itself validates the asset class. Tanzania took 2 years to accumulate 418 kg after starting in June 2023.</div>
+    </div>
+    <div class="pos-card" style="background:var(--surface-1);border-color:var(--border-md)">
+      <div class="pos-icon">🌍</div>
+      <div class="pos-title" style="color:var(--text-head)">4 — Geopolitical Moment: First-Mover Advantage</div>
+      <div class="pos-body">The global fracturing of commodity markets, the decline of USD dominance in bilateral settlements, and the race for critical minerals supply chain security all converge to create demand for a <strong>neutral, transparent, physically-backed mineral asset instrument</strong>. Rwanda can capture this market — but only if it moves before Kenya, Tanzania, or DRC build equivalent infrastructure.</div>
+    </div>
+    <div class="pos-card" style="background:var(--blue-lt);border-color:var(--blue)">
+      <div class="pos-icon">📊</div>
+      <div class="pos-title" style="color:var(--blue)">5 — Production Scale: Credible Underlying</div>
+      <div class="pos-body">Rwanda exported <strong>$2.56B in minerals in 2025</strong> (+46% year-on-year). It holds Africa's largest tungsten mine, produces 22%+ of the world's tantalum, and has an active gold refinery. This is not a hypothetical asset base — it is an existing, large-scale, internationally recognised production infrastructure with ITSCI-certified traceability.</div>
+    </div>
+    <div class="pos-card" style="background:var(--gold-pale);border-color:#E8CC80">
+      <div class="pos-icon">🔐</div>
+      <div class="pos-title" style="color:var(--gold)">6 — Governance Track Record</div>
+      <div class="pos-body">Rwanda's governance scores (World Bank, Mo Ibrahim Foundation) and its compliance with Dodd-Frank S.1502 (3TG due diligence) and OECD due diligence guidelines provide the reputational foundation that institutional investors require before committing capital to an asset-backed token from an emerging market.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--g-deep);border-radius:var(--radius);padding:22px 28px;color:#FFFFFF">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">The Window Is Open — But Not Indefinitely</div>
+    <p style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.75">Mauritius, South Africa, Kenya and Ghana are all exploring digital asset frameworks for commodities. The country that moves first — with the right legal, financial, and intelligence infrastructure — captures the market. Rwanda has a 12–24 month window of genuine first-mover advantage. The 18-month RMB-FinIntel programme is the prerequisite infrastructure. The tokenisation pilot begins in Year 3.</p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. LIQUIDITY, DIASPORA & THE MOMO PARALLEL
+════════════════════════════════════════════════════════════ -->
+<section id="liquidity-diaspora" class="section">
+  <div class="eyebrow">4 — Liquidity &amp; Financial Inclusion</div>
+  <h2 class="section-title">Liquidity, Diaspora Investment &amp; The MoMo Parallel</h2>
+  <p class="section-lead">Beyond breaking the prefinancing trap, mineral tokenisation unlocks three deeper transformations: liquidity for the entire sector, a new diaspora investment channel, and a financial inclusion revolution comparable to what mobile money did for everyday Rwandans.</p>
+
+  <!-- Liquidity -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:8px">A — Liquidity: The Hidden Problem Tokenisation Solves</h3>
+  <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:18px">Illiquidity is one of the most costly and least discussed problems in Rwanda's mining sector. Tokenisation attacks it from both sides of the market simultaneously.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:32px">
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="card-title" style="color:var(--blue)">🏭 For Mining Companies — Financing Without Prefinancing</div>
+      <div class="card-body">Today, a mining company holding certified gold cannot easily convert it to cash without going through a prefinancer who imposes a below-market price as the financing cost. A tokenised asset is liquid by definition — it can be sold on exchange within hours at a transparent, market-referenced price. This transforms working capital management for the entire sector: companies can raise financing against a certified, tokenised asset without surrendering pricing power. Inventory becomes a liquid financial instrument — not a negotiating weakness.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--g-deep)">
+      <div class="card-title" style="color:var(--g-deep)">📦 For Buyers — Flexible Positioning Without Physical Logistics</div>
+      <div class="card-body">International buyers currently face an all-or-nothing choice: commit to physical delivery of large minimum lots, or stay out of the Rwandan market. Token holders can adjust their exposure dynamically — buying more when prices are attractive, selling on the secondary market when strategy shifts — without managing physical commodity logistics. This flexibility attracts a broader and more stable buyer base, which in turn provides Rwandan exporters with more consistent, better-priced demand.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="card-title" style="color:var(--gold)">🔄 Secondary Market Liquidity — A Self-Reinforcing Cycle</div>
+      <div class="card-body">As secondary market trading volume grows, bid-ask spreads narrow, price discovery improves, and the token becomes more attractive to larger institutional investors — who bring deeper liquidity, further tightening spreads. This virtuous cycle is the same dynamic that made government bond markets liquid over decades. Rwanda's mineral token market can replicate it — starting with gold, extending to 3T minerals — by building depth progressively through KIFC's institutional investor network.</div>
+    </div>
+  </div>
+
+  <!-- Diaspora -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:8px">B — Diaspora Investment: The Next Agaciro</h3>
+  <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:18px">Rwanda's diaspora bonds — particularly the Agaciro Development Fund — demonstrated a powerful truth: the Rwandan diaspora is willing to invest in Rwanda's development if the instrument is accessible, regulated, credible, and carries a financial return. Mineral tokens are the next-generation version of that instrument.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px">
+    <div style="background:var(--gold-pale);border:1px solid #E8CC80;border-radius:var(--radius);padding:20px 22px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7A5800;margin-bottom:10px">Agaciro Development Fund — The Template</div>
+      <p style="font-size:13px;color:var(--text-body);line-height:1.7">The Agaciro Fund mobilised diaspora capital through patriotic solidarity and a modest financial return. It worked because the instrument was accessible (low minimum subscription), regulated (government-backed), and credible (clear use of proceeds). Its limitation: the return was fixed and low, and the instrument was illiquid once subscribed.</p>
+    </div>
+    <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:var(--radius);padding:20px 22px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">Mineral Tokens — The Next Generation</div>
+      <p style="font-size:13px;color:var(--text-body);line-height:1.7">A mineral token carries the same accessibility (fractional — from ~$850/token for gold), regulation (CMA-licensed, BNR-custodied), and credibility (backed by physical, certified mineral). But it adds what Agaciro lacked: <strong>market-referenced return</strong> (tracks commodity prices), <strong>liquidity</strong> (tradeable on secondary market), and <strong>global reach</strong> (accessible via KIFC digital platform from any country).</p>
+    </div>
+  </div>
+  <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-left:4px solid var(--gold);border-radius:var(--radius);padding:16px 20px;margin-bottom:32px;font-size:13px;color:var(--text-body);line-height:1.7">
+    <strong style="color:var(--gold)">The diaspora opportunity:</strong> Rwanda's diaspora remittances exceed $300M annually. Even a 5% reallocation into mineral tokens would represent $15M+ in new mineral sector financing — replacing prefinancing from foreign trading houses with capital from Rwandans who have a stake in Rwanda's development success. This is nation-building through financial architecture.
+  </div>
+
+  <!-- MoMo parallel -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:8px">C — The MoMo Parallel: A Financial Inclusion Revolution</h3>
+  <p style="font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:18px">The most powerful way to explain mineral tokenisation to non-technical stakeholders — including RMB leadership, ministry officials, and mining company owners — is the MoMo analogy. It is accurate, immediately understandable, and politically resonant in Rwanda.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:18px">
+    <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:var(--radius) 0 0 var(--radius);padding:22px 24px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Before MoMo — Financial Transactions</div>
+      <ul style="font-size:13px;color:var(--text-body);line-height:1.8;list-style:none;padding:0">
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Required physical presence at a bank branch</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Formal bank account — excluding millions</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> High transaction costs relative to amounts sent</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Days to settle — cash carried physically</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Large minimum amounts — small transactions excluded</li>
+      </ul>
+    </div>
+    <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:0 var(--radius) var(--radius) 0;padding:22px 24px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:12px">After MoMo — The Transformation</div>
+      <ul style="font-size:13px;color:var(--text-body);line-height:1.8;list-style:none;padding:0">
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Transact from anywhere, on a basic phone</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> No bank account required — phone number is the account</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Micro-transaction costs — proportional and transparent</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Instant settlement — seconds, not days</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Any amount — from 100 RWF upward</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:20px">
+    <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:var(--radius) 0 0 var(--radius);padding:22px 24px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Before Tokenisation — Mineral Investment</div>
+      <ul style="font-size:13px;color:var(--text-body);line-height:1.8;list-style:none;padding:0">
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Required commodity trading account — excluding retail</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Minimum investment: full lot ($8.5M+ for 100kg gold)</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Physical delivery logistics — expensive and complex</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Opaque bilateral pricing — information asymmetry</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--red)">✗</span> Diaspora and small investors completely excluded</li>
+      </ul>
+    </div>
+    <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:0 var(--radius) var(--radius) 0;padding:22px 24px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:12px">After Tokenisation — The Transformation</div>
+      <ul style="font-size:13px;color:var(--text-body);line-height:1.8;list-style:none;padding:0">
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Invest via KIFC digital platform — from any device</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Minimum investment: ~$850 (10g gold token)</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> No physical handling — digital ownership, instant settlement</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Transparent, real-time LME/LBMA-anchored pricing</li>
+        <li style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--g-deep)">✓</span> Diaspora, retail, pension funds — all can participate</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:var(--g-deep);border-radius:var(--radius);padding:22px 26px;color:#FFFFFF">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">📱 The MoMo Insight — Applied to Minerals</div>
+    <p style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.75">MoMo did not just make transactions faster — it <strong>redefined who could participate in the financial system</strong>. It collapsed the infrastructure cost barrier and broadened inclusion dramatically, at a fraction of the previous cost. Mineral tokenisation does the same for investment in Rwanda's natural wealth: it removes the minimum ticket size barrier, the geography barrier, and the intermediary cost barrier simultaneously. Just as MoMo brought financial services to every Rwandan with a phone, mineral tokens bring mineral investment to every Rwandan with a digital wallet — and to every international investor with a KIFC account. <strong>This is not a financial innovation for its own sake. It is the democratisation of Rwanda's mineral wealth.</strong></p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     4. FINANCIAL INTELLIGENCE CONNECTION
+════════════════════════════════════════════════════════════ -->
+<section id="fi-connection" class="section section-alt">
+  <div class="eyebrow">5 — Financial Intelligence Connection</div>
+  <h2 class="section-title">Why Tokenisation Cannot Work Efficiently Without the RMB-Mineral Financial Intelligence Programme</h2>
+  <p class="section-lead">This is the most critical analytical link in the proposal. A mineral token is only credible if the underlying asset can be independently priced, traced, and validated. Every requirement of tokenisation maps directly to a deliverable of the 18-month programme.</p>
+
+  <div style="overflow-x:auto;margin-bottom:28px">
+    <table class="fi-table">
+      <thead>
+        <tr>
+          <th style="width:28%">Tokenisation Requirement</th>
+          <th style="width:28%">RMB-FinIntel Deliverable</th>
+          <th>Why the Connection Is Essential</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="req">Credible, periodic asset valuation anchored to international benchmarks</td>
+          <td class="del">D2.1 — Mineral Pricing Reference Guide<br><span style="font-size:12px;color:var(--text-muted)">Phase 2, End M4</span></td>
+          <td class="why">Without a credible, methodology-documented pricing reference, the accredited valuation authority has no benchmark to anchor the token price. CMA will not approve issuance without this.</td>
+        </tr>
+        <tr>
+          <td class="req">Real-time price discovery and market monitoring</td>
+          <td class="del">D2.3 — Demand-Offer-Price Dynamic Model<br><span style="font-size:12px;color:var(--text-muted)">Phase 2, End M5</span></td>
+          <td class="why">Token prices must reflect live market conditions — not static valuations. The dynamic model provides continuous price signal updating that feeds the exchange pricing engine.</td>
+        </tr>
+        <tr>
+          <td class="req">Verified provenance and traceability chain</td>
+          <td class="del">D1.1 — Sector Data Diagnostic + Inter-Agency Framework<br><span style="font-size:12px;color:var(--text-muted)">Phase 1, End M2</span></td>
+          <td class="why">Institutional investors — particularly European pension funds subject to EU CRMA — will only hold tokens from minerals with documented, auditable traceability. The diagnostic establishes the data baseline.</td>
+        </tr>
+        <tr>
+          <td class="req">Company-level financial credibility & solvency assessment</td>
+          <td class="del">D3.4 — Full Costs (Financial) Modeling + D4.1 — Company Portal<br><span style="font-size:12px;color:var(--text-muted)">Phase 3–4</span></td>
+          <td class="why">Token issuers must demonstrate financial soundness. The company-level financial models provide the credit risk profile that CMA, KIFC exchange operators, and institutional investors require.</td>
+        </tr>
+        <tr>
+          <td class="req">Regulatory reporting and periodic disclosure</td>
+          <td class="del">D2.6 — Quarterly Reports + D3.1 — Automated Dashboard<br><span style="font-size:12px;color:var(--text-muted)">Phase 2–3</span></td>
+          <td class="why">CMA will require regular disclosure on underlying asset values, production volumes, and pricing. The automated dashboard and quarterly reports provide the compliance reporting infrastructure.</td>
+        </tr>
+        <tr>
+          <td class="req">Energy cost transparency for clean-premium valuation</td>
+          <td class="del">D3.4e — Energy Financial Intelligence Component<br><span style="font-size:12px;color:var(--text-muted)">Phase 3, End M9</span></td>
+          <td class="why">EU and North American buyers are willing to pay clean-energy premiums for minerals with documented low-carbon intensity. Tokenised minerals with certified energy profiles command higher valuations.</td>
+        </tr>
+        <tr>
+          <td class="req">Market access cost framework for price gap closure</td>
+          <td class="del">D3.2 — Market Access & Segmentation Cost Framework<br><span style="font-size:12px;color:var(--text-muted)">Phase 3, End M8</span></td>
+          <td class="why">The gap between declared export values and international benchmarks must be decomposed and reduced before tokenisation. A token priced at an already-discounted level does not solve the prefinancing problem.</td>
+        </tr>
+        <tr>
+          <td class="req">Annual market outlook and scenario analysis</td>
+          <td class="del">D3.5 — Annual Mineral Market Outlook<br><span style="font-size:12px;color:var(--text-muted)">Phase 3, End M11</span></td>
+          <td class="why">Institutional investors price forward scenarios. A credible 3-year mineral market outlook — with base, upside, and downside scenarios — is a prerequisite for pension fund and sovereign wealth fund participation.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sequence diagram narrative -->
+  <div style="background:var(--g-pale);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:20px 24px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">The Sequencing Principle</div>
+    <p style="font-size:14px;color:var(--text-body);line-height:1.75">The 18-month RMB-FinIntel programme is not merely preparation for tokenisation — it is the <strong>credibility infrastructure that makes tokenisation legally approvable, institutionally investable, and financially meaningful</strong>. A mineral token issued before this infrastructure is built is a speculative instrument. A mineral token issued after it is built is a strategic national asset instrument. The difference between the two is the entire RMB-FinIntel programme.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     5. ECONOMIC IMPACT FOR RWANDA
+════════════════════════════════════════════════════════════ -->
+<section id="impact" class="section section-green">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 85% 50%,rgba(200,150,10,0.13) 0%,transparent 60%);pointer-events:none"></div>
+  <div style="position:relative;z-index:2">
+    <div class="eyebrow">6 — Economic Impact</div>
+    <h2 class="section-title">Expected Impact for Rwanda's Economy</h2>
+    <p class="section-lead">Mineral tokenisation is not a financial innovation for its own sake — it is a strategic tool for capturing more value from Rwanda's mineral wealth, in a geopolitical context that rewards transparency, traceability, and institutional credibility.</p>
+
+    <div class="impact-grid" style="margin-bottom:32px">
+      <div class="impact-card">
+        <div class="impact-n">+12–18%</div>
+        <div class="impact-label">Price Gap Recovery</div>
+        <div class="impact-body">Estimated current gap between declared export values and international benchmarks for gold and 3T minerals. Tokenisation with transparent pricing eliminates the prefinancing discount — recovering this margin directly for Rwandan exporters and the national economy.</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-n">$300M+</div>
+        <div class="impact-label">Potential Annual Value Recovery</div>
+        <div class="impact-body">Applied to Rwanda's $2.56B mineral export base, a 12% price gap recovery represents approximately $300M in additional annual value — exceeding the entire trade deficit improvement achieved in 2025. A structural, permanent improvement — not a cyclical one.</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-n">5–10x</div>
+        <div class="impact-label">Investor Pool Expansion</div>
+        <div class="impact-body">Fractional tokenisation opens Rwanda's mineral assets to institutional investors (pension funds, sovereign wealth funds, family offices) currently unable to access physical commodity markets. This multiplies the potential investor pool by 5–10x versus traditional bilateral commodity trading.</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-n">Year 3</div>
+        <div class="impact-label">Realistic Pilot Launch</div>
+        <div class="impact-body">With the 18-month programme building the financial intelligence foundations, a credible, CMA-approved, KIFC-listed gold token pilot is achievable by Year 3 — positioning Rwanda as Africa's first regulated mineral token market before any competitor establishes equivalent infrastructure.</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-n">FX</div>
+        <div class="impact-label">Currency Independence</div>
+        <div class="impact-body">Mineral tokens priced in a neutral, asset-backed digital unit reduce Rwanda's dependence on USD bilateral settlements — providing a hedge against forced currency exposure in a world of fragmenting payment systems and declining dollar dominance in commodity trade.</div>
+      </div>
+      <div class="impact-card">
+        <div class="impact-n">BNR</div>
+        <div class="impact-label">Reserve Strategy Amplification</div>
+        <div class="impact-body">BNR's gold reserve acquisition from July 2025 is amplified by tokenisation: domestically-produced, certified Rwandan gold held as national reserves — valued by RMB-FinIntel's pricing infrastructure, tradeable on KIFC exchange — creates a virtuous loop between production, finance, and national monetary strategy.</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(0,0,0,0.25);border-radius:var(--radius);border-left:4px solid var(--gold);padding:22px 26px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Strategic Positioning in the Global Minerals Economy</div>
+      <p style="font-size:14px;color:rgba(255,255,255,0.85);line-height:1.75">The EU Critical Raw Materials Act mandates 10% of strategic minerals from trusted partners by 2030. The US Minerals Security Partnership creates financing incentives for verified responsible-sourcing practices. Rwanda — with ITSCI-certified supply chains, a mineral financial intelligence infrastructure, and a regulated token market — is uniquely positioned to capture premium demand from both Western blocs simultaneously. A tokenised mineral is by definition transparent, traceable, and priced — exactly what these regulatory frameworks require.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     6. RISKS — HONEST ASSESSMENT
+════════════════════════════════════════════════════════════ -->
+<section id="risks" class="section">
+  <div class="eyebrow">7 — Honest Risk Assessment</div>
+  <h2 class="section-title">Risks to Be Honest About — And How to Mitigate Them</h2>
+  <p class="section-lead">Sound financial intelligence means naming risks clearly — not to discourage the initiative, but to design it correctly from Day 1. Each risk is manageable if addressed in the sequencing and governance design.</p>
+
+  <div class="risk-grid">
+    <div class="risk-card">
+      <div class="risk-title">⚖️ Collateral Integrity Risk</div>
+      <div class="risk-body">Physical minerals must be securely stored, independently audited, and truly ring-fenced. If the custodian lends out or substitutes the underlying asset, the token loses its fundamental value proposition and investor trust collapses instantly — with reputational damage extending well beyond the token market.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> BNR vault infrastructure as gold custodian. International licensed warehouse operator for 3T minerals. Real-time auditing embedded in the token smart contract. Independent quarterly audits as a condition of CMA licensing.</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-title">💧 Liquidity Risk</div>
+      <div class="risk-body">Tokens are only valuable if there is an active secondary market. Rwanda needs a critical mass of investors for tokens to trade at fair value consistently. A thin secondary market allows large investors to move prices — defeating the price discovery purpose of tokenisation.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> Start with gold — the most internationally liquid commodity. KIFC's international investor network provides initial demand. Market maker obligations for licensed exchange participants. Gradual expansion to 3T minerals once liquidity is established.</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-title">📋 Regulatory Coherence Risk</div>
+      <div class="risk-body">CMA, BNR, and RMB must speak with one coordinated regulatory voice. Contradictory signals — on licensing, on valuation methodology, on AML/CFT requirements — would kill investor confidence immediately. The draft law assigns CMA as regulatory authority, but mineral-specific rules require RMB's active input.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> Joint inter-agency working group from Phase 1 of RMB-FinIntel. Formal MoU between RMB, BNR, and CMA on mineral tokenisation regulatory framework — drafted in parallel with the financial intelligence infrastructure.</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-title">🔍 Traceability Credibility Risk</div>
+      <div class="risk-body">Given the ongoing international scrutiny of Rwanda's mineral supply chains — particularly regarding DRC conflict minerals — the traceability documentation underlying any mineral token must be beyond reproach. A single credibility failure contaminates the entire token market.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> ITSCI certification as the baseline — not a substitute for it. Third-party blockchain traceability audit built into the token issuance process. RMB-FinIntel's sector data diagnostic identifies and resolves traceability gaps before tokenisation begins.</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-title">💱 Price Peg Discipline Risk</div>
+      <div class="risk-body">The token price must faithfully track the underlying asset price at all times. Any perceived divergence — even temporary — triggers investor concern and rapid token liquidation. Market manipulation, thin order books, or valuation methodology disputes can all cause divergence.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> LME/LBMA-anchored pricing reference (D2.1) as the real-time benchmark. Automated price feeds integrated into the exchange platform. Circuit breaker mechanisms if token price deviates more than 2% from spot benchmark for more than 15 minutes.</div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-title">📱 Technology & Cyber Risk</div>
+      <div class="risk-body">Smart contract vulnerabilities, exchange platform hacks, and private key management failures have caused significant losses in existing digital asset markets. Rwanda's cyber infrastructure must be assessed and hardened before launch.</div>
+      <div class="risk-mitig"><strong>Mitigation:</strong> Smart contract code audits by internationally recognised security firms before deployment. Multi-signature key management for token issuance. Cyber insurance requirement for licensed exchange operators. Rwanda's existing cybersecurity framework (RISA) as baseline.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     8. ROADMAP & STAKEHOLDERS
+════════════════════════════════════════════════════════════ -->
+<section id="roadmap" class="section section-alt">
+  <div class="eyebrow">8 — Roadmap &amp; Stakeholders</div>
+  <h2 class="section-title">From M2 to M15: The Tokenisation Milestone Roadmap</h2>
+  <p class="section-lead">Tokenisation cannot start at Day 1 — but it does not have to wait for Year 3 either. The roadmap below is ambitious and realistic: parallel workstreams run alongside the 18-month RMB-FinIntel programme, converging at Month 15 for the first gold token pilot. Every milestone is a discussion point for RMB, BNR, CMA, KIFC, and mining companies.</p>
+
+  <!-- Gantt chart -->
+  <div style="background:var(--g-xpale);border:1px solid var(--border-lt);border-radius:var(--radius);padding:16px 0 0 0;margin-bottom:28px">
+    <div style="padding:0 20px 12px;font-family:var(--font-m);font-size:11px;letter-spacing:1px;color:var(--text-muted);text-transform:uppercase">Tokenisation Milestone Gantt — Months 1 to 18 (pilot at M15)</div>
+    <div style="overflow-x:auto">
+      <table id="tok-gantt" style="min-width:820px;width:100%;border-collapse:collapse">
+        <thead><tr id="tok-gantt-head"></tr></thead>
+        <tbody id="tok-gantt-body"></tbody>
+      </table>
+    </div>
+    <!-- Legend -->
+    <div style="display:flex;gap:20px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border-lt);margin-top:4px">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><div style="width:18px;height:10px;border-radius:2px;background:var(--blue)"></div>Prerequisite (FI Programme)</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><div style="width:18px;height:10px;border-radius:2px;background:var(--gold)"></div>Regulatory Alignment</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><div style="width:18px;height:10px;border-radius:2px;background:var(--g-deep)"></div>Technical &amp; Operational Setup</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted)"><div style="width:18px;height:10px;border-radius:2px;background:#5B2C6F"></div>🏅 Pilot Launch</div>
+    </div>
+  </div>
+
+  <!-- Milestone cards below Gantt -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:36px">
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">M2 — Foundation</div>
+      <div class="card-title">Inter-Agency Working Group</div>
+      <div class="card-body">RMB + BNR + CMA joint working group formally established. Mandate: draft mineral-specific token issuance standards in parallel with the main programme. MoU signed between three institutions on tokenisation regulatory framework.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--blue)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">M4 — Prerequisite Ready</div>
+      <div class="card-title">Pricing Reference Guide Delivered</div>
+      <div class="card-body">D2.1 (Pricing Reference Guide) delivered — LME/LBMA-anchored methodology available. This is the accredited valuation backbone that CMA requires for any token issuance approval. Without this deliverable, no token can receive regulatory sign-off.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">M6 — Shadow Exercise</div>
+      <div class="card-title">Shadow Tokenisation Simulation</div>
+      <div class="card-body">Full technical rehearsal with a willing mining company — no real tokens issued. Complete process run end-to-end: certification → valuation → custodian → issuance → simulated exchange listing → settlement. Identify and resolve process gaps before real pilot.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--gold)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">M9 — Regulatory Lock</div>
+      <div class="card-title">CMA Mineral Token Framework</div>
+      <div class="card-body">CMA licensing framework for mineral token issuers drafted and published (in parallel with Virtual Assets Law gazette). Mineral-specific rules agreed: minimum lot sizes, custodian requirements, reporting obligations, circuit breaker mechanisms, AML/CFT provisions for token transactions.</div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--g-deep)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);margin-bottom:6px">M12 — Infrastructure Ready</div>
+      <div class="card-title">Custodian &amp; Platform Confirmed</div>
+      <div class="card-body">BNR vault confirmed as gold custodian. Licensed warehouse operator confirmed for 3T minerals. KIFC digital exchange platform selected and technically audited. Smart contract code audited by an internationally recognised security firm. Legal structure for token issuer finalised.</div>
+    </div>
+    <div class="card" style="border-left:4px solid #5B2C6F;background:linear-gradient(135deg,#F3E8FF 0%,#FFFFFF 100%)">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#5B2C6F;margin-bottom:6px">M15 — 🏅 Pilot Launch</div>
+      <div class="card-title" style="color:#5B2C6F">First Rwandan Gold Token — Issued</div>
+      <div class="card-body">First real gold token issuance: 100 kg pilot lot (~$8.5M). CMA-approved, BNR-custodied, KIFC-listed. Targeted investors: KIFC members, regional pension funds, Rwandan diaspora. 3-month parallel operation alongside traditional export channel. Performance evaluation: price premium, liquidity depth, settlement efficiency.</div>
+    </div>
+  </div>
+
+  <!-- Stakeholder coordination grid -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:14px">Multi-Stakeholder Coordination Matrix</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-bottom:20px">
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--g-deep);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--g-deep);font-size:13px;margin-bottom:6px">RMB</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Sector intelligence · Pricing reference · Traceability certification · Mineral-specific token standards input</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--red);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--red);font-size:13px;margin-bottom:6px">BNR</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Gold reserve policy · Physical custodian · Monetary framework alignment · AML/CFT oversight</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--blue);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--blue);font-size:13px;margin-bottom:6px">CMA</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Regulatory authority under draft law · Token issuer licensing · Exchange supervision · Investor protection</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--gold);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--gold);font-size:13px;margin-bottom:6px">KIFC</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Digital exchange infrastructure · Investment fund structuring · International investor access · Cross-border passporting</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--text-muted);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--text-muted);font-size:13px;margin-bottom:6px">Mining Companies</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Physical gold supply · ITSCI traceability · Collateral compliance · Pilot programme volunteers</div>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--g-deep);border-radius:6px;padding:14px">
+      <div style="font-weight:700;color:var(--g-deep);font-size:13px;margin-bottom:6px">RRA / MINECOFIN</div>
+      <div style="color:var(--text-muted);font-size:12px;line-height:1.5">Tax treatment of token transactions · Royalty framework · Fiscal impact assessment of tokenisation model</div>
+    </div>
+  </div>
+
+  <!-- Closing punchline -->
+  <div style="background:var(--blue-lt);border:1px solid var(--blue);border-left:4px solid var(--blue);border-radius:var(--radius);padding:18px 22px">
+    <strong style="color:var(--blue);font-size:13px">💬 A Proposal for Discussion:</strong>
+    <span style="font-size:13px;color:var(--text-body)"> This roadmap is a starting point — not a fixed plan. Each milestone requires decisions from multiple institutions. The RMB-FinIntel programme creates the analytical foundation and brings all stakeholders to the table. The tokenisation calendar should be discussed, challenged, and refined jointly by RMB, BNR, CMA, KIFC, and representative mining companies — ideally in a dedicated multi-stakeholder workshop at the end of Phase 1 (M2), using the sector diagnostic outputs as the shared evidence base.</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Technical Proposal</a>
+    <a href="index.html#strategic-horizon" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Strategic Horizon →</a>
+    <a href="architecture.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Architecture →</a>
+    <a href="demo.html" class="btn btn-green" style="font-size:12px;padding:8px 18px">🔬 Tool Mock-up</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">Mineral Tokenisation — Strategic Horizon<br>RMB Financial Market Intelligence Expert · April 2026</div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<script>
+// ── TOKENISATION GANTT ────────────────────────────────────────────────────
+(function(){
+  var MONTHS = 18;
+  var phColors = {
+    'prereq':  '#1B6CA8',
+    'reg':     '#B8860B',
+    'tech':    '#1A5C38',
+    'pilot':   '#5B2C6F'
+  };
+
+  var rows = [
+    // Phase A: Prerequisite (FI Programme) — blue
+    {ph:'prereq', hdr:true,  label:'PHASE A — Prerequisites: RMB-FinIntel Programme Workstreams'},
+    {ph:'prereq', label:'Inter-Agency Working Group established (RMB + BNR + CMA)',               s:1, d:1,    note:'Milestone: M2'},
+    {ph:'prereq', label:'Sector Data Diagnostic & data-sharing MoUs (D1.1)',                      s:0, d:2,    note:'Deliverable D1.1 — End M2'},
+    {ph:'prereq', label:'Pricing Reference Guide — LME/LBMA methodology (D2.1)',                  s:2, d:2,    note:'Deliverable D2.1 — End M4'},
+    {ph:'prereq', label:'Demand-Offer-Price Dynamic Model (D2.3)',                                 s:2, d:3,    note:'Deliverable D2.3 — End M5'},
+    {ph:'prereq', label:'Company-level financial models (D3.4 + D4.1)',                            s:5, d:6,    note:'Deliverables D3.4 & D4.1 — M7–M12'},
+    // Phase B: Regulatory Alignment — gold
+    {ph:'reg',    hdr:true,  label:'PHASE B — Regulatory Alignment (parallel workstream)'},
+    {ph:'reg',    label:'Virtual Assets Law gazette (BNR/CMA parliamentary process)',              s:3, d:5,    note:'External dependency — M4–M9 estimate'},
+    {ph:'reg',    label:'Mineral-specific token issuance standards drafted (CMA)',                 s:4, d:4,    note:'CMA drafting — M5–M9'},
+    {ph:'reg',    label:'CMA licensing framework for mineral token issuers published',             s:8, d:1,    note:'Target: End M9'},
+    // Phase C: Technical & Operational Setup — green
+    {ph:'tech',   hdr:true,  label:'PHASE C — Technical & Operational Setup'},
+    {ph:'tech',   label:'Shadow tokenisation simulation (full rehearsal, no real tokens)',         s:5, d:1,    note:'End-to-end simulation — M6'},
+    {ph:'tech',   label:'Custodian confirmed (BNR vault for gold / warehouse for 3T)',             s:8, d:3,    note:'M9–M12'},
+    {ph:'tech',   label:'KIFC exchange platform selected & smart contract audit',                  s:9, d:3,    note:'M10–M12'},
+    {ph:'tech',   label:'Legal structure for token issuer finalised',                              s:10, d:2,   note:'M11–M12'},
+    {ph:'tech',   label:'Investor roadshow & KIFC member outreach',                                s:11, d:3,   note:'M12–M14'},
+    // Phase D: Pilot — purple
+    {ph:'pilot',  hdr:true,  label:'PHASE D — 🏅 Gold Token Pilot'},
+    {ph:'pilot',  label:'🏅 First Rwandan gold token issued — 100kg pilot lot (~$8.5M)',          s:14, d:1,   note:'Target: M15 — CMA-approved · BNR-custodied · KIFC-listed'},
+    {ph:'pilot',  label:'3-month parallel operation & performance evaluation',                     s:14, d:3,   note:'M15–M18'},
+  ];
+
+  // Build header
+  var head = document.getElementById('tok-gantt-head');
+  if (!head) return;
+  var headHtml = '<th class="g-task" style="font-size:10px;font-family:monospace;padding:9px 12px;text-align:left;background:var(--surface-1);border-bottom:2px solid var(--border-md);color:var(--text-muted)">Task / Milestone</th>';
+  for (var m = 0; m < MONTHS; m++) {
+    headHtml += '<th style="padding:9px 4px;font-size:10px;font-family:monospace;text-align:center;background:var(--surface-1);border-bottom:2px solid var(--border-md);color:var(--text-muted)">M' + (m+1) + '</th>';
+  }
+  head.innerHTML = headHtml;
+
+  // Build body
+  var body = document.getElementById('tok-gantt-body');
+  if (!body) return;
+
+  rows.forEach(function(row) {
+    var tr = document.createElement('tr');
+    if (row.hdr) {
+      var td = document.createElement('td');
+      td.colSpan = MONTHS + 1;
+      td.style.cssText = 'padding:14px 12px 4px;font-family:var(--font-m);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;color:' + phColors[row.ph] + ';border-bottom:2px solid ' + phColors[row.ph] + ';background:rgba(0,0,0,0.02)';
+      td.textContent = row.label;
+      tr.appendChild(td);
+    } else {
+      var labelTd = '<td style="padding:6px 10px 6px 12px;font-size:12px;color:var(--text-body);white-space:nowrap;border-bottom:1px solid var(--border-lt);min-width:260px">'
+        + (row.label.indexOf('🏅') >= 0 ? '<strong>' + row.label + '</strong>' : row.label)
+        + (row.note ? '<br><small style="font-size:10px;color:var(--text-muted);font-style:italic;font-weight:normal">' + row.note + '</small>' : '')
+        + '</td>';
+      var cells = labelTd;
+      for (var m = 0; m < MONTHS; m++) {
+        var active = (m + 1 > row.s) && (m < row.s + row.d);
+        if (!active) {
+          cells += '<td style="padding:0 1px;height:28px;border-bottom:1px solid var(--border-lt)"></td>';
+        } else {
+          var ls = Math.max(row.s, m);
+          var le = Math.min(row.s + row.d, m + 1);
+          var leftPct  = (ls - m) * 100;
+          var widthPct = (le - ls) * 100;
+          var c = phColors[row.ph];
+          var bg = row.ph === 'pilot'
+            ? 'linear-gradient(135deg,' + c + ' 0%,#8B44B0 100%)'
+            : c;
+          var mLabel = widthPct >= 55 ? 'M' + (m+1) : '';
+          cells += '<td style="padding:0 1px;border-bottom:1px solid var(--border-lt);vertical-align:middle">'
+            + '<div style="background:' + bg + ';height:22px;margin:4px 0 4px ' + leftPct + '%;width:' + widthPct + '%;border-radius:3px;display:flex;align-items:center;justify-content:center;overflow:hidden">'
+            + (mLabel ? '<span style="font-size:8px;font-family:monospace;color:rgba(255,255,255,0.95);font-weight:700">' + mLabel + '</span>' : '')
+            + '</div></td>';
+        }
+      }
+      tr.innerHTML = cells;
+    }
+    body.appendChild(tr);
+  });
+
+  // Highlight M15 column
+  var allTds = document.querySelectorAll('#tok-gantt-body tr td:nth-child(16)');
+  allTds.forEach(function(td) {
+    if (!td.colSpan || td.colSpan === 1) {
+      td.style.background = 'rgba(91,44,111,0.05)';
+    }
+  });
+})();
+</script>
+
+<script src="nav.js"></script>
+</body>
+</html>
