@@ -1,0 +1,1836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mineral Financing Models — RMB-FinIntel</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+/* ═══════════════════════════════════════════════════════════
+   PAGE-SPECIFIC STYLES
+═══════════════════════════════════════════════════════════ */
+
+/* ── Layer stack visual ── */
+.layer-stack { display:flex; flex-direction:column; gap:3px; margin-bottom:32px; }
+.layer-block {
+  border-radius:var(--radius); padding:18px 24px;
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; transition:all 0.2s; border:1px solid transparent;
+}
+.layer-block:hover { transform:translateX(4px); }
+.layer-block-left { display:flex; align-items:center; gap:16px; }
+.layer-num { font-family:var(--font-d); font-size:28px; font-weight:700; opacity:0.25; }
+.layer-title { font-family:var(--font-d); font-size:18px; font-weight:700; }
+.layer-sub { font-size:13px; margin-top:3px; opacity:0.8; }
+.layer-arrow { font-size:12px; opacity:0.5; }
+.layer-outputs { font-family:var(--font-m); font-size:10px; letter-spacing:1px; text-transform:uppercase; opacity:0.7; text-align:right; max-width:220px; line-height:1.6; }
+
+/* ── Expandable section cards ── */
+.exp-section { margin-bottom:12px; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-sm); }
+.exp-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 22px; cursor:pointer; user-select:none;
+  transition:all 0.2s; border-bottom:1px solid transparent;
+}
+.exp-header:hover { filter:brightness(0.97); }
+.exp-header-left { display:flex; align-items:center; gap:14px; }
+.exp-icon { font-size:22px; }
+.exp-badge { font-family:var(--font-m); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; padding:3px 8px; border-radius:3px; }
+.exp-title { font-family:var(--font-d); font-size:17px; font-weight:700; color:var(--text-head); margin-bottom:2px; }
+.exp-preview { font-size:13px; color:var(--text-muted); }
+.exp-toggle { font-size:12px; color:var(--text-muted); font-family:var(--font-m); transition:transform 0.25s; flex-shrink:0; }
+.exp-toggle.open { transform:rotate(180deg); }
+.exp-body { display:none; padding:24px; background:#FFFFFF; border-top:1px solid var(--border-lt); }
+.exp-body.open { display:block; }
+
+/* ── Sub-cards inside expanded bodies ── */
+.sub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-bottom:20px; }
+.sub-card { background:var(--surface-1); border:1px solid var(--border-lt); border-radius:6px; padding:16px; }
+.sub-card-title { font-size:13px; font-weight:700; color:var(--text-head); margin-bottom:6px; }
+.sub-card-body { font-size:12px; color:var(--text-muted); line-height:1.6; }
+
+/* ── Formula boxes ── */
+.formula-box {
+  background:var(--surface-1); border:1px solid var(--border-md);
+  border-left:3px solid var(--g-deep); border-radius:4px;
+  padding:12px 16px; font-family:var(--font-m); font-size:12px;
+  color:var(--text-body); margin-bottom:10px; line-height:1.8;
+}
+.formula-box .f-label { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+.formula-box .f-eq { color:var(--g-deep); font-weight:700; }
+.formula-box .f-note { font-size:10px; color:var(--text-muted); margin-top:4px; font-style:italic; font-family:var(--font-b); }
+
+/* ── Balance sheet grid ── */
+.bs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; margin-bottom:16px; }
+.bs-entity {
+  border-radius:6px; overflow:hidden; border:1px solid var(--border-lt);
+  transition:all 0.2s; cursor:pointer;
+}
+.bs-entity:hover, .bs-entity.active { border-color:var(--g-deep); box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.bs-entity-header { padding:10px 12px; font-weight:700; font-size:12px; color:#FFFFFF; }
+.bs-entity-body { padding:10px 12px; background:#FFFFFF; }
+.bs-row { display:flex; justify-content:space-between; align-items:center; padding:3px 0; border-bottom:1px solid var(--border-lt); font-size:11px; }
+.bs-row:last-child { border:none; }
+.bs-label { color:var(--text-muted); }
+.bs-bar-wrap { display:flex; align-items:center; gap:5px; }
+.bs-bar { height:7px; border-radius:2px; min-width:4px; }
+.bs-val { font-family:var(--font-m); font-size:10px; font-weight:700; }
+
+/* ── Interactive calculator ── */
+.calc-wrap { background:var(--surface-1); border:1px solid var(--border-lt); border-radius:var(--radius); padding:20px; margin-bottom:16px; }
+.calc-title { font-family:var(--font-m); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--g-deep); margin-bottom:14px; }
+.calc-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px; }
+.calc-field label { display:block; font-size:11px; color:var(--text-muted); margin-bottom:4px; font-family:var(--font-m); letter-spacing:0.5px; }
+.calc-field input, .calc-field select {
+  width:100%; padding:8px 10px; border:1px solid var(--border-md);
+  border-radius:4px; font-size:13px; font-family:var(--font-b);
+  background:#FFFFFF; color:var(--text-body); outline:none;
+  transition:border 0.2s;
+}
+.calc-field input:focus, .calc-field select:focus { border-color:var(--g-deep); }
+.calc-result { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px; }
+.calc-metric { background:#FFFFFF; border:1px solid var(--border-lt); border-radius:6px; padding:12px; text-align:center; }
+.calc-metric-val { font-family:var(--font-d); font-size:22px; font-weight:700; color:var(--g-deep); }
+.calc-metric-val.red { color:var(--red); }
+.calc-metric-val.gold { color:var(--gold); }
+.calc-metric-label { font-size:11px; color:var(--text-muted); margin-top:3px; }
+.calc-btn { background:var(--g-deep); color:#FFFFFF; border:none; padding:9px 20px; border-radius:5px; font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-b); transition:all 0.2s; }
+.calc-btn:hover { background:var(--g-mid); }
+
+/* ── Risk matrix ── */
+.risk-matrix { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
+.risk-matrix th { padding:8px 12px; font-family:var(--font-m); font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); background:var(--surface-1); border-bottom:2px solid var(--border-md); text-align:center; }
+.risk-matrix th:first-child { text-align:left; }
+.risk-matrix td { padding:8px 12px; border-bottom:1px solid var(--border-lt); text-align:center; vertical-align:middle; }
+.risk-matrix td:first-child { text-align:left; font-weight:600; color:var(--text-body); }
+.risk-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin:0 auto; }
+
+/* ── Financing cards ── */
+.fin-card { background:#FFFFFF; border:1px solid var(--border-lt); border-radius:var(--radius); padding:20px; margin-bottom:10px; box-shadow:var(--shadow-sm); }
+.fin-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; gap:10px; }
+.fin-card-title { font-size:15px; font-weight:700; color:var(--text-head); }
+.fin-card-tags { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.fin-detail-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-bottom:12px; }
+.fin-detail { background:var(--surface-1); border-radius:5px; padding:10px; }
+.fin-detail-label { font-family:var(--font-m); font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; }
+.fin-detail-val { font-size:13px; font-weight:700; color:var(--text-body); }
+.fin-detail-val.green { color:var(--g-deep); }
+.fin-detail-val.gold { color:var(--gold); }
+
+/* ── Entity modal ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55);
+  z-index:1000; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+  background:#FFFFFF; border-radius:var(--radius); max-width:860px; width:100%;
+  max-height:88vh; overflow-y:auto; box-shadow:var(--shadow-lg);
+  animation:fadeUp 0.25s ease;
+}
+.modal-header { padding:22px 26px 16px; border-bottom:1px solid var(--border-lt); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#FFFFFF; z-index:2; }
+.modal-title { font-family:var(--font-d); font-size:22px; font-weight:700; color:var(--text-head); }
+.modal-close { background:none; border:1px solid var(--border-md); border-radius:5px; width:32px; height:32px; cursor:pointer; font-size:16px; color:var(--text-muted); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.modal-close:hover { background:var(--red-lt); color:var(--red); border-color:var(--red); }
+.modal-body { padding:22px 26px; }
+.modal-section { margin-bottom:24px; }
+.modal-section-title { font-family:var(--font-m); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border-lt); }
+
+/* ── Metrics cards ── */
+.metric-card { background:#FFFFFF; border:1px solid var(--border-lt); border-radius:var(--radius); padding:18px; }
+.metric-score { font-family:var(--font-d); font-size:36px; font-weight:700; line-height:1; margin-bottom:4px; }
+.metric-name { font-size:13px; font-weight:700; color:var(--text-head); margin-bottom:6px; }
+.metric-formula { font-family:var(--font-m); font-size:10px; color:var(--text-muted); margin-bottom:8px; }
+.metric-body { font-size:12px; color:var(--text-muted); line-height:1.6; }
+.score-bar-wrap { height:6px; background:var(--border-lt); border-radius:3px; margin-bottom:8px; }
+.score-bar { height:6px; border-radius:3px; }
+
+/* ── Token flow visual ── */
+.token-flow { display:flex; align-items:stretch; gap:3px; flex-wrap:wrap; }
+.token-step { flex:1; min-width:100px; border-radius:5px; padding:12px 10px; text-align:center; }
+.token-step-num { font-family:var(--font-d); font-size:18px; font-weight:700; opacity:0.4; margin-bottom:4px; }
+.token-step-label { font-size:11px; font-weight:700; margin-bottom:4px; }
+.token-step-body { font-size:10px; line-height:1.5; opacity:0.8; }
+.token-arrow { display:flex; align-items:center; color:var(--text-muted); font-size:14px; flex-shrink:0; }
+
+/* ── Impact section ── */
+.impact-before-after { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-bottom:20px; }
+.impact-col { padding:20px 22px; }
+.impact-col.before { background:var(--red-lt); border:1px solid #F4B8B8; border-radius:var(--radius) 0 0 var(--radius); }
+.impact-col.after  { background:var(--g-pale); border:1px solid var(--g-lt); border-radius:0 var(--radius) var(--radius) 0; }
+.impact-col-label { font-family:var(--font-m); font-size:10px; letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:10px; }
+.impact-item { display:flex; align-items:flex-start; gap:8px; margin-bottom:8px; font-size:13px; line-height:1.55; }
+
+/* ── Responsive ── */
+@media (max-width:768px) {
+  .calc-grid { grid-template-columns:1fr; }
+  .impact-before-after { grid-template-columns:1fr; }
+  .impact-col.before { border-radius:var(--radius) var(--radius) 0 0; }
+  .impact-col.after  { border-radius:0 0 var(--radius) var(--radius); }
+  .layer-block { flex-direction:column; align-items:flex-start; gap:8px; }
+  .layer-outputs { text-align:left; }
+}
+
+    @media (max-width:900px) {
+      .entity-header-grid { grid-template-columns:1fr !important; }
+      .entity-header-grid > div:last-child { border-left:none !important; border-top:1px solid var(--border-lt); }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="rmb-nav">
+  <div class="nav-logo-block">
+    <div class="nav-logo">RMB<br>FI</div>
+    <div class="nav-brand-text">
+      <div class="nav-brand-main">RMB-FinIntel</div>
+      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html">Technical Proposal</a>
+    <div class="nav-divider"></div>
+    <a href="index.html#strategic-horizon" style="color:var(--gold);font-weight:700">🔭 Strategic Horizon</a>
+    <div class="nav-divider"></div>
+    <a href="tokenisation.html" style="color:var(--blue);font-weight:700">🔗 Tokenisation</a>
+    <div class="nav-divider"></div>
+    <a href="financing-models.html" class="active" style="color:var(--g-deep);font-weight:700">🏦 Financing Models</a>
+    <div class="nav-divider"></div>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-trigger">Current Situation Model</button>
+      <div class="nav-dropdown-menu">
+        <span class="ddm-label">Sub-modules</span>
+        <a href="architecture.html">🏗 Architecture</a>
+        <a href="energy.html">⚡ Energy Component</a>
+        <a href="demo.html">🔬 Tool Mock-up</a>
+      </div>
+    </div>
+  </div>
+  <!-- Hamburger button (mobile only) -->
+  <button class="nav-hamburger" id="nav-hbg" aria-label="Menu" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile nav panel -->
+<div class="nav-mobile-panel" id="nav-mobile">
+  <a href="index.html">Technical Proposal</a>
+  <span class="mob-section-label">Strategic Horizon</span>
+  <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+  <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+  <a href="financing-models.html">🏦 Financing Models</a>
+  <span class="mob-section-label">Current Situation Model</span>
+  <a href="architecture.html">🏗 Architecture</a>
+  <a href="energy.html">⚡ Energy Component</a>
+  <a href="demo.html">🔬 Tool Mock-up</a>
+</div>
+<script>
+function toggleMobileNav() {
+  var panel = document.getElementById('nav-mobile');
+  var hbg   = document.getElementById('nav-hbg');
+  if (!panel) return;
+  var open = panel.classList.toggle('open');
+  // Animate hamburger to X
+  var spans = hbg ? hbg.querySelectorAll('span') : [];
+  if (open) {
+    if (spans[0]) { spans[0].style.transform='rotate(45deg) translate(5px,5px)'; }
+    if (spans[1]) { spans[1].style.opacity='0'; }
+    if (spans[2]) { spans[2].style.transform='rotate(-45deg) translate(5px,-5px)'; }
+    document.body.style.overflow = 'hidden';
+  } else {
+    if (spans[0]) { spans[0].style.transform=''; }
+    if (spans[1]) { spans[1].style.opacity='1'; }
+    if (spans[2]) { spans[2].style.transform=''; }
+    document.body.style.overflow = '';
+  }
+}
+// Close on outside click
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('nav-mobile');
+  var hbg   = document.getElementById('nav-hbg');
+  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== hbg && !hbg.contains(e.target)) {
+    toggleMobileNav();
+  }
+});
+// Mark active link in mobile panel
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('#nav-mobile a').forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href === page || (page==='' && href==='index.html')) a.classList.add('active');
+  });
+})();
+</script>
+
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<div class="hero" style="min-height:54vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Strategic Horizon · Financial Architecture</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal">Rwanda Mineral <span class="accent">Financing Models</span></h1>
+    <p class="hero-lead fade-up au-3">Financial intelligence and asset tokenisation are not ends in themselves — they are the infrastructure for a new financing paradigm. This page shows how accurate company-level financial intelligence, asset valuation, and adapted financing instruments combine into a self-reinforcing system that ends Rwanda's prefinancing dependency and maximises value capture at every node of the mineral value chain.</p>
+    <p class="hero-meta fade-up au-4">Strategic Horizon · Financing Architecture · Beyond the 18-Month Programme</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-5">
+      <a href="#system-logic" class="btn btn-gold">Explore the System ↓</a>
+      <a href="#entity-navigator" class="btn btn-outline">Entity Navigator ↓</a>
+      <a href="tokenisation.html" class="btn btn-green">🔗 Asset Tokenisation</a>
+    </div>
+    <div class="stats-bar fade-up au-5">
+      <div class="stat"><div class="stat-n">3</div><div class="stat-l">Interdependent layers</div></div>
+      <div class="stat"><div class="stat-n">4</div><div class="stat-l">Entity types covered</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Financing instruments</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Asset classes tokenisable</div></div>
+      <div class="stat"><div class="stat-n">−8pp</div><div class="stat-l">Est. financing cost reduction</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 0 — SYSTEM LOGIC
+═══════════════════════════════════════════ -->
+<section id="system-logic" class="section section-alt">
+  <div class="eyebrow">0 — System Architecture</div>
+  <h2 class="section-title">The Three-Layer System: How It Works</h2>
+  <p class="section-lead">The system operates bottom-up. You cannot tokenise what you cannot value. You cannot value what you cannot measure. Financial intelligence is the foundation — everything else depends on it.</p>
+
+  <div class="layer-stack">
+    <div class="layer-block" style="background:var(--blue-lt);border-color:var(--blue)">
+      <div class="layer-block-left">
+        <div class="layer-num" style="color:var(--blue)">0</div>
+        <div>
+          <div class="layer-title" style="color:var(--blue)">RMB-FinIntel Data Infrastructure</div>
+          <div class="layer-sub" style="color:#1B4F7A">Sector data diagnostic (D1.1) · Pricing reference (D2.1) · Inter-agency data flows (RRA, RDB, MINECOFIN) · Company portal (D4.1)</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="layer-outputs" style="color:#1B4F7A">Foundation layer · 18-month programme deliverables</div>
+        <div style="font-size:11px;margin-top:6px"><a href="index.html" style="color:var(--blue);font-family:var(--font-m);font-size:10px;border-bottom:1px solid var(--blue)">→ See Technical Proposal</a></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;font-family:var(--font-m)">↓ powers Layer 1 with sector data, pricing benchmarks &amp; inter-agency flows</div>
+
+    <div class="layer-block" style="background:var(--g-pale);border-color:var(--g-lt)" onclick="scrollTo('intelligence')">
+      <div class="layer-block-left">
+        <div class="layer-num" style="color:var(--g-deep)">1</div>
+        <div>
+          <div class="layer-title" style="color:var(--g-deep)">Financial Intelligence</div>
+          <div class="layer-sub" style="color:var(--g-mid)">Revenue models · Cost structures (fixed vs variable) · Breakeven analysis · Inventory mark-to-market · Peer benchmarking</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="layer-outputs" style="color:var(--g-mid)">Outputs: company P&amp;L · unit costs · benchmarks · daily inventory values</div>
+        <div style="font-size:11px;color:var(--g-mid);margin-top:6px">→ Explore Layer 1 ↓</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;font-family:var(--font-m)">↓ P&amp;L data + inventory values + benchmarks feed Layer 2</div>
+
+    <div class="layer-block" style="background:var(--gold-pale);border-color:#E8CC80" onclick="scrollTo('valuation')">
+      <div class="layer-block-left">
+        <div class="layer-num" style="color:var(--gold)">2</div>
+        <div>
+          <div class="layer-title" style="color:var(--gold)">Asset Valuation &amp; Tokenisation</div>
+          <div class="layer-sub" style="color:#7A5800">Asset registry · Dual valuation (cost vs market) · Risk scoring · Tokenisation gateway (equipment + inventory + gold)</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="layer-outputs" style="color:#7A5800">Outputs: NAV at cost · NAV at market · risk scores · tokenised collateral</div>
+        <div style="font-size:11px;color:#7A5800;margin-top:6px">→ Explore Layer 2 ↓</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:var(--text-muted);padding:2px 0;font-family:var(--font-m)">↓ collateral quality scores + tokenised assets feed Layer 3</div>
+
+    <div class="layer-block" style="background:#F3E8FF;border-color:#C39BD3" onclick="scrollTo('financing')">
+      <div class="layer-block-left">
+        <div class="layer-num" style="color:#5B2C6F">3</div>
+        <div>
+          <div class="layer-title" style="color:#5B2C6F">Financing Instruments</div>
+          <div class="layer-sub" style="color:#7D3C98">Warehouse receipts · Equipment-backed lending · Offtake financing · Token-based fractional capital · Working capital facilities</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="layer-outputs" style="color:#7D3C98">Outputs: cheaper capital · adapted cycle durations · diversified, transparent financing</div>
+        <div style="font-size:11px;color:#7D3C98;margin-top:6px">→ Explore Layer 3 ↓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key principle box -->
+  <div style="background:var(--g-deep);border-radius:var(--radius);padding:20px 26px;color:#FFFFFF;margin-top:8px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">The Core Principle</div>
+    <p style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.75">A Rwandan mining cooperative or trading company cannot access cheap financing today not because lenders are unwilling — but because <strong style="color:#FFFFFF">neither party can accurately measure the value or risk of the assets being offered as collateral</strong>. This system solves that problem at source: measure first, value second, tokenise third, finance fourth. Each layer builds on the one below it, and each layer makes financing cheaper, faster, and more adapted to the economic realities of each entity type.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — LAYER 1: FINANCIAL INTELLIGENCE
+═══════════════════════════════════════════ -->
+<section id="intelligence" class="section">
+  <div class="eyebrow">Layer 1 — Financial Intelligence</div>
+  <h2 class="section-title">Measuring What Matters: Revenue, Costs &amp; Benchmarks</h2>
+  <p class="section-lead">Layer 1 produces the financial signals that feed every other layer. Without accurate cost structures and inventory valuations at company level, nothing above it can function.</p>
+
+  <!-- 1A: Revenue & Cost Structure -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--g-pale);border-color:var(--g-lt)" onclick="toggleExp('exp-1a')">
+      <div class="exp-header-left">
+        <div class="exp-icon">📊</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--g-deep);color:#FFF">1A</span>
+            <div class="exp-title">Revenue Model &amp; Cost Structure</div>
+          </div>
+          <div class="exp-preview">Build the complete P&amp;L of any mineral sector company — revenues, variable costs, fixed costs, breakeven point. Identify where margin is made and where it leaks.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-1a">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-1a">
+      <!-- Formula cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
+        <div>
+          <div class="formula-box">
+            <div class="f-label">Revenue per tonne exported</div>
+            <div class="f-eq">Rev = Volume × (P<sub>mkt</sub> − TC − RC − QD − LC)</div>
+            <div class="f-note">P<sub>mkt</sub>: LME/LBMA benchmark · TC: Treatment Charges · RC: Refining Charges · QD: Quality Deductions · LC: Logistics Cost</div>
+          </div>
+          <div class="formula-box">
+            <div class="f-label">Gross Margin</div>
+            <div class="f-eq">GM = Rev − VC<br>VC = Energy + Labour + Consumables + Royalties</div>
+            <div class="f-note">Variable costs scale with production volume. Royalties typically 4–6% of export value in Rwanda.</div>
+          </div>
+          <div class="formula-box">
+            <div class="f-label">Net Operating Margin</div>
+            <div class="f-eq">NOM = GM − FC<br>FC = Depreciation + Admin + Financing costs</div>
+            <div class="f-note">Fixed costs do not scale with volume — critical for breakeven calculation.</div>
+          </div>
+        </div>
+        <div>
+          <div class="formula-box" style="border-left-color:var(--gold)">
+            <div class="f-label">Breakeven Volume (MTU)</div>
+            <div class="f-eq">BEV = FC ÷ (P<sub>mkt</sub> − TC − RC − VC/unit)</div>
+            <div class="f-note">MTU = Metric Tonne Unit. Below BEV, the company destroys value with every tonne produced.</div>
+          </div>
+          <div class="formula-box" style="border-left-color:var(--red)">
+            <div class="f-label">Prefinancing Discount Cost</div>
+            <div class="f-eq">PDC = Volume × P<sub>mkt</sub> × d%</div>
+            <div class="f-note">d% = prefinancing discount rate (typically 12–18% of benchmark price). PDC is the hidden transfer to international trading houses — quantified for the first time through this system.</div>
+          </div>
+          <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:6px;padding:14px;margin-top:10px">
+            <div style="font-size:11px;font-weight:700;color:var(--text-head);margin-bottom:8px">Cost Structure by Category</div>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:70%;background:var(--border-lt);height:8px;border-radius:3px;overflow:hidden"><div style="width:35%;height:8px;background:var(--gold);border-radius:3px"></div></div>
+                <span style="color:var(--text-muted)">Energy: ~35%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:70%;background:var(--border-lt);height:8px;border-radius:3px;overflow:hidden"><div style="width:28%;height:8px;background:var(--blue);border-radius:3px"></div></div>
+                <span style="color:var(--text-muted)">Labour: ~28%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:70%;background:var(--border-lt);height:8px;border-radius:3px;overflow:hidden"><div style="width:18%;height:8px;background:var(--g-deep);border-radius:3px"></div></div>
+                <span style="color:var(--text-muted)">Consumables: ~18%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:70%;background:var(--border-lt);height:8px;border-radius:3px;overflow:hidden"><div style="width:12%;height:8px;background:#5B2C6F;border-radius:3px"></div></div>
+                <span style="color:var(--text-muted)">Royalties &amp; taxes: ~12%</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;font-size:11px">
+                <div style="width:70%;background:var(--border-lt);height:8px;border-radius:3px;overflow:hidden"><div style="width:7%;height:8px;background:var(--text-muted);border-radius:3px"></div></div>
+                <span style="color:var(--text-muted)">Admin &amp; financing: ~7%</span>
+              </div>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);font-style:italic;margin-top:8px">Indicative structure for semi-industrial mining — varies significantly by entity type</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive breakeven calculator -->
+      <div class="calc-wrap">
+        <div class="calc-title">🔢 Interactive Breakeven Calculator — Cassiterite (Semi-Industrial)</div>
+        <div class="calc-grid">
+          <div class="calc-field">
+            <label>Mineral Type</label>
+            <select id="c-mineral" onchange="recalc()">
+              <option value="cassiterite">Cassiterite (Sn concentrate)</option>
+              <option value="coltan">Coltan (Ta concentrate)</option>
+              <option value="wolframite">Wolframite (W concentrate)</option>
+              <option value="gold">Gold (refined)</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label>Market Price (USD / MTU)</label>
+            <input type="number" id="c-price" value="8500" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Treatment + Refining Charges (USD / MTU)</label>
+            <input type="number" id="c-trc" value="1200" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Variable Cost per MTU (USD)</label>
+            <input type="number" id="c-vc" value="3800" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Monthly Fixed Costs (USD)</label>
+            <input type="number" id="c-fc" value="45000" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Prefinancing Discount (%)</label>
+            <input type="number" id="c-pd" value="15" step="0.5" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Monthly Production (MTU)</label>
+            <input type="number" id="c-vol" value="12" onchange="recalc()"/>
+          </div>
+          <div class="calc-field">
+            <label>Logistics Cost (USD / MTU)</label>
+            <input type="number" id="c-lc" value="320" onchange="recalc()"/>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="recalc()">↻ Recalculate</button>
+        <div style="margin-top:16px">
+          <div class="calc-result" id="calc-result">
+            <!-- filled by JS -->
+          </div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-muted);font-style:italic">
+          Pre-filled with indicative Rwanda semi-industrial cassiterite values. Adjust inputs to model different scenarios.
+          Reference: LME Tin ~$26,000/tonne → ~$8,500/MTU at 32.7% Sn grade. All values illustrative.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1B: Inventory Management -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--blue-lt);border-color:var(--blue)" onclick="toggleExp('exp-1b')">
+      <div class="exp-header-left">
+        <div class="exp-icon">📦</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--blue);color:#FFF">1B</span>
+            <div class="exp-title">Inventory &amp; Stock Management</div>
+          </div>
+          <div class="exp-preview">Know at end of each day: quantities and values of all outstanding stock — raw material, semi-finished, finished products — simultaneously at cost and at market price. The spread is the collateralisation opportunity.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-1b">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-1b">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text-head);margin-bottom:10px">Three Stock Categories — Valuation Rules</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="background:var(--blue-lt);border:1px solid var(--blue);border-radius:6px;padding:12px">
+              <div style="font-family:var(--font-m);font-size:10px;text-transform:uppercase;color:var(--blue);margin-bottom:5px">Raw Material</div>
+              <div style="font-size:12px;color:var(--text-body);line-height:1.6"><strong>At cost:</strong> Acquisition cost + haulage to site<br><strong>At market:</strong> Qty × LME benchmark × grade factor<br><strong>Purpose:</strong> Warehouse receipt collateral</div>
+            </div>
+            <div style="background:var(--gold-pale);border:1px solid #E8CC80;border-radius:6px;padding:12px">
+              <div style="font-family:var(--font-m);font-size:10px;text-transform:uppercase;color:var(--gold);margin-bottom:5px">Semi-Finished Products</div>
+              <div style="font-size:12px;color:var(--text-body);line-height:1.6"><strong>At cost:</strong> Raw material cost + processing cost-to-date<br><strong>At market:</strong> Qty × benchmark × processing premium factor<br><strong>Purpose:</strong> Intermediate collateral for processing companies</div>
+            </div>
+            <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:6px;padding:12px">
+              <div style="font-family:var(--font-m);font-size:10px;text-transform:uppercase;color:var(--g-deep);margin-bottom:5px">Finished Products</div>
+              <div style="font-size:12px;color:var(--text-body);line-height:1.6"><strong>At cost:</strong> Full production cost (all layers)<br><strong>At market:</strong> Qty × export benchmark (LME/LBMA)<br><strong>Purpose:</strong> Highest-quality tokenisation collateral</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--text-head);margin-bottom:10px">Daily Mark-to-Market Dashboard (Illustrative)</div>
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:var(--surface-1)">
+                <th style="padding:8px;text-align:left;border-bottom:2px solid var(--border-md);font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--text-muted)">Stock Category</th>
+                <th style="padding:8px;text-align:right;border-bottom:2px solid var(--border-md);font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--text-muted)">Qty (MTU)</th>
+                <th style="padding:8px;text-align:right;border-bottom:2px solid var(--border-md);font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--text-muted)">Cost Value</th>
+                <th style="padding:8px;text-align:right;border-bottom:2px solid var(--border-md);font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--text-muted)">Market Value</th>
+                <th style="padding:8px;text-align:right;border-bottom:2px solid var(--border-md);font-family:var(--font-m);font-size:9px;letter-spacing:1px;color:var(--text-muted)">Latent Margin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border-lt)">Raw Ore (Sn 28%)</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">45</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$54,000</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$107,100</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$53,100</td></tr>
+              <tr style="background:var(--surface-1)"><td style="padding:7px 8px;border-bottom:1px solid var(--border-lt)">Concentrate (Sn 65%)</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">18</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$78,300</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$136,800</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$58,500</td></tr>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid var(--border-lt)">Finished (Sn 99.9%)</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">6</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$37,200</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt)">$52,000</td><td style="padding:7px 8px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$14,800</td></tr>
+              <tr style="background:var(--g-xpale)"><td style="padding:7px 8px;font-weight:700">TOTAL</td><td style="padding:7px 8px;text-align:right;font-weight:700">69</td><td style="padding:7px 8px;text-align:right;font-weight:700">$169,500</td><td style="padding:7px 8px;text-align:right;font-weight:700">$295,900</td><td style="padding:7px 8px;text-align:right;font-weight:700;color:var(--g-deep)">+$126,400</td></tr>
+            </tbody>
+          </table>
+          <div style="background:var(--g-xpale);border:1px solid var(--border-lt);border-radius:5px;padding:10px;margin-top:10px;font-size:12px;color:var(--text-muted)">
+            <strong style="color:var(--g-deep)">Collateralisation insight:</strong> The $295,900 market value of certified, ring-fenced inventory is the tokenisable collateral base. At a 70% advance rate (conservative), this unlocks $207,130 in warehouse receipt financing — without a prefinancing agreement.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1C: Benchmarking -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--gold-pale);border-color:#E8CC80" onclick="toggleExp('exp-1c')">
+      <div class="exp-header-left">
+        <div class="exp-icon">📏</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--gold);color:#FFF">1C</span>
+            <div class="exp-title">Benchmarking &amp; Comparables</div>
+          </div>
+          <div class="exp-preview">Compare any company against its segment peers: cost per MTU, energy intensity, labour productivity, gross margin, prefinancing discount. Know where a company stands in its competitive landscape.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-1c">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-1c">
+      <div style="overflow-x:auto">
+        <table class="risk-matrix" style="margin-bottom:16px">
+          <thead>
+            <tr>
+              <th style="text-align:left">KPI</th>
+              <th>Sector Min</th>
+              <th>Sector Avg</th>
+              <th>Sector Max</th>
+              <th>LME Ref.</th>
+              <th style="color:var(--g-deep)">Company X</th>
+              <th>Signal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cost / MTU (USD)</td>
+              <td style="color:var(--g-deep)">$3,200</td><td>$4,850</td><td style="color:var(--red)">$7,100</td><td>—</td>
+              <td style="font-weight:700;color:var(--gold)">$5,200</td>
+              <td><span style="font-size:10px;background:var(--gold-lt);color:#7A5800;padding:2px 6px;border-radius:3px">Above avg</span></td>
+            </tr>
+            <tr style="background:var(--surface-1)">
+              <td>Energy cost %</td>
+              <td style="color:var(--g-deep)">22%</td><td>35%</td><td style="color:var(--red)">52%</td><td>—</td>
+              <td style="font-weight:700;color:var(--red)">44%</td>
+              <td><span style="font-size:10px;background:var(--red-lt);color:var(--red);padding:2px 6px;border-radius:3px">⚠ High</span></td>
+            </tr>
+            <tr>
+              <td>Gross Margin %</td>
+              <td style="color:var(--red)">8%</td><td>22%</td><td style="color:var(--g-deep)">38%</td><td>—</td>
+              <td style="font-weight:700;color:var(--g-deep)">26%</td>
+              <td><span style="font-size:10px;background:var(--g-pale);color:var(--g-deep);padding:2px 6px;border-radius:3px">✓ Good</span></td>
+            </tr>
+            <tr style="background:var(--surface-1)">
+              <td>Prefinancing discount</td>
+              <td style="color:var(--g-deep)">0%</td><td>13%</td><td style="color:var(--red)">21%</td><td>—</td>
+              <td style="font-weight:700;color:var(--red)">18%</td>
+              <td><span style="font-size:10px;background:var(--red-lt);color:var(--red);padding:2px 6px;border-radius:3px">⚠ Trapped</span></td>
+            </tr>
+            <tr>
+              <td>Price gap vs LME/MTU</td>
+              <td style="color:var(--g-deep)">$120</td><td>$890</td><td style="color:var(--red)">$2,100</td><td>$8,500</td>
+              <td style="font-weight:700;color:var(--red)">$1,530</td>
+              <td><span style="font-size:10px;background:var(--red-lt);color:var(--red);padding:2px 6px;border-radius:3px">⚠ High gap</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="background:var(--g-xpale);border-left:3px solid var(--g-deep);border-radius:4px;padding:12px 16px;font-size:13px;color:var(--text-muted)">
+        <strong style="color:var(--g-deep)">Analytical output:</strong> Company X is profitable (26% GM) but energy-intensive and heavily prefinancing-dependent (18% discount). The benchmarking signal prioritises: (1) energy cost reduction programme, (2) prefinancing exit via warehouse receipt financing, (3) no immediate cost-per-MTU concern. These three findings feed directly into Layer 3 financing instrument selection.
+      </div>
+    </div>
+  </div>
+
+  <!-- 1D: Balance Sheet by Entity -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--surface-1);border-color:var(--border-md)" onclick="toggleExp('exp-1d')">
+      <div class="exp-header-left">
+        <div class="exp-icon">🏢</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--text-muted);color:#FFF">1D</span>
+            <div class="exp-title">Balance Sheet Structure by Entity Type</div>
+          </div>
+          <div class="exp-preview">The balance sheet of a processing company is fundamentally different from a trading company. Click any entity to see its specific asset profile — and the financing instruments unlocked by that profile.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-1d">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-1d">
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">Click an entity type to highlight its balance sheet profile and see the financing instruments available for that entity in Layer 3.</p>
+      <div class="bs-grid" id="bs-grid">
+        <!-- filled by JS -->
+      </div>
+      <div id="bs-detail" style="display:none;background:var(--g-xpale);border:1px solid var(--border-lt);border-radius:var(--radius);padding:16px;margin-top:4px">
+        <!-- filled by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — LAYER 2: ASSET VALUATION
+═══════════════════════════════════════════ -->
+<section id="valuation" class="section section-alt">
+  <div class="eyebrow">Layer 2 — Asset Valuation &amp; Tokenisation</div>
+  <h2 class="section-title">From Measurement to Monetisation: Asset Value &amp; Risk</h2>
+  <p class="section-lead">Layer 2 takes the financial intelligence from Layer 1 and converts it into actionable asset valuations, risk scores, and tokenisation-ready collateral packages. Every asset is valued twice — at cost and at market — simultaneously.</p>
+
+  <!-- 2A: Asset Registry -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--gold-pale);border-color:#E8CC80" onclick="toggleExp('exp-2a')">
+      <div class="exp-header-left">
+        <div class="exp-icon">🗂️</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--gold);color:#FFF">2A</span>
+            <div class="exp-title">Asset Registry &amp; Dual Valuation Engine</div>
+          </div>
+          <div class="exp-preview">Catalogue every asset at cost and at market simultaneously. The spread between cost value and market value is the latent collateral — waiting to be unlocked through tokenisation.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-2a">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-2a">
+      <div style="overflow-x:auto;margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:700px">
+          <thead>
+            <tr style="background:var(--g-deep)">
+              <th style="padding:10px 12px;text-align:left;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px;text-transform:uppercase">Asset</th>
+              <th style="padding:10px 12px;text-align:center;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px">Class</th>
+              <th style="padding:10px 12px;text-align:right;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px">Book Value</th>
+              <th style="padding:10px 12px;text-align:right;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px">Market Value</th>
+              <th style="padding:10px 12px;text-align:right;color:var(--gold);font-family:var(--font-m);font-size:9px;letter-spacing:1px">Latent Value</th>
+              <th style="padding:10px 12px;text-align:center;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px">Tokenisable</th>
+              <th style="padding:10px 12px;text-align:center;color:#FFF;font-family:var(--font-m);font-size:9px;letter-spacing:1px">Risk Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border-lt)">Jaw Crusher (2021)</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span class="badge badge-blue">Equipment</span></td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$68,000</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$95,000</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$27,000</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)">✅ Yes</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span style="color:var(--gold);font-weight:700">4/10</span></td></tr>
+            <tr style="background:var(--surface-1)"><td style="padding:8px 12px;border-bottom:1px solid var(--border-lt)">Ball Mill (2019)</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span class="badge badge-blue">Equipment</span></td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$112,000</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$138,000</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$26,000</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)">✅ Yes</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span style="color:var(--gold);font-weight:700">5/10</span></td></tr>
+            <tr><td style="padding:8px 12px;border-bottom:1px solid var(--border-lt)">Cassiterite Concentrate Stock</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span class="badge badge-green">Inventory</span></td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$78,300</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$136,800</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$58,500</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)">✅ Yes</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span style="color:var(--g-deep);font-weight:700">3/10</span></td></tr>
+            <tr style="background:var(--surface-1)"><td style="padding:8px 12px;border-bottom:1px solid var(--border-lt)">Gold Refined Stock (800g)</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span class="badge badge-gold">Gold</span></td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$59,200</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt)">$68,000</td><td style="padding:8px 12px;text-align:right;border-bottom:1px solid var(--border-lt);color:var(--g-deep);font-weight:700">+$8,800</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)">✅ Yes</td><td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--border-lt)"><span style="color:var(--g-deep);font-weight:700">2/10</span></td></tr>
+            <tr style="background:var(--g-xpale)"><td style="padding:8px 12px;font-weight:700">TOTAL</td><td style="padding:8px 12px"></td><td style="padding:8px 12px;text-align:right;font-weight:700">$317,500</td><td style="padding:8px 12px;text-align:right;font-weight:700">$437,800</td><td style="padding:8px 12px;text-align:right;font-weight:700;color:var(--g-deep)">+$120,300</td><td style="padding:8px 12px;text-align:center;font-weight:700;color:var(--g-deep)">$437,800</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="background:var(--g-xpale);border-left:3px solid var(--g-deep);border-radius:4px;padding:12px 16px;font-size:13px;color:var(--text-muted)">
+        <strong style="color:var(--g-deep)">Key insight:</strong> This company has $437,800 in tokenisable assets at market value. At a conservative 70% advance rate, this unlocks up to $306,460 in collateral-backed financing — at rates significantly below prefinancing terms. The gold stock, being LBMA-benchmarked and BNR-custodian-eligible, commands the highest advance rate (up to 90%).
+      </div>
+    </div>
+  </div>
+
+  <!-- 2B: Risk Scoring -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--red-lt);border-color:#F4B8B8" onclick="toggleExp('exp-2b')">
+      <div class="exp-header-left">
+        <div class="exp-icon">⚖️</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--red);color:#FFF">2B</span>
+            <div class="exp-title">Risk Scoring per Asset</div>
+          </div>
+          <div class="exp-preview">Calculate price risk, liquidity risk, obsolescence risk, and concentration risk for each asset. The composite risk score determines the collateral discount rate applied by lenders.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-2b">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-2b">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px">
+        <div>
+          <div class="formula-box" style="border-left-color:var(--red)">
+            <div class="f-label">Composite Risk Score (1–10)</div>
+            <div class="f-eq">CRS = 0.35×PR + 0.25×LR + 0.20×OR + 0.20×CR</div>
+            <div class="f-note">PR: Price Risk · LR: Liquidity Risk · OR: Obsolescence Risk · CR: Concentration Risk<br>Score 1–3: Low (advance rate 85–90%) · 4–6: Medium (70–84%) · 7–10: High (below 70%)</div>
+          </div>
+          <div class="formula-box" style="border-left-color:var(--red)">
+            <div class="f-label">Collateral Advance Rate</div>
+            <div class="f-eq">CAR = Base Rate − (CRS × discount_factor)</div>
+            <div class="f-note">Gold (CRS≈2): CAR = 90% · Cassiterite concentrate (CRS≈3): CAR = 80–85% · Equipment (CRS≈5): CAR = 65–70%</div>
+          </div>
+        </div>
+        <div>
+          <table class="risk-matrix">
+            <thead>
+              <tr>
+                <th style="text-align:left">Asset Type</th>
+                <th>Price</th><th>Liquidity</th><th>Obsolescence</th><th>Concentration</th><th>CRS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Gold refined</td>
+                <td><span class="risk-dot" style="background:#2ECC71"></span><br><span style="font-size:10px">Low</span></td>
+                <td><span class="risk-dot" style="background:#2ECC71"></span><br><span style="font-size:10px">High liq.</span></td>
+                <td><span class="risk-dot" style="background:#2ECC71"></span><br><span style="font-size:10px">None</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Medium</span></td>
+                <td style="font-weight:700;color:var(--g-deep)">2</td>
+              </tr>
+              <tr style="background:var(--surface-1)">
+                <td>3T concentrate</td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Med</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Med liq.</span></td>
+                <td><span class="risk-dot" style="background:#2ECC71"></span><br><span style="font-size:10px">Low</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Medium</span></td>
+                <td style="font-weight:700;color:var(--gold)">3–4</td>
+              </tr>
+              <tr>
+                <td>Processing equip.</td>
+                <td><span class="risk-dot" style="background:#2ECC71"></span><br><span style="font-size:10px">Stable</span></td>
+                <td><span class="risk-dot" style="background:var(--red)"></span><br><span style="font-size:10px">Low liq.</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Medium</span></td>
+                <td><span class="risk-dot" style="background:var(--red)"></span><br><span style="font-size:10px">High</span></td>
+                <td style="font-weight:700;color:var(--red)">5–6</td>
+              </tr>
+              <tr style="background:var(--surface-1)">
+                <td>Raw ore stockpile</td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Med</span></td>
+                <td><span class="risk-dot" style="background:var(--red)"></span><br><span style="font-size:10px">Low liq.</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Weathering</span></td>
+                <td><span class="risk-dot" style="background:var(--gold)"></span><br><span style="font-size:10px">Medium</span></td>
+                <td style="font-weight:700;color:var(--gold)">5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2C: Tokenisation Gateway -->
+  <div class="exp-section">
+    <div class="exp-header" style="background:var(--g-pale);border-color:var(--g-lt)" onclick="toggleExp('exp-2c')">
+      <div class="exp-header-left">
+        <div class="exp-icon">🔗</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="exp-badge" style="background:var(--g-deep);color:#FFF">2C</span>
+            <div class="exp-title">Tokenisation Gateway: Three Asset Classes</div>
+          </div>
+          <div class="exp-preview">Convert verified, ring-fenced assets into digitally tradeable tokens. Gold stock, warehouse inventory (3T minerals), and equipment each follow specific tokenisation rules and custody arrangements.</div>
+        </div>
+      </div>
+      <div class="exp-toggle" id="toggle-2c">▼ EXPAND</div>
+    </div>
+    <div class="exp-body" id="exp-2c">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px">
+        <div style="background:var(--gold-pale);border:1px solid #E8CC80;border-top:3px solid var(--gold);border-radius:var(--radius);padding:18px">
+          <div style="font-size:20px;margin-bottom:8px">🏅</div>
+          <div style="font-size:14px;font-weight:700;color:var(--gold);margin-bottom:8px">Gold Stock Tokens</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+            <strong>Pricing:</strong> LBMA benchmark (daily fix)<br>
+            <strong>Custodian:</strong> BNR vault (national gold reserve infrastructure)<br>
+            <strong>Minimum lot:</strong> 100g per token<br>
+            <strong>Advance rate:</strong> Up to 90%<br>
+            <strong>Risk score:</strong> 2/10 (lowest in class)<br>
+            <strong>Listing:</strong> KIFC digital exchange<br>
+            <strong>Certification:</strong> ITSCI + RMB assay certificate
+          </div>
+        </div>
+        <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-top:3px solid var(--g-deep);border-radius:var(--radius);padding:18px">
+          <div style="font-size:20px;margin-bottom:8px">🏭</div>
+          <div style="font-size:14px;font-weight:700;color:var(--g-deep);margin-bottom:8px">Warehouse Inventory Tokens (3T)</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+            <strong>Pricing:</strong> LME reference (Sn, Ta, W benchmarks)<br>
+            <strong>Custodian:</strong> Licensed warehouse operator (ITSCI-certified facility)<br>
+            <strong>Minimum lot:</strong> 1 MTU per token<br>
+            <strong>Advance rate:</strong> 75–85% (grade-dependent)<br>
+            <strong>Risk score:</strong> 3–4/10<br>
+            <strong>Listing:</strong> KIFC exchange (wholesale) + bilateral commercial banks<br>
+            <strong>Certification:</strong> ITSCI traceability + RMB export certificate
+          </div>
+        </div>
+        <div style="background:var(--blue-lt);border:1px solid var(--blue);border-top:3px solid var(--blue);border-radius:var(--radius);padding:18px">
+          <div style="font-size:20px;margin-bottom:8px">⚙️</div>
+          <div style="font-size:14px;font-weight:700;color:var(--blue);margin-bottom:8px">Equipment Tokens</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.65">
+            <strong>Pricing:</strong> Depreciated replacement cost + condition audit<br>
+            <strong>Custodian:</strong> Insurance-backed equipment lender<br>
+            <strong>Minimum lot:</strong> $10,000 per token<br>
+            <strong>Advance rate:</strong> 60–70% (condition-dependent)<br>
+            <strong>Risk score:</strong> 5–6/10<br>
+            <strong>Listing:</strong> KIFC institutional platform (not retail)<br>
+            <strong>Certification:</strong> Independent condition audit + insurance certificate + REMA energy rating (for green premium)
+          </div>
+        </div>
+      </div>
+
+      <!-- Token issuance flow -->
+      <div style="font-size:13px;font-weight:700;color:var(--text-head);margin-bottom:12px">Token Issuance Flow</div>
+      <div class="token-flow">
+        <div class="token-step" style="background:var(--blue-lt);border:1px solid var(--blue)">
+          <div class="token-step-num" style="color:var(--blue)">1</div>
+          <div class="token-step-label" style="color:var(--blue)">Certification</div>
+          <div class="token-step-body" style="color:var(--text-muted)">RMB assay + ITSCI traceability verification</div>
+        </div>
+        <div class="token-arrow">→</div>
+        <div class="token-step" style="background:var(--gold-pale);border:1px solid #E8CC80">
+          <div class="token-step-num" style="color:var(--gold)">2</div>
+          <div class="token-step-label" style="color:var(--gold)">Valuation</div>
+          <div class="token-step-body" style="color:var(--text-muted)">LME/LBMA-anchored independent valuation (D2.1)</div>
+        </div>
+        <div class="token-arrow">→</div>
+        <div class="token-step" style="background:var(--g-pale);border:1px solid var(--g-lt)">
+          <div class="token-step-num" style="color:var(--g-deep)">3</div>
+          <div class="token-step-label" style="color:var(--g-deep)">Ring-Fencing</div>
+          <div class="token-step-body" style="color:var(--text-muted)">BNR vault / licensed warehouse / insured equipment</div>
+        </div>
+        <div class="token-arrow">→</div>
+        <div class="token-step" style="background:var(--surface-1);border:1px solid var(--border-md)">
+          <div class="token-step-num" style="color:var(--text-muted)">4</div>
+          <div class="token-step-label" style="color:var(--text-muted)">CMA Approval</div>
+          <div class="token-step-body" style="color:var(--text-muted)">100% collateral verification + issuer licensing</div>
+        </div>
+        <div class="token-arrow">→</div>
+        <div class="token-step" style="background:#F3E8FF;border:1px solid #C39BD3">
+          <div class="token-step-num" style="color:#5B2C6F">5</div>
+          <div class="token-step-label" style="color:#5B2C6F">KIFC Listing</div>
+          <div class="token-step-body" style="color:var(--text-muted)">Exchange listing + investor access + price discovery</div>
+        </div>
+        <div class="token-arrow">→</div>
+        <div class="token-step" style="background:var(--g-pale);border:1px solid var(--g-lt)">
+          <div class="token-step-num" style="color:var(--g-deep)">6</div>
+          <div class="token-step-label" style="color:var(--g-deep)">Financing</div>
+          <div class="token-step-body" style="color:var(--text-muted)">Full market price received — no prefinancing discount</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;text-align:center">
+        <a href="tokenisation.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">Full tokenisation detail → tokenisation.html</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — LAYER 3: FINANCING INSTRUMENTS
+═══════════════════════════════════════════ -->
+<section id="financing" class="section">
+  <div class="eyebrow">Layer 3 — Financing Instruments</div>
+  <h2 class="section-title">Five Instruments: Diversified, Transparent &amp; Competitively Priced Financing</h2>
+  <p class="section-lead">The core problem is not prefinancing itself — it is <strong>foreign prefinancing dependency</strong> that hands international traders disproportionate bargaining power to set prices arbitrarily below market benchmarks, effectively charging an opaque and very high financing cost. The answer is not to eliminate prefinancing — it is to give Rwandan mineral companies access to a <strong>diversified portfolio of financing instruments</strong>, locally and internationally, at transparent and competitive rates. Data-driven financial intelligence is what makes this choice possible: only when a company knows its own cost structure, asset values, and risk profile can it identify the cheapest financing option available to it and negotiate from a position of knowledge.</p>
+
+  <div style="background:var(--blue-lt);border:1px solid var(--blue);border-left:4px solid var(--blue);border-radius:var(--radius);padding:16px 22px;margin-bottom:28px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px">The Decision Framework</div>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.7">For each financing decision, the RMB-FinIntel analytics engine compares: <strong>(1)</strong> the effective cost of each available instrument (advance rate, interest, fees, price discount if any); <strong>(2)</strong> the cycle duration matched to the asset being financed; <strong>(3)</strong> the collateral quality score from Layer 2; <strong>(4)</strong> the company's current Financing Cost Index (FCI). The output is a ranked recommendation — with the cheapest, most adapted instrument at the top. The company decides. The system informs.</p>
+  </div>
+
+  <div id="financing-instruments">
+    <!-- filled by JS as expandable cards -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — ENTITY NAVIGATOR
+═══════════════════════════════════════════ -->
+<section id="entity-navigator" class="section section-alt">
+  <div class="eyebrow">Interactive Navigator — Balance Sheet &amp; Financing Structures</div>
+  <h2 class="section-title">Mining Entities: Assets vs Financing Profile</h2>
+  <p class="section-lead">Balance sheet structures are not the same across mineral sector entities — and therefore neither are their financing needs or optimal financing models. A processing company with heavy machinery has fundamentally different collateral and financing cycles than a trading company dominated by receivables and finished goods. Understanding these structural differences at company level — and aggregating them at national level — is what allows Rwanda to map its mineral sector financing needs precisely and engage investors with concrete, evidence-based proposals.</p>
+
+  <!-- Key framing notes -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:28px">
+    <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:14px 18px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);margin-bottom:6px">🏢 One Company, Multiple Entities</div>
+      <p style="font-size:13px;color:var(--text-body);line-height:1.65">Within a single mining company, there may be several distinct entity types operating simultaneously — a cooperative-style extraction unit, a processing subsidiary, and a trading arm. Each carries its own balance sheet, financing needs, and risk profile. The financial intelligence framework must capture all layers.</p>
+    </div>
+    <div style="background:var(--blue-lt);border:1px solid var(--blue);border-left:4px solid var(--blue);border-radius:var(--radius);padding:14px 18px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">🔑 Asset Ownership Models</div>
+      <p style="font-size:13px;color:var(--text-body);line-height:1.65">For heavy assets not used at 100% capacity by a single entity, alternative ownership models deserve exploration: an external asset-owning entity that leases equipment to cooperatives; shared ownership cooperatives; public-private equipment pools. These models change the balance sheet structure and open new financing possibilities — and their financial viability can only be assessed through company-level financial intelligence.</p>
+    </div>
+    <div style="background:var(--gold-pale);border:1px solid #E8CC80;border-left:4px solid var(--gold);border-radius:var(--radius);padding:14px 18px">
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">📊 National Aggregation</div>
+      <p style="font-size:13px;color:var(--text-body);line-height:1.65">Automated tools in the RMB-FinIntel platform will aggregate individual balance sheets into a national-level financing needs map — showing total sector asset base, total financing gap by instrument type, and priority intervention points. This gives Rwanda a powerful evidence base for investor negotiations and policy design.</p>
+    </div>
+  </div>
+
+  <!-- Financing maturity buckets note -->
+  <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-top:3px solid #5B2C6F;border-radius:var(--radius);padding:18px 22px;margin-bottom:28px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#5B2C6F;margin-bottom:10px">📅 Analytical Structure of Financing — Maturity Buckets</div>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.7;margin-bottom:12px">Financial intelligence must capture not just the amount of financing — but its <strong>maturity structure</strong>. All borrowings are categorised by repayment schedule into maturity buckets, allowing a precise picture of what financing is available, due, or needed at each time horizon:</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--red);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--red)">0–3M</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Immediate<br>liquidity</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--red);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--red)">3–6M</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Short-term<br>operations</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--gold);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--gold)">6–12M</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Working<br>capital</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--gold);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--gold)">1–3Y</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Medium<br>term</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--g-deep);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--g-deep)">3–5Y</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Equipment<br>cycle</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--g-deep);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--g-deep)">5–10Y</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Long-term<br>investment</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-top:3px solid var(--blue);border-radius:5px;padding:8px 12px;text-align:center;flex:1;min-width:80px">
+        <div style="font-family:var(--font-m);font-size:11px;font-weight:700;color:var(--blue)">10Y+</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Strategic<br>equity</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;font-style:italic">The <strong>financing equilibrium rule</strong> applies across all entities: long-term assets must be financed by long-term sources (equity + long-term borrowings). Mismatches — financing long-term assets with short-term borrowings — create structural fragility. The financial intelligence framework detects and flags these mismatches automatically.</p>
+  </div>
+
+  <!-- Entity cards grid -->
+  <!-- Strategic framing note -->
+  <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-left:4px solid var(--red);border-radius:var(--radius);padding:18px 22px;margin-bottom:24px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px">⚠️ Current Reality — The Structural Problem This Programme Must Address</div>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.75;margin-bottom:10px">Across all entity types in Rwanda's mineral sector, a common and critical structural imbalance exists: <strong>Short Term borrowings dominate the financing structure</strong> (70–90%), while Long Term assets represent a significant share of the balance sheet. This mismatch is not a choice — it is a consequence of the absence of acceptable collateral and accurate asset valuation.</p>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.75;margin-bottom:10px">The consequences are severe: <strong>financing costs are extremely high</strong> (20–30% for artisanal miners, 15–18% for other entities), equity is suppressed (companies cannot accumulate profits when financing costs eat margins), and Rwandan companies negotiate with financiers from a position of weakness — accepting unfavourable terms because they have no alternatives.</p>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.75"><strong style="color:var(--g-deep)">The programme's ambition:</strong> by building accurate financial intelligence, valuing assets at their true market value, and enabling tokenisation of collateral, the RMB-FinIntel programme progressively rebalances this structure — reducing Short Term borrowing, lowering financing costs, and enabling companies to accumulate equity. As they grow financially stronger, they negotiate cheaper financing — creating a virtuous cycle that strengthens Rwanda's entire mineral sector.</p>
+  </div>
+
+  <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px">Each card shows the typical balance sheet structure for that entity type — with a proportional visual of Assets (left) vs Financing Sources (right), respecting the financing equilibrium principle. <strong>Click any card</strong> to expand the full financing profile.</p>
+
+  <!-- Color scheme toggle -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+    <span style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted)">Balance sheet colour scheme:</span>
+    <div style="display:flex;border:1px solid var(--border-md);border-radius:6px;overflow:hidden">
+      <button id="btn-scheme-A" onclick="switchScheme('A')"
+        style="padding:7px 16px;font-size:12px;font-weight:700;font-family:var(--font-b);border:none;cursor:pointer;transition:all 0.2s;background:var(--g-deep);color:#FFFFFF">
+        A — Neutral
+      </button>
+      <button id="btn-scheme-B" onclick="switchScheme('B')"
+        style="padding:7px 16px;font-size:12px;font-weight:700;font-family:var(--font-b);border:none;cursor:pointer;transition:all 0.2s;background:#FFFFFF;color:var(--text-muted);border-left:1px solid var(--border-md)">
+        B — Semantic
+      </button>
+    </div>
+    <div id="scheme-legend" style="font-size:12px;color:var(--text-muted);font-style:italic">
+      A — Neutral: light uniform tones — the structure speaks for itself without color bias
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px" id="entity-cards-grid">
+    <!-- filled by JS -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — METRICS & ANALYTICS
+═══════════════════════════════════════════ -->
+<section id="metrics" class="section">
+  <div class="eyebrow">Cross-Cutting Layer — Automated Analytics</div>
+  <h2 class="section-title">Five Metrics That Drive Every Financing Decision</h2>
+  <p class="section-lead">The analytics engine computes five composite scores per company — continuously updated from Layer 1 data. Each score determines which financing instruments are available, at what rate, and with what collateral requirement.</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px" id="metrics-grid">
+    <!-- filled by JS -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — IMPACT
+═══════════════════════════════════════════ -->
+<section id="impact" class="section section-green">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse 50% 70% at 85% 50%,rgba(200,150,10,0.13) 0%,transparent 60%);pointer-events:none"></div>
+  <div style="position:relative;z-index:2">
+    <div class="eyebrow">6 — Why This Changes Everything</div>
+    <h2 class="section-title">Before &amp; After: The Financing Revolution</h2>
+    <p class="section-lead">This is not incremental improvement. It is a structural transformation of how Rwanda's mineral sector is financed — from opacity and dependency to transparency and autonomy.</p>
+
+    <div class="impact-before-after" style="margin-bottom:28px">
+      <div class="impact-col before">
+        <div class="impact-col-label" style="color:var(--red)">❌ Current State</div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">No accurate company-level cost data — lenders cannot assess risk</span></div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">Inventory valued at cost only — latent market value invisible and uncollateralised</span></div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">Equipment booked at depreciated cost — replacement value and tokenisation potential ignored</span></div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">Prefinancing as only liquidity source — price discount of 12–18% as implicit financing cost</span></div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">Commercial banks cannot lend — no collateral visibility, no credit risk assessment</span></div>
+        <div class="impact-item"><span style="color:var(--red);flex-shrink:0">✗</span><span style="color:var(--text-body)">No benchmarking — companies do not know if their costs are competitive</span></div>
+      </div>
+      <div class="impact-col after">
+        <div class="impact-col-label" style="color:var(--g-deep)">✅ With This System</div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Full company P&amp;L, cost structure, and benchmarks — lenders can price risk accurately</span></div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Inventory mark-to-market daily — latent value unlocked through warehouse receipt financing</span></div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Equipment tokenised at replacement value — unlocks asset-backed lending matched to depreciation cycle</span></div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Five adapted financing instruments replace prefinancing — companies choose their capital source</span></div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Commercial banks, KIFC vehicles, diaspora investors — all can participate with full collateral visibility</span></div>
+        <div class="impact-item"><span style="color:var(--g-deep);flex-shrink:0">✓</span><span style="color:var(--text-body)">Continuous benchmarking — identifies cost reduction opportunities at company level, sector-wide</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
+      <div class="impact-card"><div class="impact-n">−8pp</div><div class="impact-label">Financing Cost Reduction</div><div class="impact-body">Estimated reduction in effective financing cost vs prefinancing — from ~15–18% to ~7–10% — by replacing prefinancing discount with collateral-backed instruments at market rates.</div></div>
+      <div class="impact-card"><div class="impact-n">70%</div><div class="impact-label">Advance Rate on Inventory</div><div class="impact-body">Conservative advance rate on ITSCI-certified, LME-priced inventory held in licensed warehouse — unlocking working capital without surrendering pricing power.</div></div>
+      <div class="impact-card"><div class="impact-n">$437K</div><div class="impact-label">Tokenisable Asset Base (Illustrative)</div><div class="impact-body">Total tokenisable assets for a mid-size processing company in the illustrative example — across gold, 3T concentrate, and processing equipment.</div></div>
+      <div class="impact-card"><div class="impact-n">4×</div><div class="impact-label">Lender Pool Expansion</div><div class="impact-body">Tokenisation expands the lender pool from one (the prefinancer) to many: commercial banks, KIFC vehicles, pension funds, diaspora, international institutional investors.</div></div>
+      <div class="impact-card"><div class="impact-n">D+1</div><div class="impact-label">Daily Mark-to-Market</div><div class="impact-body">Inventory is valued at market price every business day — providing lenders with real-time collateral visibility and enabling automated drawdown/repayment facilities.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ENTITY MODAL -->
+<div class="modal-overlay" id="entity-modal" onclick="closeModal(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Entity Profile</div>
+      <button class="modal-close" onclick="closeEntityModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="index.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">← Technical Proposal</a>
+    <a href="tokenisation.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">🔗 Tokenisation →</a>
+    <a href="demo.html" class="btn btn-green" style="font-size:12px;padding:8px 18px">🔬 Tool Mock-up</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">Rwanda Mineral Financing Models<br>RMB Financial Market Intelligence Expert · April 2026</div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   FINANCING MODELS — INTERACTIVE LOGIC
+═══════════════════════════════════════════════════════════ */
+
+// ── 1. Expandable sections ──────────────────────────────────
+function toggleExp(id) {
+  var body = document.getElementById(id);
+  var toggle = document.getElementById('toggle-' + id.replace('exp-',''));
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (toggle) {
+    toggle.textContent = isOpen ? '▼ EXPAND' : '▲ COLLAPSE';
+    toggle.classList.toggle('open', !isOpen);
+  }
+}
+
+// ── 2. Breakeven Calculator ─────────────────────────────────
+var MINERAL_DEFAULTS = {
+  cassiterite: { price:8500, trc:1200, vc:3800, fc:45000, pd:15, vol:12, lc:320 },
+  coltan:      { price:52000, trc:3200, vc:18000, fc:55000, pd:14, vol:2, lc:380 },
+  wolframite:  { price:6800, trc:950, vc:3200, fc:42000, pd:16, vol:10, lc:290 },
+  gold:        { price:85000, trc:800, vc:12000, fc:60000, pd:12, vol:1.5, lc:180 }
+};
+
+document.getElementById('c-mineral').addEventListener('change', function() {
+  var d = MINERAL_DEFAULTS[this.value];
+  if (!d) return;
+  document.getElementById('c-price').value = d.price;
+  document.getElementById('c-trc').value   = d.trc;
+  document.getElementById('c-vc').value    = d.vc;
+  document.getElementById('c-fc').value    = d.fc;
+  document.getElementById('c-pd').value    = d.pd;
+  document.getElementById('c-vol').value   = d.vol;
+  document.getElementById('c-lc').value    = d.lc;
+  recalc();
+});
+
+function recalc() {
+  var price = parseFloat(document.getElementById('c-price').value) || 0;
+  var trc   = parseFloat(document.getElementById('c-trc').value)   || 0;
+  var vc    = parseFloat(document.getElementById('c-vc').value)    || 0;
+  var fc    = parseFloat(document.getElementById('c-fc').value)    || 0;
+  var pd    = parseFloat(document.getElementById('c-pd').value)    || 0;
+  var vol   = parseFloat(document.getElementById('c-vol').value)   || 0;
+  var lc    = parseFloat(document.getElementById('c-lc').value)    || 0;
+
+  var effPrice     = price * (1 - pd/100) - trc - lc;
+  var effPriceClean = price - trc - lc;
+  var marginPerMTU = effPriceClean - vc;
+  var marginWithPF = effPrice - vc;
+  var bev          = marginPerMTU > 0 ? (fc / marginPerMTU) : Infinity;
+  var bevPF        = marginWithPF > 0 ? (fc / marginWithPF) : Infinity;
+  var monthlyGM    = (effPriceClean - vc) * vol - fc;
+  var monthlyGMpf  = (effPrice - vc) * vol - fc;
+  var pfCost       = vol * price * (pd/100);
+
+  function fmt(n) { return n >= 0 ? '$' + n.toLocaleString('en-US',{maximumFractionDigits:0}) : '-$' + Math.abs(n).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function fmtMTU(n) { return isFinite(n) ? n.toFixed(1) + ' MTU' : '∞'; }
+
+  var res = document.getElementById('calc-result');
+  res.innerHTML = [
+    { label:'Net Price / MTU<br>(no prefinancing)', val:fmt(effPriceClean), cls: effPriceClean>vc ? '' : 'red' },
+    { label:'Net Price / MTU<br>(with prefinancing)', val:fmt(effPrice), cls: effPrice>vc ? 'gold' : 'red' },
+    { label:'Breakeven Volume<br>(no prefinancing)', val:fmtMTU(bev), cls: vol>=bev ? '' : 'red' },
+    { label:'Breakeven Volume<br>(with prefinancing)', val:fmtMTU(bevPF), cls: vol>=bevPF ? 'gold' : 'red' },
+    { label:'Monthly Net Margin<br>(no prefinancing)', val:fmt(monthlyGM), cls: monthlyGM>=0 ? '' : 'red' },
+    { label:'Monthly Net Margin<br>(prefinancing)', val:fmt(monthlyGMpf), cls: monthlyGMpf>=0 ? 'gold' : 'red' },
+    { label:'Monthly Prefinancing<br>Cost (value lost)', val:fmt(pfCost), cls:'red' },
+  ].map(function(m) {
+    return '<div class="calc-metric"><div class="calc-metric-val ' + m.cls + '">' + m.val + '</div><div class="calc-metric-label">' + m.label + '</div></div>';
+  }).join('');
+}
+recalc();
+
+// ── 3. Balance Sheet by Entity ──────────────────────────────
+var ENTITIES = {
+  coop: {
+    label:'Artisanal Mining', icon:'⛏️', color:'#2E86AB',
+    assets: [
+      { name:'Artisanal equipment', pct:48, color:'#2E86AB' },
+      { name:'Raw ore stock',       pct:22, color:'#2ECC71' },
+      { name:'Cash & bank',         pct:30, color:'#95A5A6' }
+    ],
+    note:'Light equipment dominates (45–50%). Very low ore stock — miners work in very short revolving cycles (weekly or bi-weekly). High cash component reflects the fast cycle nature.',
+    instruments:['Warehouse Receipt Financing','Token-Based Fractional Financing']
+  },
+  company: {
+    label:'Mining Company', icon:'🏭', color:COLORS_G='#1A5C38',
+    assets: [
+      { name:'Mining equipment',          pct:32, color:'#1A5C38' },
+      { name:'Raw ore stockpile',         pct:28, color:'#2ECC71' },
+      { name:'Concentrate stock',         pct:22, color:'#F39C12' },
+      { name:'Receivables',               pct:12, color:'#E74C3C' },
+      { name:'Cash & other',              pct:6,  color:'#95A5A6' }
+    ],
+    note:'Mixed balance sheet — significant equipment (tokenisable via asset-backed lending) and multi-stage inventory (raw + concentrate). Best candidate for multiple instruments simultaneously.',
+    instruments:['Warehouse Receipt Financing','Equipment Asset-Backed Lending','Offtake-Linked Financing','Token-Based Fractional Financing']
+  },
+  processing: {
+    label:'Processing Company', icon:'⚙️', color:'#B8860B',
+    assets: [
+      { name:'Heavy machinery & equip.',  pct:48, color:'#B8860B' },
+      { name:'Raw material input stock',  pct:20, color:'#2ECC71' },
+      { name:'Semi-finished products',    pct:18, color:'#F39C12' },
+      { name:'Finished products',         pct:8,  color:'#1A5C38' },
+      { name:'Receivables',               pct:6,  color:'#E74C3C' }
+    ],
+    note:'Heavy equipment dominates the balance sheet — 48% of total assets. This is the entity type for which equipment tokenisation has the greatest impact. Multi-stage inventory provides additional collateral at each processing stage.',
+    instruments:['Equipment Asset-Backed Lending','Warehouse Receipt Financing','Token-Based Fractional Financing']
+  },
+  trading: {
+    label:'Trading Company', icon:'🚢', color:'#1B6CA8',
+    assets: [
+      { name:'Finished mineral inventory', pct:55, color:'#1B6CA8' },
+      { name:'Receivables (buyers)',        pct:30, color:'#E74C3C' },
+      { name:'Warehouse & logistics assets',pct:10, color:'#B8860B' },
+      { name:'Cash & other',               pct:5,  color:'#95A5A6' }
+    ],
+    note:'Balance sheet dominated by finished goods inventory (55%) and receivables (30%). The trading company has the highest-quality tokenisable inventory (finished, graded, certified) but also the highest receivables risk. Daily mark-to-market is critical.',
+    instruments:['Warehouse Receipt Financing','Working Capital Revolving Facility','Token-Based Fractional Financing','Offtake-Linked Financing']
+  }
+};
+
+var INSTRUMENTS_SHORT = {
+  'Warehouse Receipt Financing':'🏭 Warehouse',
+  'Equipment Asset-Backed Lending':'⚙️ Equipment',
+  'Offtake-Linked Financing':'📋 Offtake',
+  'Token-Based Fractional Financing':'🔗 Token',
+  'Working Capital Revolving Facility':'💳 Working Capital'
+};
+
+// ── Entity cards with balance sheet visuals ─────────────────────────────
+var ENTITY_INTROS = {
+  coop: 'Artisanal mining in Rwanda is carried out by individual miners and cooperatives — individually or collectively owned. The balance sheet is dominated by light equipment (45–50%) and a very low ore stock (20–25%), reflecting an extremely short and unstable economic cycle. Miners borrow money weekly or every two weeks to pay their workers, then repay in minerals — a heavy, expensive revolving financing trap. The programme’s goal is to progressively stabilise this cycle: first to 3-month terms, then 6 months, then 12+ months — reducing financing costs, increasing productivity, and building equity over time.',
+  company: 'A mining company has the most diverse balance sheet — significant equipment, multi-stage inventory (raw ore + concentrate), and growing receivables. It benefits from multiple financing instruments simultaneously and is the prime candidate for equipment tokenisation alongside offtake-linked financing.',
+  processing: "The processing company is the most capital-intensive entity in Rwanda's mineral value chain. Heavy machinery (smelters, ball mills, gravity separation units) represents 45–50% of total assets. Equipment tokenisation has the highest absolute impact here — and REMA green energy certification can materially improve the collateral quality score and unlock green-premium financing.",
+  trading: 'The trading company balance sheet is dominated by finished goods inventory (55%) and buyer receivables (30%). This entity is most directly trapped by foreign prefinancing. The working capital revolving facility and token-based financing together eliminate this dependency — replacing a single predatory lender with a diversified, transparent financing pool.'
+};
+
+// Color scheme A (semantic): assets vary by type; financing: greens=stable, ambers/reds=fragile
+// Color scheme B (neutral):  two alternating shades per column — clean and minimal
+var BS_COLORS = {
+  // A — Neutral: light uniform tones. Assets = soft green, Financing = soft blue.
+  // Text is dark so all labels are readable even on small segments.
+  A: {
+    ltAsset:    '#4CAF82',   // Assets: slightly deeper shade for LT (visual anchor)
+    ltAsset2:   '#6DBF96',
+    stAsset:    '#5DBF8A',
+    stAsset2:   '#7ECFA0',
+    receivables:'#6BBFA0',
+    cash:       '#5BA87E',
+    // Financing: two alternating soft blue tones
+    equity:     '#4A90BE',
+    ltDebt:     '#6AAAD4',
+    stDebt:     '#89BDD8',
+    prefinance: '#8AAFC8',
+    payables:   '#9BBFCE',
+    otherLiab:  '#AECFDB'
+  },
+  // B — Semantic: colors carry analytical meaning.
+  // Assets: greens. Financing: deep green=equity(stable) → red=prefinancing(fragile).
+  B: {
+    ltAsset:    '#1A5C38',   // Long-term assets — deep green
+    ltAsset2:   '#256B44',
+    stAsset:    '#2E8B57',
+    stAsset2:   '#3DAF72',
+    receivables:'#7D9A2A',   // Receivables — olive (liquid but uncertain)
+    cash:       '#52856A',
+    // Financing: green=stable → amber=caution → red=fragile
+    equity:     '#1A5C38',   // Equity — most stable
+    ltDebt:     '#1B6CA8',   // Long-term borrowings — solid blue
+    stDebt:     '#B8860B',   // Short-term borrowings — amber (fragile)
+    prefinance: '#C00000',   // Foreign prefinancing — red (costly trap)
+    payables:   '#7B241C',   // Trade payables — dark red
+    otherLiab:  '#717D7E'    // Other current liabilities — grey
+  }
+};
+var currentColorScheme = 'A'; // default
+
+function bsColor(scheme, role) { return BS_COLORS[scheme][role]; }
+
+var BS_VISUALS = {
+  coop: {
+    assets: [
+      { label:'Artisanal equipment', pct:48, roleA:'ltAsset', roleB:'ltAsset' },
+      { label:'Raw ore stock',       pct:22, roleA:'stAsset', roleB:'stAsset' },
+      { label:'Cash & bank',         pct:30, roleA:'cash',    roleB:'ltAsset2' }
+    ],
+    financing: [
+      { label:'Equity',             pct:5,  roleA:'equity',    roleB:'equity' },
+      { label:'Weekly revolving ST',pct:87, roleA:'prefinance',roleB:'stDebt' },
+      { label:'Trade payables',     pct:5,  roleA:'payables',  roleB:'payables' },
+      { label:'Other liabilities',  pct:3,  roleA:'otherLiab', roleB:'otherLiab' }
+    ],
+    ltAssetPct:48, ltFinancePct:5
+  },
+  company: {
+    assets: [
+      { label:'Equipment',   pct:32, roleA:'ltAsset',    roleB:'ltAsset' },
+      { label:'Raw ore',     pct:28, roleA:'stAsset',    roleB:'stAsset' },
+      { label:'Concentrate', pct:22, roleA:'stAsset2',   roleB:'ltAsset2' },
+      { label:'Receivables', pct:12, roleA:'receivables',roleB:'stAsset2' },
+      { label:'Cash & bank', pct:6,  roleA:'cash',       roleB:'stAsset' }
+    ],
+    financing: [
+      { label:'Equity',            pct:20, roleA:'equity',    roleB:'equity' },
+      { label:'LT borrowings',     pct:5,  roleA:'ltDebt',    roleB:'ltDebt' },
+      { label:'ST borrowings',     pct:70, roleA:'stDebt',    roleB:'stDebt' },
+      { label:'Trade payables',    pct:3,  roleA:'payables',  roleB:'payables' },
+      { label:'Other liabilities', pct:2,  roleA:'otherLiab', roleB:'otherLiab' }
+    ],
+    ltAssetPct:32, ltFinancePct:25
+  },
+  processing: {
+    assets: [
+      { label:'Heavy machinery', pct:48, roleA:'ltAsset',    roleB:'ltAsset' },
+      { label:'Raw material',    pct:20, roleA:'stAsset',    roleB:'stAsset' },
+      { label:'Semi-finished',   pct:18, roleA:'stAsset2',   roleB:'ltAsset2' },
+      { label:'Finished goods',  pct:8,  roleA:'ltAsset2',   roleB:'stAsset2' },
+      { label:'Receivables',     pct:6,  roleA:'receivables',roleB:'stAsset' }
+    ],
+    financing: [
+      { label:'Equity',            pct:15, roleA:'equity',    roleB:'equity' },
+      { label:'LT borrowings',     pct:10, roleA:'ltDebt',    roleB:'ltDebt' },
+      { label:'ST borrowings',     pct:72, roleA:'stDebt',    roleB:'stDebt' },
+      { label:'Trade payables',    pct:2,  roleA:'payables',  roleB:'payables' },
+      { label:'Other liabilities', pct:1,  roleA:'otherLiab', roleB:'otherLiab' }
+    ],
+    ltAssetPct:48, ltFinancePct:25
+  },
+  trading: {
+    assets: [
+      { label:'Finished inventory',pct:55, roleA:'stAsset',    roleB:'stAsset' },
+      { label:'Receivables',       pct:30, roleA:'receivables',roleB:'ltAsset2' },
+      { label:'Warehouse assets',  pct:10, roleA:'ltAsset2',   roleB:'stAsset2' },
+      { label:'Cash & bank',       pct:5,  roleA:'cash',       roleB:'ltAsset' }
+    ],
+    financing: [
+      { label:'Equity',              pct:10, roleA:'equity',    roleB:'equity' },
+      { label:'LT borrowings',       pct:3,  roleA:'ltDebt',    roleB:'ltDebt' },
+      { label:'Foreign prefinancing', pct:82, roleA:'prefinance',roleB:'stDebt' },
+      { label:'Trade payables',      pct:3,  roleA:'payables',  roleB:'payables' },
+      { label:'Other liabilities',   pct:2,  roleA:'otherLiab', roleB:'otherLiab' }
+    ],
+    ltAssetPct:10, ltFinancePct:13
+  }
+};
+
+function buildBSSegments(segments, scheme) {
+  return segments.map(function(s) {
+    var col = BS_COLORS[scheme][s['role'+scheme]];
+    // Determine text color: light backgrounds (Neutral) need dark text
+    var textCol = (scheme === 'A') ? '#1A3A2A' : '#FFFFFF';
+    var big  = s.pct >= 15;   // large: label + % on two lines
+    var mid  = s.pct >= 8;    // medium: label + % on one line (small font)
+    // tiny (<8%): label only, smallest font — still always shown
+    var fs   = big ? '10' : (mid ? '9' : '8');
+    var txt  = big
+      ? s.label + '<br>' + s.pct + '%'
+      : (mid ? s.label + ' ' + s.pct + '%' : s.label + ' ' + s.pct + '%');
+    return '<div style="flex:'+s.pct+';background:'+col+';display:flex;align-items:center;justify-content:center;'
+      + 'font-family:var(--font-m);font-size:'+fs+'px;font-weight:700;color:'+textCol+';'
+      + 'text-align:center;padding:2px 6px;line-height:1.3;overflow:hidden;cursor:default;min-height:18px;" title="'+s.label+': '+s.pct+'%">'
+      + txt
+      + '</div>';
+  }).join('');
+}
+
+function renderEntityCards() {
+  var grid = document.getElementById('entity-cards-grid');
+  if (!grid) return;
+  var scheme = currentColorScheme;
+  var bsHeight = 240;
+
+  grid.innerHTML = Object.keys(ENTITIES).map(function(key) {
+    var e = ENTITIES[key];
+    var bsv = BS_VISUALS[key];
+    var intro = ENTITY_INTROS[key];
+    var expId = 'entity-exp-' + key;
+
+    var equil = bsv.ltFinancePct >= bsv.ltAssetPct;
+    var equilColor = equil ? 'var(--g-deep)' : 'var(--red)';
+    var equilIcon  = equil ? '\u2713' : '\u26a0';
+    var equilText  = equil ? 'Financing equilibrium maintained' : 'Long Term assets exceed Long Term financing \u2014 structural fragility risk';
+
+    var assetHTML   = buildBSSegments(bsv.assets,    scheme);
+    var financeHTML = buildBSSegments(bsv.financing, scheme);
+
+    return ''
+      + '<div class="exp-section" id="entity-row-'+key+'" style="border:1px solid var(--border-lt);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)">'
+
+      // Header: responsive grid — description | BS visual
+      + '<div class="entity-header-grid" onclick="toggleEntityRow(\''+key+'\')" style="display:grid;grid-template-columns:1fr 480px;cursor:pointer">'
+
+        // Left — description
+        + '<div style="display:flex;align-items:stretch">'
+          + '<div style="width:6px;flex-shrink:0;background:'+e.color+'"></div>'
+          + '<div style="padding:20px 22px;flex:1">'
+            + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+              + '<span style="font-size:24px">'+e.icon+'</span>'
+              + '<div>'
+                + '<div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:'+e.color+'">'+e.label+'</div>'
+                + '<div style="font-family:var(--font-m);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-top:2px">Tap or click anywhere on this card for more details</div>'
+              + '</div>'
+            + '</div>'
+            + '<p style="font-size:13px;color:var(--text-body);line-height:1.7;margin-bottom:12px">'+intro+'</p>'
+            + '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">'
+              + e.instruments.map(function(i){return '<span style="font-size:10px;background:var(--g-pale);color:var(--g-deep);border:1px solid var(--g-lt);border-radius:10px;padding:3px 10px;font-family:var(--font-m)">'+(INSTRUMENTS_SHORT[i]||i)+'</span>';}).join('')
+            + '</div>'
+            + '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">'
+              + '<span style="font-size:12px;color:'+equilColor+';font-weight:700">'+equilIcon+' '+equilText+'</span>'
+              + '<span style="font-size:11px;color:var(--text-muted);font-family:var(--font-m)">Long Term assets: <strong style="color:'+e.color+'">'+bsv.ltAssetPct+'%</strong> &nbsp;|&nbsp; Long Term financing (Equity + LT debt): <strong style="color:'+e.color+'">'+bsv.ltFinancePct+'%</strong></span>'
+            + '</div>'
+          + '</div>'
+        + '</div>'
+
+        // Right — balance sheet visual
+        + '<div style="background:var(--surface-1);border-left:1px solid var(--border-lt);padding:16px 14px;display:flex;flex-direction:column">'
+          + '<div style="display:grid;grid-template-columns:1fr 12px 1fr;gap:0;flex:1;min-height:'+bsHeight+'px">'
+
+            + '<div style="display:flex;flex-direction:column">'
+              + '<div style="font-family:var(--font-m);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:5px">ASSETS</div>'
+              + '<div style="flex:1;display:flex;flex-direction:column;border-radius:4px;overflow:hidden">'+assetHTML+'</div>'
+            + '</div>'
+
+            + '<div style="display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text-muted)">\u25b6</div>'
+
+            + '<div style="display:flex;flex-direction:column">'
+              + '<div style="font-family:var(--font-m);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:5px">FINANCING SOURCES</div>'
+              + '<div style="flex:1;display:flex;flex-direction:column;border-radius:4px;overflow:hidden">'+financeHTML+'</div>'
+            + '</div>'
+
+          + '</div>'
+        + '</div>'
+
+      + '</div>'
+
+      // Show more / show less bottom bar
+      + '<div id="'+expId+'-bar" onclick="toggleEntityRow(\''+key+'\')" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-top:1px solid var(--border-lt);background:var(--g-xpale);cursor:pointer;transition:background 0.2s;">'
+        + '<span id="'+expId+'-bar-icon" style="font-size:12px;color:var(--g-deep)">&#9660;</span>'
+        + '<span id="'+expId+'-bar-label" style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700">Show more details</span>'
+      + '</div>'
+
+      // Inline expanded body
+      + '<div id="'+expId+'" style="display:none;border-top:1px solid var(--border-lt);background:#FFFFFF">'
+        + '<div style="padding:22px 24px" id="'+expId+'-content"></div>'
+      + '</div>'
+
+    + '</div>';
+  }).join('');
+}
+renderEntityCards();
+
+// ── Toggle entity row + lazy-load content ────────────────────────────────
+function toggleEntityRow(key) {
+  var body    = document.getElementById('entity-exp-' + key);
+  var contentEl = document.getElementById('entity-exp-' + key + '-content');
+  var barIcon = document.getElementById('entity-exp-' + key + '-bar-icon');
+  var barLabel= document.getElementById('entity-exp-' + key + '-bar-label');
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+
+  // Close all others and reset their bars
+  Object.keys(ENTITIES).forEach(function(k) {
+    var b = document.getElementById('entity-exp-' + k);
+    if (b) b.style.display = 'none';
+    var bi = document.getElementById('entity-exp-' + k + '-bar-icon');
+    var bl = document.getElementById('entity-exp-' + k + '-bar-label');
+    if (bi) bi.innerHTML = '&#9660;';
+    if (bl) bl.textContent = 'Show more details';
+  });
+
+  if (!isOpen) {
+    if (contentEl && contentEl.innerHTML.trim() === '') {
+      var p = ENTITY_PROFILES[key];
+      if (p) contentEl.innerHTML = buildEntityProfileHTML(p);
+    }
+    body.style.display = 'block';
+    if (barIcon)  barIcon.innerHTML = '&#9650;';
+    if (barLabel) barLabel.textContent = 'Show less';
+    var row = document.getElementById('entity-row-' + key);
+    if (row) { setTimeout(function(){ row.scrollIntoView({behavior:'smooth',block:'nearest'}); }, 50); }
+  }
+}
+
+// ── Build profile HTML (extracted from modal for reuse) ──────────────────
+function buildEntityProfileHTML(p) {
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">'
+    + '<div>'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border-lt)">Balance Sheet Structure</div>'
+      + '<div style="display:flex;flex-direction:column;gap:5px">'
+      + p.balance.map(function(b) {
+          return '<div style="display:flex;align-items:center;gap:8px;font-size:13px">'
+            + '<div style="width:110px;flex-shrink:0;font-weight:600;color:var(--text-head);font-size:12px">'+b[0]+'</div>'
+            + '<div style="flex:1;background:var(--border-lt);height:9px;border-radius:3px;overflow:hidden">'
+              + '<div style="width:'+b[1]+';height:9px;background:'+p.color+';border-radius:3px"></div></div>'
+            + '<div style="width:32px;text-align:right;font-family:var(--font-m);font-size:10px;color:'+p.color+';font-weight:700">'+b[1]+'</div>'
+            + '<div style="width:180px;font-size:11px;color:var(--text-muted)">'+b[2]+'</div>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+    + '</div>'
+    + '<div>'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border-lt)">Tokenisable Asset Base</div>'
+      + '<div style="background:var(--g-xpale);border-left:3px solid '+p.color+';border-radius:4px;padding:12px 14px;font-size:13px;color:var(--text-body);line-height:1.7">'+p.tokenisable+'</div>'
+    + '</div>'
+    + '</div>'
+    + '<div style="margin-bottom:16px">'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border-lt)">Financing Instruments — Recommended</div>'
+      + '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px">'
+      + p.instruments.map(function(i) {
+          return '<div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:6px;padding:12px 14px">'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+              + '<span style="font-size:13px;font-weight:700;color:var(--text-head)">'+i.name+'</span>'
+              + '<span class="badge badge-green" style="font-size:10px">'+i.fit+'</span>'
+            + '</div>'
+            + '<div style="font-size:12px;color:var(--text-muted)">'+i.why+'</div>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+    + '</div>'
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      + '<div style="background:var(--blue-lt);border:1px solid var(--blue);border-radius:var(--radius);padding:14px">'
+        + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Typical Financing Need</div>'
+        + '<div style="font-size:13px;color:var(--text-body)">'+p.need+'</div>'
+      + '</div>'
+      + '<div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:var(--radius);padding:14px">'
+        + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--g-deep);margin-bottom:6px">Estimated Saving vs Prefinancing</div>'
+        + '<div style="font-size:13px;color:var(--text-body)">'+p.saving+'</div>'
+      + '</div>'
+    + '</div>';
+}
+
+
+// ── Color scheme switcher ────────────────────────────────────────────────
+function switchScheme(scheme) {
+  currentColorScheme = scheme;
+  // Update button styles
+  var legends = {
+    A: 'A: Colors carry meaning — greens = stable LT financing, ambers = short-term, red = foreign prefinancing',
+    B: 'B: Clean neutral palette — two alternating shades per column, no semantic color meaning'
+  };
+  ['A','B'].forEach(function(s) {
+    var btn = document.getElementById('btn-scheme-'+s);
+    if (!btn) return;
+    if (s === scheme) {
+      btn.style.background = 'var(--g-deep)'; btn.style.color = '#FFFFFF';
+    } else {
+      btn.style.background = '#FFFFFF'; btn.style.color = 'var(--text-muted)';
+    }
+  });
+  var leg = document.getElementById('scheme-legend');
+  if (leg) leg.textContent = legends[scheme] || '';
+  // Close all open rows then re-render
+  Object.keys(ENTITIES).forEach(function(k) {
+    var b = document.getElementById('entity-exp-' + k);
+    if (b) b.style.display = 'none';
+    var c = document.getElementById('entity-exp-' + k + '-content');
+    if (c) c.innerHTML = '';
+  });
+  renderEntityCards();
+}
+
+// Keep openEntityModal for direct access (still works from anywhere)
+
+function renderBSGrid() { /* legacy stub */ }
+
+// ── 4. Financing instruments ────────────────────────────────
+var INSTRUMENTS = [
+  { id:'wrf', icon:'🏭', color:'#1A5C38', bg:'var(--g-pale)', border:'var(--g-lt)',
+    title:'A — Warehouse Receipt Financing',
+    badge:'Layer 3A', for:'Mining Coops · Mining Companies · Processing Companies · Trading Companies',
+    asset:'ITSCI-certified inventory (raw ore, concentrate, finished goods) held in licensed warehouse',
+    cycle:'30–90 days (matched to production and export cycle)',
+    advRate:'70–85% of LME-benchmarked market value at time of issuance',
+    saving:'Estimated −8 to −12pp vs prefinancing effective cost',
+    how:'The mining or trading company deposits certified inventory with a licensed warehouse operator. The operator issues a warehouse receipt — a standardised document confirming quantity, grade, custody, and ITSCI certification. The company uses the receipt as collateral with a commercial bank or KIFC-registered finance vehicle. The lender advances 70–85% of the RMB-FinIntel daily market value. When the inventory is sold, the loan is repaid and the receipt cancelled. No price discount, no buyer lock-in, no prefinancing dependency.',
+    link:null
+  },
+  { id:'eabl', icon:'⚙️', color:'#B8860B', bg:'var(--gold-pale)', border:'#E8CC80',
+    title:'B — Equipment Asset-Backed Lending',
+    badge:'Layer 3B', for:'Processing Companies (primary) · Mining Companies (secondary)',
+    asset:'Processing machinery and mining equipment tokenised at depreciated replacement cost',
+    cycle:'12–60 months (matched to equipment depreciation schedule)',
+    advRate:'60–70% of independent replacement cost valuation',
+    saving:'Estimated −4 to −6pp vs unsecured commercial rate; REMA green rating adds further −1 to −2pp',
+    how:'Equipment is independently valued at replacement cost by a certified appraiser, with a condition audit score (1–10). The company tokenises the equipment through a CMA-licensed issuer — creating an equipment-backed token representing a fractional claim on the asset. The token is offered to institutional investors via KIFC, or used directly as collateral with a commercial bank. The loan term matches the depreciation schedule — a 5-year ball mill generates a 5-year equipment token. REMA energy efficiency certification improves the collateral quality score, unlocking a green-premium advance rate.',
+    link:null
+  },
+  { id:'olf', icon:'📋', color:'#1B6CA8', bg:'var(--blue-lt)', border:'var(--blue)',
+    title:'C — Offtake-Linked Financing',
+    badge:'Layer 3C', for:'Mining Companies · Processing Companies · Trading Companies',
+    asset:'Future mineral production — forward contract anchored to RMB-FinIntel pricing reference',
+    cycle:'6–24 months',
+    advRate:'Up to 80% of contracted offtake value at RMB-FinIntel benchmark price',
+    saving:'Key innovation: pricing reference (D2.1) eliminates the prefinancing discount embedded in unanchored offtake agreements — estimated value recovery of 12–18% of contract value',
+    how:'The company signs an offtake agreement with a buyer — but unlike traditional prefinancing, the price is anchored to the RMB-FinIntel Pricing Reference Guide (D2.1), which is based on LME/LBMA benchmarks and updated monthly. The financer (commercial bank or KIFC vehicle) advances against the contracted offtake at the benchmark price. The key difference from prefinancing: the buyer cannot impose a below-benchmark price because the independent pricing reference is contractually embedded. The company retains full pricing power while accessing forward liquidity.',
+    link:null
+  },
+  { id:'tbff', icon:'🔗', color:'#5B2C6F', bg:'#F3E8FF', border:'#C39BD3',
+    title:'D — Token-Based Fractional Financing',
+    badge:'Layer 3D · Links to Tokenisation Page', for:'All entity types',
+    asset:'Any certified, ring-fenced asset (gold, 3T inventory, equipment) — tokenised via CMA/KIFC process',
+    cycle:'Flexible — matched to token maturity and asset economic life',
+    advRate:'100% of token value received from diversified investor pool at market price',
+    saving:'Full price capture — no single buyer/lender discount. Investor pool: KIFC members, diaspora, pension funds, international institutional investors.',
+    how:'The most powerful instrument — and the one most dependent on the financial intelligence infrastructure being in place. The company tokenises a ring-fenced asset (see Layer 2C for full process). Tokens are listed on the KIFC exchange. Instead of negotiating with a single prefinancer, the company sells to a diversified pool of investors at a market-transparent price. Full market value is received upfront. Token holders can redeem physical delivery or trade on the secondary market. No bilateral price-setting, no prefinancing discount, no dependency on a single relationship.',
+    link:'tokenisation.html'
+  },
+  { id:'wcrf', icon:'💳', color:'#C00000', bg:'var(--red-lt)', border:'#F4B8B8',
+    title:'E — Working Capital Revolving Facility',
+    badge:'Layer 3E', for:'Trading Companies (primary) · Mining Companies (secondary)',
+    asset:'Receivables + finished goods inventory (daily mark-to-market via RMB-FinIntel)',
+    cycle:'7–60 days (revolving — automatic drawdown and repayment)',
+    advRate:'70–80% of receivables (< 60 days) + 75% of finished goods at daily market price',
+    saving:'Eliminates need for prefinancing to bridge receivables gap. Automated drawdown reduces administrative cost to near-zero.',
+    how:'The trading company or mining company has two high-quality current assets: receivables (amounts owed by buyers) and finished goods inventory (certified, graded, ready for export). Both are valued daily using RMB-FinIntel market prices. The revolving facility automatically draws down against available collateral (receivables + inventory) at the start of each day, and repays as receivables are collected and inventory is sold. The lender has real-time collateral visibility through the RMB-FinIntel Company Portal (D4.1) — which dramatically reduces credit risk and enables tighter pricing. No prefinancing advance needed to bridge the gap between production and payment.',
+    link:null
+  }
+];
+
+function renderInstruments() {
+  var container = document.getElementById('financing-instruments');
+  if (!container) return;
+  container.innerHTML = INSTRUMENTS.map(function(ins, idx) {
+    var expId = 'ins-' + ins.id;
+    return '<div class="exp-section" style="margin-bottom:10px">'
+      + '<div class="exp-header" style="background:'+ins.bg+';border-color:'+ins.border+'" onclick="toggleExp(\''+expId+'\')">'
+        + '<div class="exp-header-left">'
+          + '<div class="exp-icon">'+ins.icon+'</div>'
+          + '<div>'
+            + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+              + '<span class="exp-badge" style="background:'+ins.color+';color:#FFF">'+ins.badge+'</span>'
+              + '<div class="exp-title">'+ins.title+'</div>'
+            + '</div>'
+            + '<div class="exp-preview">For: '+ins.for+' &nbsp;·&nbsp; Cycle: '+ins.cycle+'</div>'
+          + '</div>'
+        + '</div>'
+        + '<div class="exp-toggle" id="toggle-'+expId+'">▼ EXPAND</div>'
+      + '</div>'
+      + '<div class="exp-body" id="'+expId+'">'
+        + '<div style="background:'+ins.bg+';border:1px solid '+ins.border+';border-radius:5px;padding:10px 14px;margin-bottom:14px">'
+          + '<span class="badge badge-green" style="font-size:11px">For: '+ins.for+'</span>'
+        + '</div>'
+        + '<div class="fin-detail-grid" style="margin-bottom:14px">'
+          + '<div class="fin-detail"><div class="fin-detail-label">Asset Collateral</div><div class="fin-detail-val" style="font-size:12px">'+ins.asset+'</div></div>'
+          + '<div class="fin-detail"><div class="fin-detail-label">Cycle Duration</div><div class="fin-detail-val green">'+ins.cycle+'</div></div>'
+          + '<div class="fin-detail"><div class="fin-detail-label">Advance Rate</div><div class="fin-detail-val gold">'+ins.advRate+'</div></div>'
+          + '<div class="fin-detail"><div class="fin-detail-label">Cost Advantage</div><div class="fin-detail-val green">'+ins.saving+'</div></div>'
+        + '</div>'
+        + '<div style="background:var(--surface-1);border-radius:5px;padding:14px;font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:'+(ins.link?'12px':'0')+'">'+ins.how+'</div>'
+        + (ins.link ? '<a href="'+ins.link+'" class="btn btn-outline" style="font-size:12px;padding:7px 16px">Full detail: '+ins.link+' →</a>' : '')
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+renderInstruments();
+
+// ── 5. Metrics grid ─────────────────────────────────────────
+var METRICS = [
+  { name:'Financial Health Score', abbr:'FHS', score:72, color:'var(--g-deep)', scoreColor:'#2ECC71',
+    formula:'FHS = 0.3×GM% + 0.25×NOM% + 0.25×(1−D/E) + 0.2×CR',
+    body:'Composite score (0–100) combining gross margin, net operating margin, debt-to-equity ratio, and current ratio. Score above 70: eligible for all instruments. 50–69: eligible for secured instruments only. Below 50: restructuring advisory required before financing.' },
+  { name:'Asset Coverage Ratio', abbr:'ACR', score:2.4, color:'var(--blue)', scoreColor:'var(--blue)',
+    formula:'ACR = (Tokenisable Assets at Market) ÷ (Total Financial Liabilities)',
+    body:'Measures how many times the company\'s tokenisable assets cover its total financial liabilities. ACR above 2.0: strong collateral position, lowest financing rates. 1.0–2.0: adequate. Below 1.0: insufficient collateral — prefinancing dependency is structural.' },
+  { name:'Financing Cost Index', abbr:'FCI', score:14.2, color:'var(--red)', scoreColor:'var(--red)',
+    formula:'FCI = Actual Financing Cost % ÷ Benchmark Financing Cost %',
+    body:'Measures how expensive the company\'s current financing is relative to a benchmark (risk-free rate + sector risk premium). FCI of 14.2% means the company is paying 14.2% effective cost — vs a benchmark of ~7%. The gap is entirely attributable to prefinancing dependency. Target: FCI below 8% using adapted instruments.' },
+  { name:'Prefinancing Dependency Score', abbr:'PDS', score:85, color:'var(--red)', scoreColor:'var(--red)',
+    formula:'PDS = (Prefinancing Revenue ÷ Total Revenue) × 100',
+    body:'The single most important score for Rwanda\'s mineral sector. PDS of 85 means 85% of this company\'s revenue passes through a prefinancing arrangement — with a 12–18% price discount applied. Target: PDS below 20 within 18 months of adopting the financing model system.' },
+  { name:'Tokenisation Readiness Score', abbr:'TRS', score:63, color:var_gold='var(--gold)', scoreColor:'var(--gold)',
+    formula:'TRS = 0.4×Traceability + 0.3×ValuationQuality + 0.2×CustodyArrangements + 0.1×LegalStructure',
+    body:'Measures how ready a company\'s assets are for tokenisation. Score above 80: pilot tokenisation eligible immediately. 60–79: 3–6 month preparation programme. Below 60: requires RMB-FinIntel Phase 1 diagnostic to resolve data gaps before tokenisation is feasible.' }
+];
+
+function renderMetrics() {
+  var grid = document.getElementById('metrics-grid');
+  if (!grid) return;
+  grid.innerHTML = METRICS.map(function(m) {
+    var pct = Math.min(100, Math.max(0, typeof m.score === 'number' ? (m.score > 10 ? m.score : m.score * 10) : 50));
+    return '<div class="metric-card">'
+      + '<div class="metric-score" style="color:'+m.scoreColor+'">'+(typeof m.score === 'number' && m.score < 10 ? m.score.toFixed(1)+'×' : m.score + (m.score <= 100 && m.score > 10 ? '' : ''))+'</div>'
+      + '<div class="metric-name">'+m.name+' <span style="color:var(--text-muted);font-weight:400;font-size:11px">('+m.abbr+')</span></div>'
+      + '<div class="score-bar-wrap"><div class="score-bar" style="width:'+pct+'%;background:'+m.scoreColor+'"></div></div>'
+      + '<div class="metric-formula">'+m.formula+'</div>'
+      + '<div class="metric-body">'+m.body+'</div>'
+      + '</div>';
+  }).join('');
+}
+renderMetrics();
+
+// ── 6. Entity Modal ─────────────────────────────────────────
+var ENTITY_PROFILES = {
+  coop: {
+    title:'⛏️ Artisanal Mining — Financing Profile',
+    color:'#2E86AB',
+    overview:'Artisanal mining in Rwanda is carried out by individual miners and cooperatives — individually or collectively owned. Light equipment (45–50%) dominates the balance sheet, with very low ore stock (20–25%) reflecting the extremely short and unstable economic cycle at work. Miners borrow money weekly or bi-weekly to pay workers, then repay the loan in minerals — a revolving trap where the lender sets the price and the miner has no breathing room. Equity barely reaches 5%. The RMB-FinIntel programme’s goal is to build the financial intelligence and collateral infrastructure needed to progressively stabilise these cycles: first to 3-month terms, then 6 months, then 12+ months — reducing financing costs, increasing productivity, accumulating equity, and putting artisanal miners in a stronger position to negotiate with financiers.',
+    balance:[ ['Artisanal equipment','48%','Light equipment (pumps, sluices, hand tools) — main long-term asset. Tokenisable once condition-audited.'],['Raw ore stock','22%','Very low — short revolving cycle means stock is converted to cash within days.'],['Cash & bank','30%','High cash share reflects the fast weekly cycle — not a sign of financial strength, but of cycle speed.'] ],
+    tokenisable:'Raw ore stockpile held in ITSCI-certified cooperative warehouse. At 70% advance rate, a cooperative holding 45 MTU of cassiterite ore at $1,200/MTU cost = $54,000 book value → $107,100 market value → $75,000 warehouse receipt financing available.',
+    instruments:[
+      { name:'Warehouse Receipt Financing', fit:'Primary', why:'ITSCI-certified ore stock is the main collateral available. Warehouse receipt financing breaks the prefinancing trap immediately without requiring concession valuation.' },
+      { name:'Token-Based Fractional Financing', fit:'Strategic horizon', why:'Once concession rights are properly valued through the RMB-FinIntel programme, tokenisation of certified ore stock opens access to KIFC investors at competitive rates.' }
+    ],
+    need:'Weekly or bi-weekly revolving facility to pay miners, repaid in minerals. Typical facility: $5,000–$40,000 per cycle. Priority: progressively lengthen the cycle to 3 months, then 6 months, then 12+ months.',
+    saving:'Current weekly revolving cost: ~25–40% annualised. Moving to a 3-month warehouse receipt facility: ~10–12%. Annual saving on a $25,000 facility: ~$3,500–$7,000 — which compounds rapidly as equity builds and cycles lengthen.'
+  },
+  company: {
+    title:'🏭 Mining Company — Financing Profile',
+    color:'#1A5C38',
+    overview:'A mining company has the most diverse balance sheet in the sector: significant equipment investment, multi-stage inventory (raw ore + concentrate), and growing receivables. It is also the entity most likely to have prefinancing arrangements at multiple stages simultaneously. This company benefits from all four main financing instruments.',
+    balance:[ ['Mining equipment','32%','Crushers, excavators, sorting tables — tokenisable'],['Raw ore stockpile','28%','Pre-processing inventory — warehouse receipt eligible'],['Concentrate stock','22%','Post-processing — highest advance rate of inventory'],['Receivables','12%','Export sale receivables — revolving facility eligible'],['Cash & Other','6%','Operational float'] ],
+    tokenisable:'Equipment ($180,000 at replacement cost) + concentrate stock (18 MTU × $7,600/MTU = $136,800) + raw ore (45 MTU × $2,380/MTU = $107,100). Total tokenisable: ~$423,900. At blended advance rate of 74%: ~$313,700 available.',
+    instruments:[
+      { name:'Warehouse Receipt Financing', fit:'Primary', why:'Multi-stage inventory — both raw ore and concentrate are warehouse-receipt eligible. Two facilities running in parallel.' },
+      { name:'Equipment Asset-Backed Lending', fit:'Primary', why:'Equipment is the second-largest asset class. Tokenised equipment unlocks 12–60 month term financing at below-commercial rates.' },
+      { name:'Offtake-Linked Financing', fit:'Strong', why:'Mining companies have the most predictable production profiles — ideal for offtake agreements anchored to RMB-FinIntel pricing reference.' },
+      { name:'Token-Based Fractional Financing', fit:'Medium', why:'For concentrate stocks meeting ITSCI + grade standards. KIFC listing broadens the investor pool beyond bilateral trading relationships.' }
+    ],
+    need:'Mixed: working capital (30–90 days) + medium-term equipment financing (12–60 months). Typical total need: $200,000–$800,000.',
+    saving:'Current blended financing cost: ~16%. With instrument mix: ~7.5%. Annual saving on $400,000 portfolio: ~$34,000.'
+  },
+  processing: {
+    title:'⚙️ Processing Company — Financing Profile',
+    color:'#B8860B',
+    overview:'The processing company is the most capital-intensive entity in Rwanda\'s mineral value chain. Heavy machinery (smelters, ball mills, gravity separation units) represents 45–50% of total assets. This is the entity type where equipment tokenisation has the highest absolute impact — and where green energy certification can materially improve the collateral quality score.',
+    balance:[ ['Heavy machinery & equip.','48%','Smelters, crushers, ball mills — primary tokenisable asset'],['Raw material input stock','20%','Purchased ore awaiting processing — warehouse receipt eligible'],['Semi-finished products','18%','In-process concentrates — intermediate collateral'],['Finished products','8%','Refined output — highest quality collateral'],['Receivables','6%','Low — processing companies invoice on delivery'] ],
+    tokenisable:'Equipment ($480,000 at replacement cost, condition 7/10) + finished products (10 MTU × $8,200/MTU = $82,000) + raw material input (30 MTU × $1,800/MTU market = $54,000). Total tokenisable: ~$616,000. At blended advance rate of 68%: ~$419,000 available.',
+    instruments:[
+      { name:'Equipment Asset-Backed Lending', fit:'Primary — highest impact', why:'48% of assets are heavy equipment. Equipment tokenisation is the game-changer for processing companies. REMA energy rating adds green-premium advance rate.' },
+      { name:'Warehouse Receipt Financing', fit:'Primary', why:'Multi-stage inventory at each processing stage — raw input, semi-finished, and finished output all eligible.' },
+      { name:'Token-Based Fractional Financing', fit:'Strong', why:'Finished refined output has the highest grade, the best ITSCI certification, and the most transparent LME pricing — ideal for KIFC token listing.' }
+    ],
+    need:'Primarily medium-term (12–60 months) for equipment + short-term (30–60 days) for working capital. Typical need: $400,000–$2M.',
+    saving:'Equipment financing: unsecured rate ~18% → asset-backed rate ~9–11%. Annual saving on $480,000 equipment portfolio: ~$33,600–$43,200.'
+  },
+  trading: {
+    title:'🚢 Trading Company — Financing Profile',
+    color:'#1B6CA8',
+    overview:'The trading company has the simplest but most receivables-heavy balance sheet in the sector. Finished mineral inventory dominates (55%), with large receivables from international buyers (30%). This is the entity most directly trapped by prefinancing — because the trading company needs liquidity to purchase minerals before receiving buyer payment. The working capital revolving facility and token-based financing together eliminate this dependency completely.',
+    balance:[ ['Finished mineral inventory','55%','ITSCI-certified, graded — highest advance rate in sector'],['Receivables (buyers)','30%','Buyer payment obligations — revolving facility collateral'],['Warehouse & logistics','10%','Storage and logistics assets — secondary tokenisable'],['Cash & Other','5%','Operational float — usually depleted by prefinancing cycle'] ],
+    tokenisable:'Finished inventory (25 MTU cassiterite × $8,500/MTU = $212,500) + receivables ($150,000) + warehouse assets ($50,000). Total: ~$412,500. At advance rates (inventory 82%, receivables 75%): ~$285,250 available.',
+    instruments:[
+      { name:'Warehouse Receipt Financing', fit:'Primary — immediate', why:'Finished, certified inventory in licensed warehouse is the cleanest collateral in the sector. Same-day facility drawdown possible once infrastructure is in place.' },
+      { name:'Working Capital Revolving Facility', fit:'Primary — daily operations', why:'The trading company\'s entire business model requires bridging the gap between purchase and sale. The revolving facility automates this — replacing prefinancing entirely.' },
+      { name:'Token-Based Fractional Financing', fit:'High impact', why:'The trading company holds finished, certified, LME-priced inventory — exactly the asset class for which KIFC token listing was designed. Direct access to global investor pool.' },
+      { name:'Offtake-Linked Financing', fit:'Strategic', why:'Pre-selling production to multiple buyers at RMB-FinIntel benchmark prices — eliminates bilateral price negotiation from a position of liquidity weakness.' }
+    ],
+    need:'Almost entirely short-term working capital (7–60 days). Typical need: $100,000–$500,000 in rolling facility.',
+    saving:'Prefinancing cost: 15–18% of transaction value. Revolving facility: 7–9%. On $300,000 monthly turnover: saving of $2,400–$3,300/month = $28,800–$39,600/year.'
+  }
+};
+
+function openEntityModal(key) {
+  var p = ENTITY_PROFILES[key];
+  if (!p) return;
+  document.getElementById('modal-title').innerHTML = p.title;
+  document.getElementById('modal-title').style.color = p.color;
+
+  var html = '<div class="modal-section">'
+    + '<div class="modal-section-title">Overview</div>'
+    + '<p style="font-size:14px;color:var(--text-body);line-height:1.75">'+p.overview+'</p>'
+    + '</div>'
+
+    + '<div class="modal-section">'
+    + '<div class="modal-section-title">Balance Sheet Structure</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">'
+    + p.balance.map(function(b) {
+        return '<div style="display:flex;align-items:center;gap:10px;font-size:13px">'
+          + '<div style="width:120px;flex-shrink:0;font-weight:600;color:var(--text-head)">'+b[0]+'</div>'
+          + '<div style="flex:1;background:var(--border-lt);height:10px;border-radius:3px;overflow:hidden">'
+            + '<div style="width:'+b[1]+';height:10px;background:'+p.color+';border-radius:3px"></div></div>'
+          + '<div style="width:36px;text-align:right;font-family:var(--font-m);font-size:11px;color:'+p.color+';font-weight:700">'+b[1]+'</div>'
+          + '<div style="flex:2;font-size:11px;color:var(--text-muted)">'+b[2]+'</div>'
+          + '</div>';
+      }).join('')
+    + '</div></div>'
+
+    + '<div class="modal-section">'
+    + '<div class="modal-section-title">Tokenisable Asset Base (Illustrative)</div>'
+    + '<div style="background:var(--g-xpale);border-left:3px solid '+p.color+';border-radius:4px;padding:12px 16px;font-size:13px;color:var(--text-body);line-height:1.7">'+p.tokenisable+'</div>'
+    + '</div>'
+
+    + '<div class="modal-section">'
+    + '<div class="modal-section-title">Financing Instruments — Recommended</div>'
+    + '<div style="display:flex;flex-direction:column;gap:8px">'
+    + p.instruments.map(function(i) {
+        return '<div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:6px;padding:12px 14px">'
+          + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+            + '<span style="font-size:13px;font-weight:700;color:var(--text-head)">'+i.name+'</span>'
+            + '<span class="badge badge-green" style="font-size:10px">'+i.fit+'</span>'
+          + '</div>'
+          + '<div style="font-size:12px;color:var(--text-muted)">'+i.why+'</div>'
+          + '</div>';
+      }).join('')
+    + '</div></div>'
+
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    + '<div style="background:var(--blue-lt);border:1px solid var(--blue);border-radius:var(--radius);padding:14px">'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Typical Financing Need</div>'
+      + '<div style="font-size:13px;color:var(--text-body)">'+p.need+'</div>'
+    + '</div>'
+    + '<div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:var(--radius);padding:14px">'
+      + '<div style="font-family:var(--font-m);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--g-deep);margin-bottom:6px">Estimated Saving vs Prefinancing</div>'
+      + '<div style="font-size:13px;color:var(--text-body)">'+p.saving+'</div>'
+    + '</div>'
+    + '</div>';
+
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('entity-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEntityModal() {
+  document.getElementById('entity-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('entity-modal')) closeEntityModal();
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeEntityModal();
+});
+
+function scrollTo(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+</script>
+
+<script src="nav.js"></script>
+</body>
+</html>

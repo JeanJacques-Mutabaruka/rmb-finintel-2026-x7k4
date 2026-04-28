@@ -142,6 +142,81 @@ body { font-family: var(--font-b); background: var(--page-bg); color: var(--text
 .au-1{animation-delay:0.1s} .au-2{animation-delay:0.2s} .au-3{animation-delay:0.3s} .au-4{animation-delay:0.4s} .au-5{animation-delay:0.5s}
 
 /* RESPONSIVE */
+
+/* ── HAMBURGER MENU (mobile) ──────────────────────────────────────────── */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: auto;
+  border: none;
+  background: none;
+  border-radius: 5px;
+  transition: background 0.2s;
+}
+.nav-hamburger:hover { background: var(--g-pale); }
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--g-deep);
+  border-radius: 2px;
+  transition: all 0.25s;
+}
+
+/* Mobile nav panel */
+.nav-mobile-panel {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--g-deep);
+  box-shadow: 0 8px 24px rgba(26,92,56,0.15);
+  z-index: 199;
+  padding: 12px 0;
+  max-height: calc(100vh - var(--nav-h));
+  overflow-y: auto;
+}
+.nav-mobile-panel.open { display: block; }
+.nav-mobile-panel a {
+  display: block;
+  padding: 11px 24px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-lt);
+  transition: all 0.15s;
+}
+.nav-mobile-panel a:last-child { border-bottom: none; }
+.nav-mobile-panel a:hover, .nav-mobile-panel a.active {
+  color: var(--g-deep);
+  background: var(--g-pale);
+}
+.nav-mobile-panel .mob-section-label {
+  display: block;
+  padding: 8px 24px 4px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-light);
+  font-family: var(--font-m);
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-lt);
+}
+
+@media (max-width:860px) {
+  .nav-links { display: none !important; }
+  .nav-hamburger { display: flex; }
+}
+
 @media (max-width:860px) {
   .rmb-nav { padding: 0 16px; }
   .nav-brand-text, .nav-divider { display: none; }

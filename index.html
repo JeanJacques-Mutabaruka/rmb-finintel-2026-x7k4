@@ -166,7 +166,62 @@
       </div>
     </div>
   </div>
+  <!-- Hamburger button (mobile only) -->
+  <button class="nav-hamburger" id="nav-hbg" aria-label="Menu" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- Mobile nav panel -->
+<div class="nav-mobile-panel" id="nav-mobile">
+  <a href="index.html">Technical Proposal</a>
+  <span class="mob-section-label">Strategic Horizon</span>
+  <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+  <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+  <a href="financing-models.html">🏦 Financing Models</a>
+  <span class="mob-section-label">Current Situation Model</span>
+  <a href="architecture.html">🏗 Architecture</a>
+  <a href="energy.html">⚡ Energy Component</a>
+  <a href="demo.html">🔬 Tool Mock-up</a>
+</div>
+<script>
+function toggleMobileNav() {
+  var panel = document.getElementById('nav-mobile');
+  var hbg   = document.getElementById('nav-hbg');
+  if (!panel) return;
+  var open = panel.classList.toggle('open');
+  // Animate hamburger to X
+  var spans = hbg ? hbg.querySelectorAll('span') : [];
+  if (open) {
+    if (spans[0]) { spans[0].style.transform='rotate(45deg) translate(5px,5px)'; }
+    if (spans[1]) { spans[1].style.opacity='0'; }
+    if (spans[2]) { spans[2].style.transform='rotate(-45deg) translate(5px,-5px)'; }
+    document.body.style.overflow = 'hidden';
+  } else {
+    if (spans[0]) { spans[0].style.transform=''; }
+    if (spans[1]) { spans[1].style.opacity='1'; }
+    if (spans[2]) { spans[2].style.transform=''; }
+    document.body.style.overflow = '';
+  }
+}
+// Close on outside click
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('nav-mobile');
+  var hbg   = document.getElementById('nav-hbg');
+  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== hbg && !hbg.contains(e.target)) {
+    toggleMobileNav();
+  }
+});
+// Mark active link in mobile panel
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('#nav-mobile a').forEach(function(a) {
+    var href = a.getAttribute('href');
+    if (href === page || (page==='' && href==='index.html')) a.classList.add('active');
+  });
+})();
+</script>
+
 
 <div class="page-wrap">
 
