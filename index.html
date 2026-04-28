@@ -15,7 +15,7 @@
 .lc-2 { background: rgba(200,150,10,0.08); } .lc-2::after { background: var(--gold); }
 .lc-3 { background: rgba(26,92,56,0.14); } .lc-3::after { background: var(--g-deep); }
 .layer-num { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 14px; }
-.layer-name { font-family: var(--font-d); font-size: 18px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; white-space: nowrap; }
+.layer-name { font-family: var(--font-d); font-size: 18px; font-weight: 700; margin-bottom: 14px; line-height: 1.2; white-space: normal; }
 .layer-desc { font-size: 14px; color: rgba(255,255,255,0.6); line-height: 1.65; margin-bottom: 20px; }
 .layer-refs { font-family: var(--font-m); font-size: 11px; padding: 5px 12px; border-radius: 4px; display: inline-block; }
 .lc-1 .layer-refs { background: #1B6CA8; color: #FFFFFF; font-weight: 600; }
@@ -53,7 +53,33 @@
   .phase-row-label { display: block; margin-bottom: 2px; }
 }
 
-/* Gantt */
+
+/* ── MOBILE OVERFLOW FIXES ── */
+@media (max-width:768px) {
+  /* Wrap any wide content */
+  .gantt-wrap, .data-table-wrap, [style*="min-width:820px"] { overflow-x: auto !important; max-width: 100vw; }
+  /* Hero 2-col grid phase labels */
+  .phase-grid, [class*="phase"] { grid-template-columns: 1fr !important; }
+  /* Hero button group wraps */
+  .hero .fade-up.au-5 { flex-wrap: wrap !important; }
+  /* Prevent any inline style from causing overflow */
+  .hero-content, .hero { max-width: 100vw; overflow-x: hidden; }
+  /* Value chain nodes wrap */
+  [style*="min-width:110px"] { min-width: 80px !important; }
+}
+
+
+    /* Global mobile overflow guard */
+    @media (max-width:860px) {
+      html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+      * { max-width: 100% !important; box-sizing: border-box; }
+      table { display: block; overflow-x: auto; }
+      [style*="white-space:nowrap"] { white-space: normal !important; }
+      [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+      [style*="min-width:820px"] { min-width: unset !important; }
+    }
+
+    /* Gantt */
 .gantt-wrap { overflow-x: auto; }
 .gantt { min-width: 820px; width: 100%; border-collapse: collapse; }
 .gantt th { padding: 9px 6px; font-size: 11px; font-family: var(--font-m); letter-spacing: 0.8px; color: rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.08); text-align: center; }
@@ -190,34 +216,31 @@ function toggleMobileNav() {
   var hbg   = document.getElementById('nav-hbg');
   if (!panel) return;
   var open = panel.classList.toggle('open');
-  // Animate hamburger to X
   var spans = hbg ? hbg.querySelectorAll('span') : [];
   if (open) {
-    if (spans[0]) { spans[0].style.transform='rotate(45deg) translate(5px,5px)'; }
-    if (spans[1]) { spans[1].style.opacity='0'; }
-    if (spans[2]) { spans[2].style.transform='rotate(-45deg) translate(5px,-5px)'; }
+    if (spans[0]) spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
+    if (spans[1]) spans[1].style.opacity   = '0';
+    if (spans[2]) spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
     document.body.style.overflow = 'hidden';
   } else {
-    if (spans[0]) { spans[0].style.transform=''; }
-    if (spans[1]) { spans[1].style.opacity='1'; }
-    if (spans[2]) { spans[2].style.transform=''; }
+    if (spans[0]) spans[0].style.transform = '';
+    if (spans[1]) spans[1].style.opacity   = '1';
+    if (spans[2]) spans[2].style.transform = '';
     document.body.style.overflow = '';
   }
 }
-// Close on outside click
 document.addEventListener('click', function(e) {
   var panel = document.getElementById('nav-mobile');
   var hbg   = document.getElementById('nav-hbg');
-  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && e.target !== hbg && !hbg.contains(e.target)) {
+  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && hbg && !hbg.contains(e.target)) {
     toggleMobileNav();
   }
 });
-// Mark active link in mobile panel
 (function() {
   var page = location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('#nav-mobile a').forEach(function(a) {
-    var href = a.getAttribute('href');
-    if (href === page || (page==='' && href==='index.html')) a.classList.add('active');
+    if (a.getAttribute('href') === page || (page === '' && a.getAttribute('href') === 'index.html'))
+      a.classList.add('active');
   });
 })();
 </script>
@@ -270,13 +293,13 @@ document.addEventListener('click', function(e) {
         </p>
         <div style="display:flex;flex-direction:column;gap:8px">
           <div style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px">
-            <span style="color:var(--g-deep);font-weight:700;white-space:nowrap">Phase 1 (M1–M2)</span>
+            <span style="color:var(--g-deep);font-weight:700">Phase 1 (M1–M2)</span>
             <span style="color:#1B6CA8">Diagnostic, data audit, financial intelligence framework design, and delivery of the first working analytical tool (Current Situation Model).</span>
-            <span style="color:#B8860B;font-weight:700;white-space:nowrap">Phase 2 (M3–M6)</span>
+            <span style="color:#B8860B;font-weight:700">Phase 2 (M3–M6)</span>
             <span style="color:#1B6CA8">Pricing reference guide, cost structure models, demand-offer-price dynamic modeling, logistics and policy cost frameworks, first quarterly report.</span>
-            <span style="color:var(--g-deep);font-weight:700;white-space:nowrap">Phase 3 (M7–M12)</span>
+            <span style="color:var(--g-deep);font-weight:700">Phase 3 (M7–M12)</span>
             <span style="color:#1B6CA8">Automated intelligence dashboard, investor hub, full costs modeling framework, market access cost framework, annual outlook, staff training.</span>
-            <span style="color:#5B2C6F;font-weight:700;white-space:nowrap">Phase 4 (M10–M18)</span>
+            <span style="color:#5B2C6F;font-weight:700">Phase 4 (M10–M18)</span>
             <span style="color:#1B6CA8">Company portal, multi-market integration model, complete financial flows modeling, full platform launch, regional hub roadmap.</span>
           </div>
           <style>

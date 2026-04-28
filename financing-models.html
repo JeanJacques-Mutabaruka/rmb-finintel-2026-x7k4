@@ -177,6 +177,18 @@
     }
 
   </style>
+<style>
+/* Global mobile overflow fix */
+@media (max-width:860px) {
+  * { max-width: 100%; }
+  table { width: 100% !important; display: block; overflow-x: auto; }
+  [style*="min-width:820px"], [style*="min-width:700px"] { min-width: unset !important; width: 100% !important; }
+  [style*="grid-template-columns:1fr 480px"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns:1fr 340px"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
+  [style*="white-space:nowrap"] { white-space: normal !important; }
+}
+</style>
 </head>
 <body>
 
