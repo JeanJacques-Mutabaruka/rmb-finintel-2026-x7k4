@@ -165,85 +165,53 @@
 </style>
 </head>
 <body>
+<aside class="rmb-sidebar" id="rmb-sidebar">
+  <div class="sb-logo-block">
+    <div class="sb-logo">RMB<br>FI</div>
+    <div>
+      <div class="sb-brand-main">RMB-FinIntel</div>
+      <div class="sb-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section-label">Proposal</span>
+    <a href="index.html" class="active">📄 Technical Proposal</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Strategic Horizon</span>
+    <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+    <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+    <a href="financing-models.html">🏦 Financing Models</a>
+    <a href="smart-stock.html">📡 Smart Stock</a>
+    <a href="market-manipulation.html" style="color:#C00000;background:rgba(192,0,0,0.06);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Current Situation Model</span>
+    <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
+      <span>🏛 Current Sit. Model</span>
+      <span class="sb-arrow">▾</span>
+    </button>
+    <div class="sb-group-items" id="sb-csm-items">
+      <a href="architecture.html" class="sb-sub">🏗 Architecture</a>
+      <a href="energy.html" class="sb-sub">⚡ Energy Component</a>
+      <a href="demo.html" class="sb-sub">🔬 Tool Mock-up</a>
+    </div>
+  </nav>
+</aside>
 
-<!-- NAV -->
-<nav class="rmb-nav">
-  <div class="nav-logo-block">
-    <div class="nav-logo">RMB<br>FI</div>
-    <div class="nav-brand-text">
-      <div class="nav-brand-main">RMB-FinIntel</div>
-      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
-    </div>
-  </div>
-  <div class="nav-links">
-    <a href="index.html" class="active">Technical Proposal</a>
-    <div class="nav-divider"></div>
-    <a href="index.html#strategic-horizon" style="color:var(--gold);font-weight:700">🔭 Strategic Horizon</a>
-    <div class="nav-divider"></div>
-    <a href="tokenisation.html" style="color:var(--blue);font-weight:700">🔗 Tokenisation</a>
-    <div class="nav-divider"></div>
-    <div class="nav-dropdown">
-      <button class="nav-dropdown-trigger">Current Situation Model</button>
-      <div class="nav-dropdown-menu">
-        <span class="ddm-label">Sub-modules</span>
-        <a href="architecture.html">🏗 Architecture</a>
-        <a href="energy.html">⚡ Energy Component</a>
-        <a href="demo.html">🔬 Tool Mock-up</a>
-      </div>
-    </div>
-  </div>
-  <!-- Hamburger button (mobile only) -->
-  <button class="nav-hamburger" id="nav-hbg" aria-label="Menu" onclick="toggleMobileNav()">
+<!-- Mobile top bar -->
+<div class="sb-topbar">
+  <div class="sb-topbar-logo">RMB<br>FI</div>
+  <div class="sb-topbar-title">RMB-FinIntel</div>
+  <button class="sb-hamburger" id="sb-hbg" onclick="sbMobileToggle()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
-</nav>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="sbMobileClose()"></div>
+
+
+<!-- NAV -->
+
 
 <!-- Mobile nav panel -->
-<div class="nav-mobile-panel" id="nav-mobile">
-  <a href="index.html">Technical Proposal</a>
-  <span class="mob-section-label">Strategic Horizon</span>
-  <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
-  <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
-  <a href="financing-models.html">🏦 Financing Models</a>
-  <span class="mob-section-label">Current Situation Model</span>
-  <a href="architecture.html">🏗 Architecture</a>
-  <a href="energy.html">⚡ Energy Component</a>
-  <a href="demo.html">🔬 Tool Mock-up</a>
-</div>
-<script>
-function toggleMobileNav() {
-  var panel = document.getElementById('nav-mobile');
-  var hbg   = document.getElementById('nav-hbg');
-  if (!panel) return;
-  var open = panel.classList.toggle('open');
-  var spans = hbg ? hbg.querySelectorAll('span') : [];
-  if (open) {
-    if (spans[0]) spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
-    if (spans[1]) spans[1].style.opacity   = '0';
-    if (spans[2]) spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
-    document.body.style.overflow = 'hidden';
-  } else {
-    if (spans[0]) spans[0].style.transform = '';
-    if (spans[1]) spans[1].style.opacity   = '1';
-    if (spans[2]) spans[2].style.transform = '';
-    document.body.style.overflow = '';
-  }
-}
-document.addEventListener('click', function(e) {
-  var panel = document.getElementById('nav-mobile');
-  var hbg   = document.getElementById('nav-hbg');
-  if (panel && panel.classList.contains('open') && !panel.contains(e.target) && hbg && !hbg.contains(e.target)) {
-    toggleMobileNav();
-  }
-});
-(function() {
-  var page = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('#nav-mobile a').forEach(function(a) {
-    if (a.getAttribute('href') === page || (page === '' && a.getAttribute('href') === 'index.html'))
-      a.classList.add('active');
-  });
-})();
-</script>
 
 
 <div class="page-wrap">

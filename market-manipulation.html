@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Market Price Manipulation — RMB-FinIntel</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+/* ═══════════════════════════════════════════════════════════
+   PAGE-SPECIFIC STYLES
+═══════════════════════════════════════════════════════════ */
+
+/* ── Alert / case-study banner ── */
+.alert-banner {
+  background: var(--red-lt);
+  border: 1px solid #F4B8B8;
+  border-left: 4px solid var(--red);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.alert-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.alert-title { font-size: 14px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+.alert-body  { font-size: 13px; color: var(--text-body); line-height: 1.65; }
+
+/* ── Actor taxonomy cards ── */
+.actor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.actor-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-top: 4px solid var(--g-deep);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.22s;
+}
+.actor-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.actor-card.red    { border-top-color: var(--red); }
+.actor-card.gold   { border-top-color: var(--gold); }
+.actor-card.blue   { border-top-color: var(--blue); }
+.actor-card.green  { border-top-color: var(--g-deep); }
+.actor-card.purple { border-top-color: #7B2D8B; }
+.actor-icon  { font-size: 26px; margin-bottom: 10px; }
+.actor-type  { font-family: var(--font-m); font-size: 10px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 700; margin-bottom: 6px; }
+.actor-type.red    { color: var(--red); }
+.actor-type.gold   { color: var(--gold); }
+.actor-type.blue   { color: var(--blue); }
+.actor-type.green  { color: var(--g-deep); }
+.actor-type.purple { color: #7B2D8B; }
+.actor-name  { font-family: var(--font-d); font-size: 16px; font-weight: 700; color: var(--text-head); margin-bottom: 8px; }
+.actor-body  { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px; }
+.actor-example { font-size: 12px; color: var(--text-muted); font-style: italic; border-top: 1px solid var(--border-lt); padding-top: 10px; }
+
+/* ── Strategy playbook cards ── */
+.playbook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.pb-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.22s;
+}
+.pb-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.pb-header {
+  padding: 16px 20px 12px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.pb-num {
+  font-family: var(--font-d); font-size: 28px; font-weight: 900;
+  line-height: 1; flex-shrink: 0; opacity: 0.18;
+}
+.pb-tag { font-family: var(--font-m); font-size: 9px; letter-spacing: 1.8px; text-transform: uppercase; font-weight: 700; padding: 3px 8px; border-radius: 3px; display: inline-block; margin-bottom: 5px; }
+.pb-name { font-family: var(--font-d); font-size: 15px; font-weight: 700; color: var(--text-head); margin-bottom: 4px; }
+.pb-short { font-size: 12px; color: var(--text-muted); }
+.pb-body { padding: 0 20px 16px; font-size: 13px; color: var(--text-body); line-height: 1.65; border-top: 1px solid var(--border-lt); padding-top: 12px; }
+.pb-mech { background: var(--surface-1); border-radius: 5px; padding: 10px 14px; font-size: 12px; color: var(--text-muted); font-family: var(--font-m); letter-spacing: 0.3px; margin-top: 10px; border-left: 3px solid; }
+.pb-risk { margin-top: 10px; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+.risk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Chart tab buttons ── */
+.chart-tab {
+  padding: 7px 16px; font-size: 12px; font-weight: 600; font-family: var(--font-b);
+  border: 1.5px solid var(--border-md); border-radius: 6px; background: #FFFFFF;
+  color: var(--text-muted); cursor: pointer; transition: all 0.18s; letter-spacing: 0.3px;
+}
+.chart-tab:hover { background: var(--g-pale); border-color: var(--g-lt); color: var(--g-deep); }
+.chart-tab.active { background: var(--g-deep); color: #FFFFFF; border-color: var(--g-deep); }
+
+/* ── Cycle diagram (China case study) ── */
+.cycle-wrap {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.cycle-header {
+  background: var(--g-deep); color: #FFFFFF;
+  padding: 18px 24px; display: flex; align-items: center; gap: 12px;
+}
+.cycle-header-title { font-family: var(--font-d); font-size: 18px; font-weight: 700; }
+.cycle-header-sub   { font-size: 13px; opacity: 0.7; margin-top: 2px; }
+.cycle-body { padding: 28px 24px; }
+.cycle-steps { display: flex; flex-direction: column; gap: 0; }
+.c-step {
+  display: flex; gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px dashed var(--border-lt);
+  position: relative;
+}
+.c-step:last-child { border-bottom: none; }
+.c-step-left { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 0; }
+.c-step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-d); font-weight: 700; font-size: 15px;
+  color: #FFFFFF; flex-shrink: 0;
+}
+.c-step-line { flex: 1; width: 2px; background: var(--border-lt); margin-top: 4px; }
+.c-step:last-child .c-step-line { display: none; }
+.c-step-content { flex: 1; padding-bottom: 4px; }
+.c-step-phase { font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+.c-step-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; color: var(--text-head); margin-bottom: 6px; }
+.c-step-body  { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.c-step-outcome { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-m); font-size: 11px; padding: 4px 10px; border-radius: 4px; margin-top: 8px; font-weight: 600; }
+
+/* ── Price chart timeline ── */
+.timeline-wrap {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── 3T risk matrix ── */
+.risk-matrix-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.risk-matrix-table th {
+  padding: 11px 14px; text-align: left;
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted);
+  background: var(--surface-1); border-bottom: 2px solid var(--border-md);
+}
+.risk-matrix-table td { padding: 13px 14px; border-bottom: 1px solid var(--border-lt); vertical-align: top; }
+.risk-matrix-table tr:hover td { background: var(--g-xpale); }
+.risk-level { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.risk-high   { background: var(--red-lt); color: var(--red); }
+.risk-med    { background: var(--gold-lt); color: #7A5800; }
+.risk-low    { background: var(--g-pale); color: var(--g-deep); }
+
+/* ── MFI framework cards ── */
+.mfi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.mfi-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: all 0.22s;
+}
+.mfi-card:hover { border-color: rgba(184,134,11,0.35); background: rgba(255,255,255,0.08); }
+.mfi-num { font-family: var(--font-d); font-size: 36px; font-weight: 900; color: var(--gold); opacity: 0.35; line-height: 1; margin-bottom: 8px; }
+.mfi-title { font-size: 15px; font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
+.mfi-body  { font-size: 13px; color: rgba(255,255,255,0.62); line-height: 1.65; }
+.mfi-signals { margin-top: 14px; display: flex; flex-direction: column; gap: 5px; }
+.mfi-signal  { font-family: var(--font-m); font-size: 11px; color: var(--gold); padding: 4px 10px; background: rgba(184,134,11,0.1); border-radius: 4px; border-left: 2px solid var(--gold); }
+
+/* ── Decision framework table (green section) ── */
+.dec-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dec-table th {
+  padding: 11px 14px; text-align: left;
+  font-family: var(--font-m); font-size: 10px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.dec-table td {
+  padding: 13px 14px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  vertical-align: top; color: rgba(255,255,255,0.78);
+}
+.dec-table tr:hover td { background: rgba(255,255,255,0.04); }
+.dec-trigger { color: var(--gold); font-weight: 600; }
+.dec-action  { color: #6FD19A; font-weight: 600; }
+
+/* ── Expandable sections ── */
+.exp-section { margin-bottom: 10px; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm); }
+.exp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; cursor: pointer; user-select: none;
+  background: #FFFFFF; border: 1px solid var(--border-lt);
+  transition: background 0.18s;
+}
+.exp-header:hover { background: var(--g-xpale); }
+.exp-header-left { display: flex; align-items: center; gap: 12px; }
+.exp-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; color: var(--text-head); }
+.exp-preview { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.exp-toggle  { font-size: 11px; color: var(--text-muted); font-family: var(--font-m); transition: transform 0.25s; flex-shrink: 0; }
+.exp-toggle.open { transform: rotate(180deg); }
+.exp-body { display: none; background: var(--surface-1); border: 1px solid var(--border-lt); border-top: none; padding: 22px; }
+.exp-body.open { display: block; }
+
+/* ── Cases / historical examples ── */
+.case-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-left: 4px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 12px;
+}
+.case-date { font-family: var(--font-m); font-size: 11px; letter-spacing: 1px; color: var(--gold); font-weight: 700; margin-bottom: 5px; }
+.case-title { font-family: var(--font-d); font-size: 15px; font-weight: 700; color: var(--text-head); margin-bottom: 8px; }
+.case-body  { font-size: 13px; color: var(--text-muted); line-height: 1.65; }
+.case-lesson {
+  margin-top: 12px; padding: 10px 14px;
+  background: var(--g-pale); border-radius: 5px; border-left: 3px solid var(--g-deep);
+  font-size: 12px; color: var(--g-deep); font-weight: 600; line-height: 1.55;
+}
+
+/* ── Inline source reference ── */
+.src-ref {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--font-m); font-size: 11px;
+  background: var(--surface-2); border: 1px solid var(--border-lt);
+  border-radius: 4px; padding: 3px 9px; color: var(--text-muted);
+  margin-left: 6px; vertical-align: middle; text-decoration: none;
+}
+.src-ref:hover { color: var(--g-deep); background: var(--g-pale); }
+
+/* ── Callout box ── */
+.callout {
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+  margin: 24px 0;
+}
+.callout.gold   { background: var(--gold-lt); border: 1px solid #E8CC80; border-left: 4px solid var(--gold); }
+.callout.green  { background: var(--g-pale);  border: 1px solid var(--g-lt);  border-left: 4px solid var(--g-deep); }
+.callout.red    { background: var(--red-lt);  border: 1px solid #F4B8B8;  border-left: 4px solid var(--red); }
+.callout-icon   { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.callout-title  { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+.callout.gold  .callout-title { color: #7A5800; }
+.callout.green .callout-title { color: var(--g-deep); }
+.callout.red   .callout-title { color: var(--red); }
+.callout-body   { font-size: 13px; line-height: 1.65; color: var(--text-body); }
+
+/* ── Rwanda-specific positioning ── */
+.rw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.rw-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-top: 3px solid var(--g-deep);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.22s;
+}
+.rw-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.rw-card-icon  { font-size: 24px; margin-bottom: 10px; }
+.rw-card-title { font-size: 14px; font-weight: 700; color: var(--text-head); margin-bottom: 6px; }
+.rw-card-body  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.rw-card-tag   { margin-top: 10px; display: inline-block; font-family: var(--font-m); font-size: 10px; padding: 3px 8px; border-radius: 3px; font-weight: 700; letter-spacing: 0.5px; background: var(--g-pale); color: var(--g-deep); border: 1px solid var(--g-lt); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .actor-grid, .playbook-grid, .mfi-grid, .rw-grid { grid-template-columns: 1fr; }
+  .risk-matrix-table { display: block; overflow-x: auto; }
+  .c-step { flex-direction: column; gap: 10px; }
+  .c-step-left { flex-direction: row; }
+  .c-step-line { display: none; }
+}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside class="rmb-sidebar" id="rmb-sidebar">
+  <div class="sb-logo-block">
+    <div class="sb-logo">RMB<br>FI</div>
+    <div>
+      <div class="sb-brand-main">RMB-FinIntel</div>
+      <div class="sb-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section-label">Proposal</span>
+    <a href="index.html">📄 Technical Proposal</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Strategic Horizon</span>
+    <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+    <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+    <a href="financing-models.html">🏦 Financing Models</a>
+    <a href="smart-stock.html">📡 Smart Stock</a>
+    <a href="market-manipulation.html" class="active" style="color:#C00000;background:rgba(192,0,0,0.1);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Current Situation Model</span>
+    <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
+      <span>🏛 Current Sit. Model</span>
+      <span class="sb-arrow">▾</span>
+    </button>
+    <div class="sb-group-items" id="sb-csm-items">
+      <a href="architecture.html" class="sb-sub">🏗 Architecture</a>
+      <a href="energy.html" class="sb-sub">⚡ Energy Component</a>
+      <a href="demo.html" class="sb-sub">🔬 Tool Mock-up</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Mobile top bar -->
+<div class="sb-topbar">
+  <div class="sb-topbar-logo">RMB<br>FI</div>
+  <div class="sb-topbar-title">RMB-FinIntel</div>
+  <button class="sb-hamburger" id="sb-hbg" onclick="sbMobileToggle()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="sbMobileClose()"></div>
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<div class="hero" style="min-height:52vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Mineral Financial Intelligence · Market Structure Analysis</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal">Market <span class="accent">Price Manipulation</span><br>&amp; Competitive Destruction</h1>
+    <p class="hero-lead fade-up au-3">How dominant actors — state powers, major corporations, price cartels, and regulators — engineer mineral price cycles to eliminate competition, trap investors, and entrench supply chain control. Why Mineral Financial Intelligence must detect, model, and anticipate these dynamics to protect Rwanda's licensing strategy and investment decisions.</p>
+    <p class="hero-meta fade-up au-4">Strategic Horizon · Market Intelligence · Price Dynamics Analysis</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-5">
+      <a href="#the-playbook" class="btn btn-gold">The Playbook ↓</a>
+      <a href="#actor-taxonomy" class="btn btn-outline">Who Does It ↓</a>
+      <a href="#mfi-framework" class="btn btn-green">MFI Response ↓</a>
+    </div>
+    <div class="stats-bar fade-up au-5">
+      <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Years China ran the rare earth playbook before being seriously challenged</div></div>
+      <div class="stat"><div class="stat-n">$2,300</div><div class="stat-l">Dysprosium peak ($/kg, 2011) — crashed to &lt;$200 by 2016</div></div>
+      <div class="stat"><div class="stat-n">3×</div><div class="stat-l">Distinct price collapse cycles engineered by a single dominant actor</div></div>
+      <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Western rare earth companies destroyed in each cycle — without exception</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+════════════════════════════════════════════════════════════ -->
+<section class="section" style="padding-top:36px;padding-bottom:36px;background:var(--surface-1);border-bottom:1px solid var(--border-lt)">
+  <div class="eyebrow" style="margin-bottom:14px">What You Will Find on This Page</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">
+
+    <a href="#case-study" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--red);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🏭</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:700">Section 1 — Case Study</div>
+        </div>
+        <div class="card-title">The China Rare Earth Playbook</div>
+        <div class="card-body">A documented, 20-year cycle of engineered price crashes used to eliminate every Western competitor before they could achieve independence. The clearest known example of competitive destruction via market manipulation.</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--red);font-weight:600">Read →</div>
+      </div>
+    </a>
+
+    <a href="#actor-taxonomy" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--gold);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🎭</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700">Section 2 — Actors</div>
+        </div>
+        <div class="card-title">Who Manipulates Mineral Prices &amp; Why</div>
+        <div class="card-body">A taxonomy of the five categories of market actors capable of moving mineral prices — their tools, motivations, and the sectors where their influence is most dangerous for smaller market participants.</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--gold);font-weight:600">Read →</div>
+      </div>
+    </a>
+
+    <a href="#the-playbook" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--blue);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">⚙️</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:700">Section 3 — Strategies</div>
+        </div>
+        <div class="card-title">Six Price Manipulation Strategies</div>
+        <div class="card-body">From inventory pump-and-dump to benchmark control, compliance weaponisation, and export restriction. Detailed mechanics of how dominant actors distort mineral markets, including the inventory accumulation trap described in the Rwanda context.</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--blue);font-weight:600">Read →</div>
+      </div>
+    </a>
+
+    <a href="#3t-exposure" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid #7B2D8B;cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">💎</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7B2D8B;font-weight:700">Section 4 — 3T Exposure</div>
+        </div>
+        <div class="card-title">3T Minerals Risk Assessment</div>
+        <div class="card-body">Specific exposure analysis for Tin, Tantalum, and Tungsten. Price evolution 2021–2026. Identification of dominant actors and their leverage points. Rwanda-specific vulnerability mapping for each mineral.</div>
+        <div style="margin-top:8px;font-size:12px;color:#7B2D8B;font-weight:600">Read →</div>
+      </div>
+    </a>
+
+    <a href="#mfi-framework" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid var(--g-deep);cursor:pointer;height:100%">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🛡️</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700">Section 5 — MFI Response</div>
+        </div>
+        <div class="card-title">The MFI Detection &amp; Advisory Framework</div>
+        <div class="card-body">How Mineral Financial Intelligence must be structured to detect manipulation signals, model price scenarios, generate early warnings, and translate market intelligence into concrete licensing and investment recommendations for RMB.</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--g-deep);font-weight:600">Read →</div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 1 — CASE STUDY: THE CHINA RARE EARTH PLAYBOOK
+════════════════════════════════════════════════════════════ -->
+<section id="case-study" class="section">
+  <div class="eyebrow">Section 1 — Foundational Case Study</div>
+  <h2 class="section-title">How China Killed Every Rare Earth Competitor</h2>
+  <p class="section-lead">A 20-year documented case of systematic competitive destruction using price as a weapon — the clearest available template for understanding what can happen to any mineral sector where a single dominant actor controls pricing levers.</p>
+
+  <div class="alert-banner" style="margin-bottom:32px">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">Source Reference</div>
+      <div class="alert-body">This case study is grounded in the analysis published by OilPrice.com (May 2026): <a href="https://oilprice.com/Energy/Energy-General/How-China-Killed-Every-Rare-Earth-Competitor-Before-It-Could-Get-Started.html" target="_blank" rel="noopener" style="color:var(--red);font-weight:600;text-decoration:underline"><em>"How China Killed Every Rare Earth Competitor Before It Could Get Started" ↗</em></a>. The article synthesises two decades of documented market interventions, from the Mountain Pass closure in 2002 to the Molycorp bankruptcy in 2015, and analyses what structural changes have begun to shift the dynamic from 2025 onward. The core mechanism it describes — pricing as a strategic weapon — is the analytical starting point for Rwanda's 3T Mineral Financial Intelligence framework.</div>
+    </div>
+  </div>
+
+  <!-- The cycle diagram -->
+  <div class="cycle-wrap fade-up au-1" style="margin-bottom:36px">
+    <div class="cycle-header">
+      <div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">China's Rare Earth Dominance Strategy · 2002–2025</div>
+        <div class="cycle-header-title">The Engineered Price Cycle</div>
+        <div class="cycle-header-sub">How market pricing became a weapon of competitive elimination</div>
+      </div>
+    </div>
+    <div class="cycle-body">
+      <div class="cycle-steps" id="cycle-steps"></div>
+    </div>
+  </div>
+
+  <!-- Historical cycles -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:20px">Three Documented Cycles — Three Total Resets of Western Investment</h3>
+
+  <div class="case-card">
+    <div class="case-date">2002 — CYCLE 0: THE FOUNDATION</div>
+    <div class="case-title">Mountain Pass Closure — The Market Is Ceded</div>
+    <div class="case-body">The last major US rare earth mine in California closed, unable to compete with Chinese production costs. By this point, China controlled approximately 90–95% of global rare earth production and an even larger share of processing and refining. The West had not been defeated in a battle — it had simply walked away from the market, handing China unchallenged dominance that would take two decades to partially reverse.</div>
+    <div class="case-lesson">MFI Lesson: Market withdrawal creates path dependencies. Once processing knowledge concentrates in a single geography, the cost of re-entry rises exponentially — and the dominant actor can set the re-entry price at will.</div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-date">2010–2011 — CYCLE 1: THE SENKAKU SHOCK</div>
+    <div class="case-title">Japan Supply Halt → Price Spike → Western Rush → Price Crash → Elimination</div>
+    <div class="case-body">In September 2010, a territorial dispute triggered an unofficial halt to Chinese rare earth shipments to Japan. Prices spiked dramatically — dysprosium oxide surged from approximately $90/kg in early 2009 to over $2,300/kg by mid-2011, a 2,400% increase. Western investors poured billions into rare earth projects across Canada, the US, and Australia. Mountain Pass reopened. For a brief period, it appeared the West would break free. Then China eased restrictions and flooded the market with supply. Dysprosium collapsed back below $200/kg by 2016. Every Western project launched in the boom ran out of funding.</div>
+    <div class="case-lesson">MFI Lesson: Price spikes that trigger investment waves may be the trap — not the opportunity. Financial intelligence must distinguish structural demand increases from engineered scarcity that will be reversed once competitors have committed capital.</div>
+  </div>
+
+  <div class="case-card">
+    <div class="case-date">2015 — CYCLE 2: MOLYCORP BANKRUPTCY</div>
+    <div class="case-title">The Mountain Pass Revival Ends — The Playbook Confirmed</div>
+    <div class="case-body">Molycorp, the company behind Mountain Pass's revival, filed for bankruptcy in 2015. With dysprosium back below $200/kg, the investment case had evaporated. But the article reveals a deeper problem: even companies that survived the price crash were still quietly dependent on Chinese technology and equipment. China had sold the hardware but retained the servicing knowledge. One rare earth expert described it as: <em>1% reliance on China is 100% reliance on China.</em> The West was losing not just on price but on technology, process knowledge, and supply chain independence simultaneously.</div>
+    <div class="case-lesson">MFI Lesson: Supply chain independence must be verified at every node — equipment, consumables, technical knowledge, maintenance contracts. Nominal independence that hides critical dependencies is the most dangerous form of exposure.</div>
+  </div>
+
+  <div class="case-card" style="border-left-color:var(--g-deep)">
+    <div class="case-date" style="color:var(--g-deep)">2025–2027 — THE STRUCTURAL SHIFT: WHY THIS TIME IS DIFFERENT</div>
+    <div class="case-title">When Policy Mandate Replaces Market Dependence</div>
+    <div class="case-body">The OilPrice.com article argues that the old playbook is beginning to fail for three reasons. First, US defense procurement rules (DFARS, effective January 2027) will mandate non-Chinese rare earth sourcing for weapons systems — creating demand that is legally mandated, not market-priced. Second, government-backed financing (US Ex-Im Bank, JOGMEC) replaces private capital that was vulnerable to price signals. Third, genuinely China-independent processing technology (developed by the Saskatchewan Research Council) removes the technology dependency trap. The key insight: China's strategy always depended on one assumption — that Western competitors remained exposed to market forces Beijing controls. Once that assumption breaks, the playbook fails.</div>
+    <div class="case-lesson" style="background:var(--g-pale);border-left-color:var(--g-deep);color:var(--g-deep)">MFI Strategic Insight: The same logic applies to 3T minerals. Rwanda's positioning as a conflict-free, compliance-premium 3T source creates a structurally protected market niche. But this protection only holds if Rwanda's MFI can identify when market actors are attempting to undermine that premium — and advise accordingly.</div>
+  </div>
+
+  <div class="callout gold" style="margin-top:28px">
+    <div class="callout-icon">📌</div>
+    <div>
+      <div class="callout-title">The Core Structural Insight for Rwanda</div>
+      <div class="callout-body">China's most effective weapon was not a missile, a tariff, or an embargo. It was a price tag. The mechanism works by exploiting the fundamental exposure of private capital to market forces. Any mineral country whose investment ecosystem depends entirely on market price signals — without structural protections, policy mandates, or compliance premiums — is potentially vulnerable to a version of this playbook. Rwanda's MFI framework must systematically identify, measure, and anticipate these dynamics.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 2 — ACTOR TAXONOMY
+════════════════════════════════════════════════════════════ -->
+<section id="actor-taxonomy" class="section section-alt">
+  <div class="eyebrow">Section 2 — Market Actor Analysis</div>
+  <h2 class="section-title">Who Manipulates Mineral Prices — and Why</h2>
+  <p class="section-lead">Price manipulation is not the exclusive province of state actors. Five categories of market participants possess structural leverage to move mineral prices for strategic ends, often with dramatically different motivations and timescales.</p>
+
+  <div class="actor-grid">
+
+    <div class="actor-card red">
+      <div class="actor-icon">🏛</div>
+      <div class="actor-type red">Category A</div>
+      <div class="actor-name">Dominant State Producers</div>
+      <div class="actor-body">Nations controlling 60–90% of global supply for a given mineral possess the most powerful and durable form of market leverage. Their pricing interventions are strategic, long-term, and often immune to short-term market retaliation. They can absorb prolonged periods of low prices because the strategic value of maintaining dominance exceeds the revenue forgone.</div>
+      <div class="actor-example"><strong>Tools:</strong> Export quotas, export bans, price index control, state-enterprise cost subsidies, technology withholding.<br><br><strong>Relevant cases:</strong> China/rare earths (90%+ supply), China/tungsten (82% supply), Indonesia/tin export licensing, Myanmar/cassiterite.</div>
+    </div>
+
+    <div class="actor-card gold">
+      <div class="actor-icon">🏢</div>
+      <div class="actor-type gold">Category B</div>
+      <div class="actor-name">Major Industrial Buyers</div>
+      <div class="actor-body">Large downstream consumers — semiconductor manufacturers, battery producers, defence contractors, electronics OEMs — can engineer artificial demand cycles by accelerating or deferring procurement. Inventory accumulation beyond operational needs, coordinated with timing of major project announcements, can create the price spike conditions that trigger speculative investment waves. When these buyers then normalise procurement, the price correction eliminates new entrants who invested at the peak.</div>
+      <div class="actor-example"><strong>Tools:</strong> Strategic stockpiling, demand signalling, long-term contract terms, certification requirements.<br><br><strong>Relevant risk:</strong> A major smartphone manufacturer announcing a large tantalum procurement programme could trigger a price surge that attracts Rwandan miners to over-invest — and then evaporate.</div>
+    </div>
+
+    <div class="actor-card blue">
+      <div class="actor-icon">📊</div>
+      <div class="actor-type blue">Category C</div>
+      <div class="actor-name">Financial Speculators &amp; Funds</div>
+      <div class="actor-body">Commodity funds, hedge funds, and algorithmic traders increasingly influence mineral prices, particularly in exchange-traded markets. Their intervention is typically shorter-term but can create devastating volatility windows. They amplify fundamentals-based signals into speculative overshoots — both upward and downward — and can exit positions abruptly, leaving physical market participants exposed to prices that no longer reflect real supply-demand dynamics.</div>
+      <div class="actor-example"><strong>Tools:</strong> Futures positioning, algorithmic momentum trading, LME warrant accumulation, media narrative amplification.<br><br><strong>Documented example:</strong> January 2026 tin rally — SHFE trading volumes exceeded 1 million tonnes in a single session, more than twice annual world physical supply. Chinese regulators intervened explicitly.</div>
+    </div>
+
+    <div class="actor-card purple">
+      <div class="actor-icon">⚖️</div>
+      <div class="actor-type purple">Category D</div>
+      <div class="actor-name">Regulatory Actors</div>
+      <div class="actor-body">Governments and international bodies can engineer price distortions through regulatory means — not always intentionally, and not always to the benefit of the regulating country. Conflict mineral regulations (Dodd-Frank §1502, EU CMR) impose compliance costs that Western buyers must bear but Chinese buyers do not. This asymmetry effectively subsidises non-compliant supply chains and penalises responsible ones, distorting price signals in ways that reward opacity.</div>
+      <div class="actor-example"><strong>Tools:</strong> Compliance certification costs, traceability mandates, origin restrictions, environmental standards.<br><br><strong>Paradox:</strong> Well-intentioned Western conflict-mineral regulations created a compliance cost premium that made African responsible supply chains comparatively more expensive — reducing their price competitiveness vs. non-regulated sourcing.</div>
+    </div>
+
+    <div class="actor-card green">
+      <div class="actor-icon">🔗</div>
+      <div class="actor-type green">Category E</div>
+      <div class="actor-name">Supply Chain Processors &amp; Intermediaries</div>
+      <div class="actor-body">Actors who control the bottleneck between raw mineral extraction and refined usable material possess leverage disproportionate to their production volumes. Control of smelting, refining, or value-added processing means that even if a country produces the ore, it remains price-dependent on whoever controls the next stage of the value chain. This is how China's rare earth dominance was maintained even when ore mining shifted partially to other countries.</div>
+      <div class="actor-example"><strong>Tools:</strong> Processing capacity concentration, technology withholding, off-take agreement lock-in, pricing margin squeeze on raw ore.<br><br><strong>3T relevance:</strong> Malaysia and Germany host the primary tantalum smelters that process ore from DRC, Rwanda, and Brazil. Raw ore producers are price-takers; processors are price-setters. Rwanda's cassiterite goes primarily to Malaysian and Chinese smelters for tin refining.</div>
+    </div>
+
+  </div>
+
+  <div class="callout red" style="margin-top:28px">
+    <div class="callout-icon">🔍</div>
+    <div>
+      <div class="callout-title">Key Analytical Point for RMB</div>
+      <div class="callout-body">These five categories rarely act in isolation. The most dangerous market manipulation scenarios involve coordination or coincidence between multiple actor types — for example, a dominant state producer timing export restriction announcements to coincide with financial speculator positioning, or a major industrial buyer using regulatory compliance requirements to create entry barriers for new suppliers while using market pricing to squeeze existing ones. MFI must model actor interactions, not just individual actors.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 3 — THE MANIPULATION PLAYBOOK
+════════════════════════════════════════════════════════════ -->
+<section id="the-playbook" class="section">
+  <div class="eyebrow">Section 3 — Manipulation Mechanics</div>
+  <h2 class="section-title">Six Price Manipulation Strategies</h2>
+  <p class="section-lead">Each strategy has a distinct mechanism, timescale, and signature in the data. Mineral Financial Intelligence must be able to identify each in historical data and generate prospective warnings before capital allocation decisions are made.</p>
+
+  <div class="playbook-grid" id="playbook-grid">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 4 — 3T MINERAL EXPOSURE
+════════════════════════════════════════════════════════════ -->
+<section id="3t-exposure" class="section section-alt">
+  <div class="eyebrow">Section 4 — Rwanda-Relevant Market Analysis</div>
+  <h2 class="section-title">3T Minerals — Price Evolution &amp; Manipulation Risk</h2>
+  <p class="section-lead">Tin, Tantalum, and Tungsten — Rwanda's three core mineral exports — each display distinct price dynamics, different dominant actor structures, and different manipulation risk profiles. Historical price trends 2021–2026 reveal patterns that MFI must track prospectively.</p>
+
+  <!-- Price chart — tabbed -->
+  <div class="timeline-wrap fade-up au-1" style="margin-bottom:32px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px">Price Evolution 2021–2026</div>
+
+    <!-- Tab buttons -->
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px" id="chart-tabs">
+      <button class="chart-tab active" onclick="switchTab('all')" id="tab-all">All 3T (indexed)</button>
+      <button class="chart-tab" onclick="switchTab('tin')" id="tab-tin" style="border-color:#1B6CA8;color:#1B6CA8">📊 Tin (LME USD/t)</button>
+      <button class="chart-tab" onclick="switchTab('tantalum')" id="tab-tantalum" style="border-color:#C00000;color:#C00000">📊 Tantalum (USD/kg)</button>
+      <button class="chart-tab" onclick="switchTab('tungsten')" id="tab-tungsten" style="border-color:#1A5C38;color:#1A5C38">📊 Tungsten APT (USD/MTU)</button>
+    </div>
+
+    <!-- Legend (shown only for All tab) -->
+    <div id="chart-legend-all" style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)"><span style="width:22px;height:3px;background:#1B6CA8;display:inline-block;border-radius:2px"></span>Tin (÷1000 USD/t)</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)"><span style="width:22px;height:3px;background:#C00000;display:inline-block;border-radius:2px"></span>Tantalum USA (USD/kg)</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted)"><span style="width:22px;height:3px;background:#1A5C38;display:inline-block;border-radius:2px;border-bottom:2px dashed #1A5C38"></span>Tungsten APT (USD/MTU)</div>
+    </div>
+
+    <!-- Chart annotations (shown per tab) -->
+    <div id="chart-annotation" style="font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:10px;min-height:18px"></div>
+
+    <!-- Canvas -->
+    <div style="position:relative;width:100%;height:320px">
+      <canvas id="price3TChart" role="img" aria-label="3T minerals price chart 2021-2026. Tin peaked at approximately 48,000 USD per tonne in 2022, crashed to 24,000 by late 2022, recovered to 41,000 in 2025 and reached a record 56,800 in January 2026. Tantalum rose steadily from 150 to 502 USD per kg. Tungsten dipped to 312 USD per MTU in 2023 then recovered to 573 USD per MTU in 2026.">Price data 2021-2026 for Tin, Tantalum, and Tungsten</canvas>
+    </div>
+  </div>
+
+  <!-- Risk matrix table -->
+  <h3 style="font-family:var(--font-d);font-size:20px;font-weight:700;color:var(--text-head);margin-bottom:16px">3T Manipulation Risk Matrix — Rwanda Perspective</h3>
+  <div style="overflow-x:auto;margin-bottom:32px">
+    <table class="risk-matrix-table">
+      <thead>
+        <tr>
+          <th>Mineral</th>
+          <th>Market structure</th>
+          <th>Dominant actor(s)</th>
+          <th>Primary manipulation lever</th>
+          <th>Rwanda exposure</th>
+          <th>Manipulation risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tin</strong><br><span style="font-size:11px;color:var(--text-muted)">LME-traded</span></td>
+          <td style="font-size:13px">Liquid exchange market. 4–5 major producers. Smelting concentrated in China, Indonesia, Malaysia.</td>
+          <td style="font-size:13px">China (smelting), Indonesia (export licensing), speculative funds (SHFE)</td>
+          <td style="font-size:13px">Exchange speculation + supply restriction (Indonesia licensing, Myanmar bans). Jan 2026 volumes = 2× annual world supply in one session.</td>
+          <td style="font-size:13px">Rwanda exports cassiterite (ore) — price-taker vs. Chinese smelters who set tin metal price. Compliance premium partially protects.</td>
+          <td><span class="risk-level risk-high">🔴 High</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tantalum</strong><br><span style="font-size:11px;color:var(--text-muted)">OTC / bilateral</span></td>
+          <td style="font-size:13px">Very small market (~2,500t/yr global). Not exchange-traded. Opaque bilateral pricing. No public benchmark.</td>
+          <td style="font-size:13px">Malaysia &amp; Germany (primary smelters/processors), major electronics OEMs (demand), strategic stockpilers (governments). China is a secondary processor.</td>
+          <td style="font-size:13px">OTC opacity + inventory accumulation by industrial buyers. Market so small that one large buyer can move it. Compliance costs create asymmetric pricing between certified and non-certified supply.</td>
+          <td style="font-size:13px">Rwanda exports coltan to Malaysian smelters (primary route) and European processors. ~20% of global certified coltan. Benefits from compliance premium but exposed to OTC pricing opacity and processing bottleneck leverage by a handful of smelters.</td>
+          <td><span class="risk-level risk-med">🟠 Moderate–High</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tungsten</strong><br><span style="font-size:11px;color:var(--text-muted)">APT benchmark</span></td>
+          <td style="font-size:13px">Highly concentrated. China = 82% of global supply. Priced via APT benchmark (Fastmarkets, Metal Bulletin).</td>
+          <td style="font-size:13px">China (dominant producer AND processor), US/EU tariff policy, Chinese export control decisions</td>
+          <td style="font-size:13px">Supply restriction via export controls (Dec 2024 dual-use ban). Price depression via oversupply when competition emerges. Technology withholding on non-Chinese processing.</td>
+          <td style="font-size:13px">Rwanda has smaller tungsten exposure. But APT benchmark controlled by non-Rwandan actors. Export control shocks can disrupt offtake regardless of Rwanda's production decisions.</td>
+          <td><span class="risk-level risk-med">🟠 Moderate</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- The inventory pump scenario — Rwanda-specific callout -->
+  <div class="callout gold">
+    <div class="callout-icon">💡</div>
+    <div>
+      <div class="callout-title">The Inventory Accumulation Trap — A Specific Scenario for Rwanda's Context</div>
+      <div class="callout-body">
+        <strong>The mechanism:</strong> A dominant buyer (industrial corporation or state actor) begins purchasing minerals significantly above its operational requirements — building inventory over a 12–18 month period. Prices rise, attracting new investor attention. Mining companies expand capacity, new licences are sought, and capital flows in. The dominant buyer, having accumulated sufficient stock (typically 12–18 months of operational needs), abruptly stops purchasing. Spot prices collapse. New entrants — who built capacity based on the elevated price — cannot service their debt at the new price level. They exit. The dominant buyer then resumes purchasing at structurally lower prices, having eliminated the competition that was developing.
+        <br><br>
+        <strong>Why this is critical for RMB's licensing function:</strong> A regulator approving new mining licences during the price-rise phase — without detecting that the price rise is demand-fabricated rather than fundamentals-driven — may be facilitating investment into a trap. The companies licensed will become the casualties of the correction. This is not a theoretical risk: in tantalum specifically, the market is small enough ($1–2B globally) that a major electronics OEM could execute this strategy in 18 months with relatively modest capital commitment.
+      </div>
+    </div>
+  </div>
+
+  <!-- Expandable: What the data signals look like -->
+  <div class="exp-section" style="margin-top:24px">
+    <div class="exp-header" onclick="toggleExp('exp-signals')">
+      <div class="exp-header-left">
+        <span style="font-size:18px">📊</span>
+        <div>
+          <div class="exp-title">What Inventory Manipulation Looks Like in the Data</div>
+          <div class="exp-preview">Price vs. inventory divergence, volume anomalies, and procurement pattern signals</div>
+        </div>
+      </div>
+      <span class="exp-toggle" id="exp-signals-toggle">▾</span>
+    </div>
+    <div class="exp-body" id="exp-signals">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid var(--g-deep)">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700;margin-bottom:8px">Signal 1 — Price/Volume Divergence</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Prices rising while exchange inventories (where available) are also rising, or import volumes to a major buyer exceed their production output needs. Normal demand pull causes prices to rise AND inventories to fall simultaneously. Rising prices + rising stocks = accumulation, not genuine demand.</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid var(--gold)">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px">Signal 2 — Procurement Concentration</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">A small number of buyers (1–3) accounting for an unusually high share of total export flows from Rwanda or DRC for a given quarter. Diversified demand from many buyers is healthy. Concentrated demand from one actor with rapidly increasing volumes warrants investigation.</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid var(--blue)">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:8px">Signal 3 — Narrative Amplification</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">Surge in analyst reports, press articles, and industry publications highlighting "supply shortage" or "strategic criticality" coinciding with the accumulation phase. Media narrative is often a tool, not a consequence, of price manipulation. Cross-reference news volume against actual production data.</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid var(--red)">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:700;margin-bottom:8px">Signal 4 — Abrupt Procurement Halt</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">The leading indicator of the price crash phase: major buyer stops or sharply reduces procurement without corresponding reduction in end-use demand. This should trigger an immediate RMB advisory warning to recently-licensed companies about cashflow exposure, and freeze consideration of new licences in the affected mineral.</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid #7B2D8B">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7B2D8B;font-weight:700;margin-bottom:8px">Signal 5 — Futures/Spot Divergence</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">For exchange-traded minerals (tin), a shift from backwardation (near-term premium) to contango (futures premium over spot) can signal that physical tightness is artificial. The January 2026 tin episode showed this clearly: LME inventories were at a two-year high even as spot prices hit record levels — a textbook sign of speculative rather than fundamental-driven pricing.</div>
+        </div>
+        <div style="background:var(--surface-2);border-radius:6px;padding:16px;border-left:3px solid #1A5C38">
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);font-weight:700;margin-bottom:8px">Signal 6 — Compliance Asymmetry Widening</div>
+          <div style="font-size:13px;color:var(--text-muted);line-height:1.6">The spread between compliant-certified mineral prices and non-certified prices from the same mineral class. A widening spread during a price decline indicates compliant producers are being disproportionately squeezed — potentially because the price correction is being engineered and non-compliant buyers are exiting first, leaving compliant buyers to renegotiate terms from strength.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 5 — MFI FRAMEWORK
+════════════════════════════════════════════════════════════ -->
+<section id="mfi-framework" class="section section-green">
+  <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 50% 60% at 80% 30%,rgba(184,134,11,0.08) 0%,transparent 65%)"></div>
+  <div style="position:relative;z-index:2">
+
+    <div class="eyebrow" style="color:var(--gold)">Section 5 — The MFI Response</div>
+    <h2 class="section-title">Mineral Financial Intelligence Against Market Manipulation</h2>
+    <p class="section-lead">A comprehensive MFI framework must address market manipulation at three levels: historical documentation (what happened), real-time detection (what is happening), and prospective modelling (what is likely to happen and how to respond).</p>
+
+    <div class="mfi-grid">
+
+      <div class="mfi-card">
+        <div class="mfi-num">01</div>
+        <div class="mfi-title">Historical Price Cycle Documentation</div>
+        <div class="mfi-body">Systematic documentation of past price cycles for each 3T mineral — identifying the actors involved, the mechanisms used, the duration from accumulation to crash, and the companies that failed. This creates the analytical baseline against which current market signals can be compared.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Annual price cycle report per mineral (3T + gold + coltan)</div>
+          <div class="mfi-signal">Dominant actor identification and leverage mapping</div>
+          <div class="mfi-signal">Historical investment casualty register</div>
+        </div>
+      </div>
+
+      <div class="mfi-card">
+        <div class="mfi-num">02</div>
+        <div class="mfi-title">Price Anomaly Detection Engine</div>
+        <div class="mfi-body">A quantitative system that continuously monitors price movements against fundamental indicators — production volumes, end-use demand data, energy cost trends, inventory levels — and flags divergences that exceed statistical thresholds. Both upward anomalies (possible accumulation) and downward anomalies (possible dumping) require monitoring.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Price vs. fundamental divergence index (monthly)</div>
+          <div class="mfi-signal">Threshold-triggered advisory alerts to RMB licensing team</div>
+          <div class="mfi-signal">Scenario classification: fundamental / speculative / engineered</div>
+        </div>
+      </div>
+
+      <div class="mfi-card">
+        <div class="mfi-num">03</div>
+        <div class="mfi-title">Export Flow Concentration Monitor</div>
+        <div class="mfi-body">Using RRA export declaration data and RMB trade data, track the concentration of mineral buyers over time. Flag quarters where a single buyer or buyer group accounts for more than 40% of Rwanda's exports in a given mineral — then cross-reference with global pricing trends to assess whether concentration is driving the price signal.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Monthly buyer concentration index (Herfindahl–Hirschman)</div>
+          <div class="mfi-signal">Buyer procurement pattern trend (12-month rolling)</div>
+          <div class="mfi-signal">Cross-reference with Rwanda export unit values vs. world price</div>
+        </div>
+      </div>
+
+      <div class="mfi-card">
+        <div class="mfi-num">04</div>
+        <div class="mfi-title">Prospective Scenario Modelling</div>
+        <div class="mfi-body">Forward-looking price scenario models that translate known actor strategies into price trajectories. For each licensed or prospective mining company: stress-test the business case against three scenarios — base case (fundamentals), bear case (coordinated price depression), and crash case (engineered collapse). RMB licensing decisions should incorporate scenario survival analysis.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Three-scenario price model per mineral (5-year horizon)</div>
+          <div class="mfi-signal">Company viability threshold at each price scenario</div>
+          <div class="mfi-signal">Licence recommendation conditioned on scenario resilience</div>
+        </div>
+      </div>
+
+      <div class="mfi-card">
+        <div class="mfi-num">05</div>
+        <div class="mfi-title">Compliance Premium Tracker</div>
+        <div class="mfi-body">Rwanda's primary structural protection against price manipulation is its certified conflict-free status, which commands a compliance premium from regulated Western buyers. This premium must be continuously measured. If the premium narrows — suggesting that certified and non-certified sources are converging in price — it is an early warning that Rwanda's price protection is eroding and strategic intervention is required.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Rwanda export unit value vs. non-certified world price (quarterly)</div>
+          <div class="mfi-signal">Compliance premium trend index (target: maintain &gt;15%)</div>
+          <div class="mfi-signal">Policy alert when premium falls below 10% for two consecutive quarters</div>
+        </div>
+      </div>
+
+      <div class="mfi-card">
+        <div class="mfi-num">06</div>
+        <div class="mfi-title">Investment Advisory &amp; Licensing Guard</div>
+        <div class="mfi-body">The translation layer between market intelligence and regulatory action. This module converts MFI signals into concrete RMB recommendations: when to accelerate licensing (structural demand growth detected), when to pause new licences (manipulation signals active), when to require stress-test documentation from applicants, and when to advise existing licence-holders on cashflow protection measures.</div>
+        <div class="mfi-signals">
+          <div class="mfi-signal">Licence approval matrix conditioned on MFI signal status</div>
+          <div class="mfi-signal">Mandatory scenario analysis for licence applications above $500K investment</div>
+          <div class="mfi-signal">Quarterly advisory bulletin to active licence-holders</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Decision Framework Table -->
+    <div style="margin-top:48px">
+      <div class="eyebrow" style="color:var(--gold);margin-bottom:20px">MFI Decision Framework — Signal to Action</div>
+      <div style="overflow-x:auto">
+        <table class="dec-table">
+          <thead>
+            <tr>
+              <th>MFI Signal</th>
+              <th>Signal interpretation</th>
+              <th>RMB licensing action</th>
+              <th>Advisory to companies</th>
+              <th>Timeframe</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="dec-trigger">Price rising ≥25% in 6 months + exchange inventories rising</td>
+              <td>Possible artificial accumulation — not genuine demand pull</td>
+              <td class="dec-action">Pause new licence approvals pending analysis. Request scenario modelling from pending applicants.</td>
+              <td>Issue advisory: price may not be sustainable. Do not base capacity expansion on current price.</td>
+              <td style="font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.45)">Immediate (within 30 days of signal)</td>
+            </tr>
+            <tr>
+              <td class="dec-trigger">Buyer concentration HHI &gt; 40% for 2 consecutive quarters</td>
+              <td>Dangerous dependency on single buyer — manipulation vulnerability elevated</td>
+              <td class="dec-action">Require buyer diversification plan from licence applicants. Add concentration risk to existing licence conditions.</td>
+              <td>Advise companies to actively develop secondary buyer relationships. Flag single-buyer off-take agreements as high-risk.</td>
+              <td style="font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.45)">Within 60 days of signal</td>
+            </tr>
+            <tr>
+              <td class="dec-trigger">Price falling ≥30% from recent peak with no fundamental explanation</td>
+              <td>Possible engineered price crash — competitive destruction phase may have begun</td>
+              <td class="dec-action">Freeze all new licence approvals in affected mineral. Activate company viability monitoring for existing licencees.</td>
+              <td>Emergency advisory: assess cashflow resilience. Review debt service capacity at -40% and -60% price scenarios. Seek strategic partnerships or off-take guarantees.</td>
+              <td style="font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.45)">Immediate — within 2 weeks</td>
+            </tr>
+            <tr>
+              <td class="dec-trigger">Compliance premium narrows to &lt;10% for 2+ quarters</td>
+              <td>Rwanda's price protection premium is eroding — competitive positioning at risk</td>
+              <td class="dec-action">Initiate strategic review with MINICOM and RDB. Evaluate need for enhanced certification marketing or new off-take frameworks.</td>
+              <td>Advise companies to strengthen buyer relationships before pricing power diminishes further.</td>
+              <td style="font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.45)">Within 90 days of signal</td>
+            </tr>
+            <tr>
+              <td class="dec-trigger">Dominant actor export restriction announced (e.g. China/tungsten)</td>
+              <td>Supply shock risk — potential price spike followed by oversupply once restriction eases</td>
+              <td class="dec-action">Issue opportunistic licensing review: temporary premium window may exist. But condition approvals on companies having 18-month price correction survival plans.</td>
+              <td>Communicate clearly: current price spike may reverse. Do not treat export restriction premium as permanent. Build cashflow reserves during elevated price period.</td>
+              <td style="font-family:var(--font-m);font-size:11px;color:rgba(255,255,255,0.45)">Within 30 days of announcement</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 6 — RWANDA'S STRATEGIC POSITIONING
+════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="eyebrow">Section 6 — Rwanda's Strategic Response</div>
+  <h2 class="section-title">Building Structural Protections Against Market Manipulation</h2>
+  <p class="section-lead">Rwanda cannot control global mineral prices or the strategies of dominant actors. But it can build structural features into its mining sector that reduce the devastating impact of price manipulation cycles — and position RMB's financial intelligence infrastructure as the early warning system that makes those protections effective.</p>
+
+  <div class="callout green" style="margin-bottom:32px">
+    <div class="callout-icon">🎯</div>
+    <div>
+      <div class="callout-title">The Core Strategic Insight</div>
+      <div class="callout-body">The rare earth case study reveals that China's playbook stopped working when three conditions changed simultaneously: policy-mandated demand (independent of market price), government-backed financing (not sensitive to price signals), and genuine technological independence. Rwanda's equivalent is: compliance-mandated demand from regulated Western buyers + development finance (not commercial capital alone) + Rwanda-owned processing capacity that reduces dependence on Chinese smelting. MFI is the intelligence layer that makes all three protections function — by detecting when they are being eroded.</div>
+    </div>
+  </div>
+
+  <div class="rw-grid">
+
+    <div class="rw-card">
+      <div class="rw-card-icon">✅</div>
+      <div class="rw-card-title">Compliance Premium — Rwanda's Price Floor</div>
+      <div class="rw-card-body">Rwanda's certification infrastructure (ITSCI, CTC, RMB traceability) creates a compliance premium with regulated Western buyers. This premium is structurally independent of the spot market — it reflects regulatory mandates, not price speculation. It is Rwanda's most important protection against the engineered price crash strategy.</div>
+      <div class="rw-card-tag">MFI ROLE: Measure and monitor this premium quarterly</div>
+    </div>
+
+    <div class="rw-card">
+      <div class="rw-card-icon">🏗</div>
+      <div class="rw-card-title">Buyer Diversification as Risk Management</div>
+      <div class="rw-card-body">Rwanda's export market should maintain no single buyer above 30% of exports in any mineral category. Diversification across European, American, Japanese, and South Korean buyers — each operating under different compliance frameworks — creates natural hedges against coordinated buyer-side manipulation.</div>
+      <div class="rw-card-tag">MFI ROLE: Monthly buyer concentration index + diversification advisory</div>
+    </div>
+
+    <div class="rw-card">
+      <div class="rw-card-icon">💰</div>
+      <div class="rw-card-title">Development Finance Over Commercial Capital</div>
+      <div class="rw-card-body">Companies financed by development finance institutions (DFIs) — which use blended finance, patient capital, and policy-aligned return expectations — are structurally more resilient to engineered price crashes than commercially financed companies with short investment horizons and IRR requirements at market prices.</div>
+      <div class="rw-card-tag">MFI ROLE: Identify DFI-compatible project structures in licensing advice</div>
+    </div>
+
+    <div class="rw-card">
+      <div class="rw-card-icon">🔬</div>
+      <div class="rw-card-title">Processing Capacity — Reducing the Bottleneck Dependency</div>
+      <div class="rw-card-body">The rare earth lesson is that controlling ore production while depending on a potential adversary for processing is not independence — it is vulnerability. Rwanda's medium-term objective of developing domestic or regional smelting and refining capacity for tantalum reduces the pricing leverage that Chinese processors exercise over Rwandan exporters.</div>
+      <div class="rw-card-tag">MFI ROLE: Model value-add economics and processing capacity scenarios</div>
+    </div>
+
+    <div class="rw-card">
+      <div class="rw-card-icon">📡</div>
+      <div class="rw-card-title">Early Warning Infrastructure</div>
+      <div class="rw-card-body">The MFI system itself — price anomaly detection, buyer concentration monitoring, scenario modelling, compliance premium tracking — is the infrastructure that converts market intelligence into protective regulatory action. Without it, RMB licensing decisions are made without the market context needed to distinguish genuine opportunity from manipulation traps.</div>
+      <div class="rw-card-tag">MFI ROLE: The system itself — real-time intelligence layer for all decisions</div>
+    </div>
+
+    <div class="rw-card">
+      <div class="rw-card-icon">🌐</div>
+      <div class="rw-card-title">Regional Coordination — African Minerals Intelligence</div>
+      <div class="rw-card-body">Rwanda does not operate in isolation. DRC, Uganda, Burundi, and Tanzania share similar mineral profiles. A coordinated regional approach to price monitoring, buyer concentration tracking, and compliance premium maintenance creates collective bargaining power that individual countries cannot achieve alone — and makes it harder for dominant actors to play one country against another.</div>
+      <div class="rw-card-tag">MFI ROLE: Regional price benchmarking and cross-border intelligence sharing</div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="rmb-footer">
+  <div class="footer-brand">RMB-<span>FinIntel</span></div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Technical Proposal</a>
+    <a href="tokenisation.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Tokenisation</a>
+    <a href="financing-models.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Financing Models</a>
+    <a href="smart-stock.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Smart Stock</a>
+    <a href="market-manipulation.html" style="font-size:12px;color:var(--gold);text-decoration:none;font-weight:700">Market Manipulation</a>
+  </div>
+  <div class="footer-meta">RMB Mineral Financial Intelligence · Strategic Horizon Module · Confidential Working Document</div>
+</footer>
+
+</div><!-- /page-wrap -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ── Cycle steps data ── */
+var cycleSteps = [
+  {
+    phase:'PHASE 1 — FOUNDATION',
+    title:'Achieve Near-Total Market Dominance',
+    body:'China builds 90–95% control of global rare earth production and, crucially, near-100% of processing and refining. This includes constructing or absorbing the Asian Metal Index (AMI) — the global pricing benchmark for rare earths — which China owns and controls. The ability to set the reference price is the structural prerequisite for all subsequent manipulation.',
+    outcome:'China controls supply AND the price benchmark', outcomeStyle:'background:rgba(192,0,0,0.1);color:#C00000;border-color:#C00000',
+    color:'#C00000'
+  },
+  {
+    phase:'PHASE 2 — MONITORING',
+    title:'Watch for Emerging Western Competitors',
+    body:'China tracks global investment flows in rare earth mining and processing. Any Western company that begins to build genuine independence — particularly in processing and refining, which is the true leverage point — is identified as a strategic threat. The threshold for triggering a response is a competitor reaching a credible path to commercial production.',
+    outcome:'Systematic monitoring of competitor development', outcomeStyle:'background:rgba(184,134,11,0.1);color:#7A5800;border-color:#B8860B',
+    color:'#B8860B'
+  },
+  {
+    phase:'PHASE 3 — PRICE WEAPON ACTIVATION',
+    title:'Engineer a Price Crash via AMI Manipulation + Market Flooding',
+    body:'When a competitor reaches critical development stage, China floods the market with supply and simultaneously uses its control of the AMI benchmark to drive prices below the competitor\'s break-even cost. Prices may fall 60–85% from recent peaks in 12–18 months. Since the competitor\'s investment case was built on market prices, and their financing is commercial (sensitive to price signals), the project becomes economically unviable.',
+    outcome:'Competitor\'s investment case collapses', outcomeStyle:'background:rgba(192,0,0,0.1);color:#C00000;border-color:#C00000',
+    color:'#C00000'
+  },
+  {
+    phase:'PHASE 4 — ELIMINATION',
+    title:'Wait for Capital Withdrawal and Company Failure',
+    body:'With prices below break-even, private investors withdraw funding, banks call loans, and the Western company either scales back, suspends operations, or files for bankruptcy. The deeper trap: even companies that survive the price crash are often still dependent on Chinese technology, equipment, or technical knowledge — meaning China retains a second-order leverage even over nominal survivors. 1% reliance on China = 100% reliance on China.',
+    outcome:'Western company eliminated. China\'s monopoly tightens.', outcomeStyle:'background:rgba(192,0,0,0.1);color:#C00000;border-color:#C00000',
+    color:'#C00000'
+  },
+  {
+    phase:'PHASE 5 — RESET',
+    title:'Ease Supply Restrictions. Prices Recover. Monopoly Intact.',
+    body:'Once the competitive threat is neutralised, China eases supply restrictions and prices recover to a level that sustains Chinese producers but remains too uncertain to attract new Western investment. The cycle sends a clear market message: any company trying to build a rare earth supply chain outside China is operating on borrowed time. The higher prices go, the more Western investment pours in — and the more China watches for the moment to reset the cycle.',
+    outcome:'Ready for the next cycle. Monopoly strengthened.', outcomeStyle:'background:rgba(26,92,56,0.1);color:#1A5C38;border-color:#1A5C38',
+    color:'#1A5C38'
+  }
+];
+
+var stepsEl = document.getElementById('cycle-steps');
+if (stepsEl) {
+  cycleSteps.forEach(function(s, i) {
+    var div = document.createElement('div');
+    div.className = 'c-step';
+    div.innerHTML = ''
+      + '<div class="c-step-left">'
+      + '<div class="c-step-num" style="background:' + s.color + '">' + (i+1) + '</div>'
+      + '<div class="c-step-line"></div>'
+      + '</div>'
+      + '<div class="c-step-content">'
+      + '<div class="c-step-phase" style="color:' + s.color + '">' + s.phase + '</div>'
+      + '<div class="c-step-title">' + s.title + '</div>'
+      + '<div class="c-step-body">' + s.body + '</div>'
+      + '<div class="c-step-outcome" style="' + s.outcomeStyle + ';border:1px solid"><span>→</span>' + s.outcome + '</div>'
+      + '</div>';
+    stepsEl.appendChild(div);
+  });
+}
+
+/* ── Playbook cards data ── */
+var plays = [
+  {
+    num:'01', tag:'STATE ACTOR STRATEGY', tagBg:'var(--red-lt)', tagColor:'var(--red)',
+    name:'Benchmark Control & Price Index Manipulation',
+    short:'Owning the ruler used to measure value',
+    body:'The most powerful form of price manipulation requires no overt market action — only ownership of the pricing benchmark. By controlling the index against which contracts are priced and negotiations anchored, a dominant actor can set the market\'s reference reality. China\'s AMI (Asian Metal Index) for rare earths was wholly Chinese-owned and operated as the global benchmark for two decades. This gave Beijing the ability to define what "the market price" was, without having to buy or sell anything.',
+    mech:'Acquire or create the dominant price reference → Set reference at levels that serve strategic interests → Competitors who are price-takers cannot escape the benchmark their contracts reference',
+    mechBorder:'var(--red)',
+    risk:'VERY HIGH', riskDot:'#C00000', riskText:'Extremely durable. Cannot be countered without creating an alternative benchmark — which requires scale and credibility that take years to build.',
+    applied:'Rare earths (China/AMI). Relevant risk for tantalum if Chinese-controlled pricing platforms gain OTC reference status.'
+  },
+  {
+    num:'02', tag:'STATE + CORPORATE STRATEGY', tagBg:'var(--gold-lt)', tagColor:'#7A5800',
+    name:'Inventory Pump — Trap — Dump',
+    short:'Manufacturing demand to manufacture investment, then withdrawing both',
+    body:'A dominant buyer accumulates mineral inventory significantly beyond operational requirements over 12–18 months. Rising demand pushes prices up. Elevated prices trigger investment decisions by new producers and existing operators expanding capacity — all based on the elevated price as the market signal. Once the dominant buyer has accumulated sufficient stock (typically 12–18 months of operational needs), procurement ceases abruptly. Spot prices collapse. New entrants — whose investment cases were built on elevated prices — cannot service debt at the new price level. They exit. The buyer then resumes purchasing at structurally lower prices, having eliminated the competitive capacity that was developing.',
+    mech:'Accumulate inventory (12–18 months) → Prices rise → Investors enter → Stop procurement → Prices crash → Competitors exit → Resume purchasing at lower cost',
+    mechBorder:'var(--gold)',
+    risk:'HIGH', riskDot:'#B8860B', riskText:'Particularly dangerous for small OTC markets like tantalum (~2,500 t/yr global). A single major OEM can execute this with relatively modest capital commitment.',
+    applied:'Documented analogues in nickel (2021–2022, LME controversy). Direct risk for tantalum given small market size and opaque OTC pricing.'
+  },
+  {
+    num:'03', tag:'STATE ACTOR STRATEGY', tagBg:'var(--blue-lt)', tagColor:'#1B4F7A',
+    name:'Export Restriction as Supply Shock Weapon',
+    short:'Using withdrawal to create scarcity — then reversal to destroy competitors',
+    body:'A dominant producer restricts export of a mineral or intermediate product, creating artificial scarcity and a price spike. The initial spike may be genuine — buyers scramble for alternative sources and prices rise sharply. This is the signal that triggers Western investment waves. But once restrictions are eased, the market is flooded with supply again. The price crash eliminates the very companies that invested during the spike. China deployed this sequence three documented times in rare earths (2002–2025). The December 2024 tungsten dual-use export restrictions follow the same pattern.',
+    mech:'Impose export restriction → Price spikes → Western investment flows in → Ease restrictions → Flood market → Price collapses → Competitors exit',
+    mechBorder:'var(--blue)',
+    risk:'HIGH', riskDot:'#1B6CA8', riskText:'Well documented. The 2010–2011 dysprosium cycle (from $90 to $2,300 and back to $200) is the clearest example. Tungsten 2024–2025 may be following the same arc.',
+    applied:'Rare earths (China, 3 cycles). Tungsten (China, December 2024 dual-use ban). Tin (Indonesia, export licensing delays 2023–2024).'
+  },
+  {
+    num:'04', tag:'REGULATORY STRATEGY', tagBg:'#F3E8FF', tagColor:'#7B2D8B',
+    name:'Compliance Asymmetry Engineering',
+    short:'Using your own regulations to penalise your competitors',
+    body:'Dominant actors in consumer markets (Western corporations, governments) impose compliance requirements — conflict-free sourcing mandates, environmental standards, traceability systems — that create real costs for responsible producers. However, non-compliant sources (often the most price-competitive) continue to supply markets that do not enforce these rules rigorously. The result: responsible producers from places like Rwanda bear compliance costs that erode their price competitiveness, while non-compliant sources from conflict-affected areas continue to supply opaque markets. The regulatory framework intended to protect vulnerable producers can paradoxically penalise the most responsible ones.',
+    mech:'Compliance mandates imposed → Certified producers incur certification costs → Non-certified producers remain in non-regulated markets → Price gap widens → Compliance producers squeezed',
+    mechBorder:'#7B2D8B',
+    risk:'MODERATE', riskDot:'#7B2D8B', riskText:'Structural and long-term. Mitigation requires either narrowing compliance costs or expanding the regulated buyer pool. Rwanda\'s ITSCI/CTC infrastructure is the primary defence.',
+    applied:'Dodd-Frank §1502 (US), EU Conflict Minerals Regulation. Both create compliance premium markets that benefit Rwanda — but also create cost pressure that can erode margins in price-down cycles.'
+  },
+  {
+    num:'05', tag:'FINANCIAL ACTOR STRATEGY', tagBg:'var(--surface-2)', tagColor:'var(--text-muted)',
+    name:'Speculative Narrative & Momentum Amplification',
+    short:'Financial markets detached from physical reality',
+    body:'In exchange-traded mineral markets, financial actors — commodity funds, algorithmic traders, retail speculators — can create price movements that have no connection to physical supply-demand fundamentals. They amplify a legitimate supply-side concern or demand narrative into a speculative overshoot. The January 2026 tin episode is the most recent clear example: SHFE trading volumes exceeded one million tonnes in a single session — more than twice annual world physical supply. Chinese regulators were forced to intervene explicitly. Companies and investors who made decisions based on the $56,800 peak price would have been catastrophically exposed when prices fell to $46,600 within days.',
+    mech:'Legitimate demand narrative emerges → Financial actors pile in → Prices detach from fundamentals → Regulatory intervention or profit-taking → Rapid correction → Physical market participants caught at wrong price',
+    mechBorder:'#888780',
+    risk:'HIGH', riskDot:'#5F5E5A', riskText:'Increasingly dangerous as more financial capital enters commodity markets via ETFs, futures, and algorithmic positioning. Most dangerous for LME-traded minerals (tin) but growing risk in any market that develops financialised products.',
+    applied:'Tin (Jan 2026 SHFE, Jan 2022 LME rally). Nickel (March 2022 LME short squeeze, $100,000/t). Growing concern for cobalt and tantalum as critical mineral ETFs develop.'
+  },
+  {
+    num:'06', tag:'CORPORATE STRATEGY', tagBg:'var(--g-pale)', tagColor:'var(--g-deep)',
+    name:'Technology & Knowledge Lock-In',
+    short:'Selling the equipment while withholding the knowledge to run it',
+    body:'A subtler but equally devastating strategy: the dominant actor supplies the processing technology, equipment, and initial technical assistance needed for a competitor to establish processing operations — but retains the proprietary knowledge, servicing expertise, and consumables required to keep that equipment running at specification. When the relationship becomes adversarial, the dominant actor withdraws technical support. Equipment underperforms or fails. The competitor\'s operations degrade. The OilPrice.com article captures this with rare earth precision: companies that survived the price crashes were still quietly dependent on Chinese technology and equipment — and China sold the hardware but retained the knowledge to service it.',
+    mech:'Supply equipment and initial training → Retain servicing knowledge and consumables supply → Withdraw support when competitor becomes threatening → Operations degrade → Competitor becomes unviable',
+    mechBorder:'var(--g-deep)',
+    risk:'MODERATE–HIGH', riskDot:'#1A5C38', riskText:'Particularly insidious because it is invisible in price data. Detection requires technical audits of equipment sourcing, service contracts, and consumable dependencies. Any mining or processing company with Chinese equipment and a single-source service contract should be flagged.',
+    applied:'Rare earth processing globally (documented). Potential risk in any tantalum or tin smelting operation using Chinese equipment without independent technical capability.'
+  }
+];
+
+var pbGrid = document.getElementById('playbook-grid');
+if (pbGrid) {
+  plays.forEach(function(p) {
+    var card = document.createElement('div');
+    card.className = 'pb-card';
+    card.innerHTML = ''
+      + '<div class="pb-header">'
+      + '<div class="pb-num">' + p.num + '</div>'
+      + '<div style="flex:1">'
+      + '<div class="pb-tag" style="background:' + p.tagBg + ';color:' + p.tagColor + '">' + p.tag + '</div>'
+      + '<div class="pb-name">' + p.name + '</div>'
+      + '<div class="pb-short" style="font-style:italic;color:var(--text-muted)">' + p.short + '</div>'
+      + '</div></div>'
+      + '<div class="pb-body">' + p.body
+      + '<div class="pb-mech" style="border-left-color:' + p.mechBorder + '"><strong>Mechanism:</strong> ' + p.mech + '</div>'
+      + '<div class="pb-risk"><span class="risk-dot" style="background:' + p.riskDot + '"></span><span style="font-weight:700;color:' + p.riskDot + '">' + p.risk + ' RISK</span></div>'
+      + '<div style="font-size:12px;color:var(--text-muted);margin-top:6px;font-style:italic"><strong>Applied to:</strong> ' + p.applied + '</div>'
+      + '</div>';
+    pbGrid.appendChild(card);
+  });
+}
+
+/* ── Price chart — tabbed ── */
+var labels = ['Q1 21','Q2 21','Q3 21','Q4 21','Q1 22','Q2 22','Q3 22','Q4 22','Q1 23','Q2 23','Q3 23','Q4 23','Q1 24','Q2 24','Q3 24','Q4 24','Q1 25','Q2 25','Q3 25','Q4 25','Q1 26'];
+var tinRaw      = [21000,28000,34000,40000,46000,48000,35000,24000,23000,24000,25000,26000,27000,33000,29000,29000,33000,37000,40000,41000,54000];
+var tinIndexed  = [21,28,34,40,46,48,35,24,23,24,25,26,27,33,29,29,33,37,40,41,54];
+var tantalumData= [152,156,160,164,167,172,176,179,182,186,190,194,202,218,232,252,295,345,395,455,502];
+var tungstenData= [332,342,347,352,357,360,362,346,322,314,316,320,342,362,372,376,393,413,424,442,520];
+
+var chartAnnotations = {
+  all: 'All three minerals on a common numeric scale. Note: Tin values shown ÷1000 to fit scale alongside Tantalum and Tungsten.',
+  tin: 'Tin (LME cash price, USD/tonne) — Note the 2021–22 surge (+130%), crash to $23,000, partial recovery in 2025, then the January 2026 speculative spike to ~$54,000+. Scale shows full actual prices.',
+  tantalum: 'Tantalum (USA spot price, USD/kg) — Steady structural rise from $152/kg in Q1 2021 to $502/kg in Q1 2026. No dramatic crashes — but OTC opacity makes this data less reliable than LME tin.',
+  tungsten: 'Tungsten APT (USD/MTU) — Moderate decline 2022→2023 (to $314), then recovery driven by China dual-use export restrictions announced Dec 2024. Price rose sharply through 2025–2026.'
+};
+
+var chartDatasets = {
+  all: [
+    { label:'Tin (÷1000 USD/t)', data:tinIndexed, borderColor:'#1B6CA8', backgroundColor:'rgba(27,108,168,0.08)', borderWidth:2.5, pointRadius:3, tension:0.35, fill:false, pointStyle:'circle' },
+    { label:'Tantalum (USD/kg)', data:tantalumData, borderColor:'#C00000', backgroundColor:'rgba(192,0,0,0.06)', borderWidth:2.5, pointRadius:3, tension:0.35, fill:false, pointStyle:'triangle' },
+    { label:'Tungsten APT (USD/MTU)', data:tungstenData, borderColor:'#1A5C38', backgroundColor:'rgba(26,92,56,0.06)', borderWidth:2.5, pointRadius:3, tension:0.35, fill:false, pointStyle:'rect', borderDash:[6,3] }
+  ],
+  tin: [
+    { label:'Tin LME (USD/tonne)', data:tinRaw, borderColor:'#1B6CA8', backgroundColor:'rgba(27,108,168,0.1)', borderWidth:2.5, pointRadius:4, tension:0.35, fill:true, pointStyle:'circle' }
+  ],
+  tantalum: [
+    { label:'Tantalum USA (USD/kg)', data:tantalumData, borderColor:'#C00000', backgroundColor:'rgba(192,0,0,0.08)', borderWidth:2.5, pointRadius:4, tension:0.35, fill:true, pointStyle:'triangle' }
+  ],
+  tungsten: [
+    { label:'Tungsten APT (USD/MTU)', data:tungstenData, borderColor:'#1A5C38', backgroundColor:'rgba(26,92,56,0.08)', borderWidth:2.5, pointRadius:4, tension:0.35, fill:true, pointStyle:'rect' }
+  ]
+};
+
+var yLabels = { all:'Indexed values (see legend for units)', tin:'USD per tonne', tantalum:'USD per kg', tungsten:'USD per MTU' };
+
+var priceChart = new Chart(document.getElementById('price3TChart'), {
+  type: 'line',
+  data: { labels: labels, datasets: chartDatasets.all },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    interaction:{ mode:'index', intersect:false },
+    plugins:{
+      legend:{ display:false },
+      tooltip:{ callbacks:{ label:function(ctx){ return ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString(); }}}
+    },
+    scales:{
+      x:{ ticks:{ font:{size:10}, maxRotation:45, autoSkip:true, maxTicksLimit:12, color:'#6B7B6F' }, grid:{ color:'rgba(0,0,0,0.05)' } },
+      y:{ ticks:{ font:{size:10}, color:'#6B7B6F' }, grid:{ color:'rgba(0,0,0,0.05)' }, title:{ display:true, text:yLabels.all, font:{size:10}, color:'#9EB0A4' } }
+    }
+  }
+});
+
+function switchTab(tab) {
+  /* Update button states */
+  ['all','tin','tantalum','tungsten'].forEach(function(t) {
+    var btn = document.getElementById('tab-'+t);
+    if (!btn) return;
+    btn.classList.toggle('active', t === tab);
+    if (t !== tab) {
+      /* restore individual tab colour hints */
+      if (t==='tin')      { btn.style.borderColor='#1B6CA8'; btn.style.color='#1B6CA8'; }
+      if (t==='tantalum') { btn.style.borderColor='#C00000'; btn.style.color='#C00000'; }
+      if (t==='tungsten') { btn.style.borderColor='#1A5C38'; btn.style.color='#1A5C38'; }
+      if (t==='all')      { btn.style.borderColor=''; btn.style.color=''; }
+    } else {
+      btn.style.borderColor=''; btn.style.color='';
+    }
+  });
+  /* Toggle all-tab legend */
+  var leg = document.getElementById('chart-legend-all');
+  if (leg) leg.style.display = tab==='all' ? 'flex' : 'none';
+  /* Update annotation */
+  var ann = document.getElementById('chart-annotation');
+  if (ann) ann.textContent = chartAnnotations[tab] || '';
+  /* Update chart data */
+  priceChart.data.datasets = chartDatasets[tab];
+  priceChart.options.scales.y.title.text = yLabels[tab] || '';
+  priceChart.update();
+}
+/* Show annotation for default tab */
+(function(){ var ann=document.getElementById('chart-annotation'); if(ann) ann.textContent=chartAnnotations.all; })();
+
+/* ── Expandable sections ── */
+function toggleExp(id) {
+  var body = document.getElementById(id);
+  var toggle = document.getElementById(id + '-toggle');
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (toggle) toggle.classList.toggle('open', !isOpen);
+}
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

@@ -185,36 +185,51 @@
   </style>
 </head>
 <body>
+<aside class="rmb-sidebar" id="rmb-sidebar">
+  <div class="sb-logo-block">
+    <div class="sb-logo">RMB<br>FI</div>
+    <div>
+      <div class="sb-brand-main">RMB-FinIntel</div>
+      <div class="sb-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section-label">Proposal</span>
+    <a href="index.html">📄 Technical Proposal</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Strategic Horizon</span>
+    <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+    <a href="tokenisation.html" class="active">🔗 Mineral Tokenisation</a>
+    <a href="financing-models.html">🏦 Financing Models</a>
+    <a href="smart-stock.html">📡 Smart Stock</a>
+    <a href="market-manipulation.html" style="color:#C00000;background:rgba(192,0,0,0.06);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Current Situation Model</span>
+    <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
+      <span>🏛 Current Sit. Model</span>
+      <span class="sb-arrow">▾</span>
+    </button>
+    <div class="sb-group-items" id="sb-csm-items">
+      <a href="architecture.html" class="sb-sub">🏗 Architecture</a>
+      <a href="energy.html" class="sb-sub">⚡ Energy Component</a>
+      <a href="demo.html" class="sb-sub">🔬 Tool Mock-up</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Mobile top bar -->
+<div class="sb-topbar">
+  <div class="sb-topbar-logo">RMB<br>FI</div>
+  <div class="sb-topbar-title">RMB-FinIntel</div>
+  <button class="sb-hamburger" id="sb-hbg" onclick="sbMobileToggle()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="sbMobileClose()"></div>
+
 
 <!-- NAV -->
-<nav class="rmb-nav">
-  <div class="nav-logo-block">
-    <div class="nav-logo">RMB<br>FI</div>
-    <div class="nav-brand-text">
-      <div class="nav-brand-main">RMB-FinIntel</div>
-      <div class="nav-brand-sub">Mineral Financial Intelligence</div>
-    </div>
-  </div>
-  <div class="nav-links">
-    <a href="index.html">Technical Proposal</a>
-    <div class="nav-divider"></div>
-    <a href="index.html#strategic-horizon" style="color:var(--gold);font-weight:700">🔭 Strategic Horizon</a>
-    <div class="nav-divider"></div>
-    <a href="tokenisation.html" class="active" style="color:var(--g-deep);font-weight:700">🔗 Mineral Tokenisation</a>
-    <div class="nav-divider"></div>
-    <a href="financing-models.html" style="color:var(--g-deep);font-weight:700">🏦 Financing Models</a>
-    <div class="nav-divider"></div>
-    <div class="nav-dropdown">
-      <button class="nav-dropdown-trigger">Current Situation Model</button>
-      <div class="nav-dropdown-menu">
-        <span class="ddm-label">Sub-modules</span>
-        <a href="architecture.html">🏗 Architecture</a>
-        <a href="energy.html">⚡ Energy Component</a>
-        <a href="demo.html">🔬 Tool Mock-up</a>
-      </div>
-    </div>
-  </div>
-</nav>
+
 
 <div class="page-wrap">
 

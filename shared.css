@@ -32,6 +32,7 @@
   --font-b: 'DM Sans', sans-serif;
   --font-m: 'DM Mono', monospace;
   --nav-h:  58px;
+  --sidebar-w: 220px;
   --radius: 8px;
   --shadow-sm: 0 1px 4px rgba(26,92,56,0.08);
   --shadow-md: 0 4px 16px rgba(26,92,56,0.12);
@@ -69,7 +70,7 @@ body { font-family: var(--font-b); background: var(--page-bg); color: var(--text
 .nav-divider { width: 1px; height: 18px; background: var(--border-lt); margin: 0 6px; }
 
 /* PAGE */
-.page-wrap { padding-top: var(--nav-h); min-height: 100vh; }
+.page-wrap { padding-top: 0; padding-left: var(--sidebar-w); min-height: 100vh; }
 
 /* HERO */
 .hero { position: relative; overflow: hidden; padding: 60px 48px 48px; display: flex; flex-direction: column; justify-content: center; background: var(--surface-2); border-bottom: 1px solid var(--border-lt); }
@@ -260,4 +261,139 @@ body { font-family: var(--font-b); background: var(--page-bg); color: var(--text
   text-transform: uppercase; color: var(--text-light); font-family: var(--font-m);
   border-bottom: 1px solid var(--border-lt); background: var(--surface-1);
 }
+/* ============================================================
+   SIDEBAR NAVIGATION  (replaces top nav bar)
+   ============================================================ */
 
+/* ── Sidebar shell ── */
+.rmb-sidebar {
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  width: var(--sidebar-w);
+  background: #FFFFFF;
+  border-right: 2px solid var(--g-deep);
+  box-shadow: 2px 0 16px rgba(26,92,56,0.08);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Logo block ── */
+.sb-logo-block {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--border-lt);
+  flex-shrink: 0;
+}
+.sb-logo {
+  width: 36px; height: 36px;
+  background: var(--g-deep); border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-d); font-weight: 900; font-size: 11px;
+  color: var(--gold); letter-spacing: 0.3px; line-height: 1.1;
+  text-align: center; flex-shrink: 0;
+}
+.sb-brand-main { font-size: 13px; font-weight: 700; color: var(--g-deep); line-height: 1.2; }
+.sb-brand-sub  { font-size: 10px; color: var(--text-muted); font-family: var(--font-m); letter-spacing: 0.5px; }
+
+/* ── Nav links ── */
+.sb-nav { flex: 1; padding: 12px 0 20px; display: flex; flex-direction: column; }
+
+.sb-section-label {
+  display: block; padding: 14px 16px 5px;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-light); font-family: var(--font-m); font-weight: 600;
+}
+
+.sb-nav a {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 16px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  color: var(--text-muted); text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.18s; line-height: 1.3;
+}
+.sb-nav a:hover { color: var(--g-deep); background: var(--g-pale); border-left-color: var(--g-lt); }
+.sb-nav a.active { color: var(--g-deep); background: var(--g-xpale); border-left-color: var(--g-deep); font-weight: 700; }
+
+/* Sub-items */
+.sb-nav a.sb-sub { padding-left: 32px; font-size: 11px; font-weight: 500; }
+.sb-nav a.sb-sub.active { color: var(--g-deep); background: var(--g-xpale); border-left-color: var(--g-deep); font-weight: 700; }
+
+/* Collapsible group trigger */
+.sb-group-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+  color: var(--text-muted); cursor: pointer;
+  border: none; border-left: 3px solid transparent;
+  width: 100%; text-align: left;
+  background: none; font-family: var(--font-b);
+  transition: all 0.18s;
+}
+.sb-group-trigger:hover { color: var(--g-deep); background: var(--g-pale); border-left-color: var(--g-lt); }
+.sb-group-trigger.active { color: var(--g-deep); background: var(--g-xpale); border-left-color: var(--g-deep); font-weight: 700; }
+.sb-group-trigger .sb-arrow { font-size: 10px; transition: transform 0.22s; flex-shrink: 0; }
+.sb-group-trigger.open .sb-arrow { transform: rotate(180deg); }
+
+.sb-group-items { display: none; background: var(--surface-1); border-top: 1px solid var(--border-lt); border-bottom: 1px solid var(--border-lt); }
+.sb-group-items.open { display: block; }
+
+/* Sidebar divider */
+.sb-divider { height: 1px; background: var(--border-lt); margin: 8px 16px; }
+
+/* ── Mobile top bar ── */
+.sb-topbar {
+  display: none; position: fixed;
+  top: 0; left: 0; right: 0; height: 52px;
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--g-deep);
+  box-shadow: 0 2px 12px rgba(26,92,56,0.1);
+  z-index: 201; align-items: center; padding: 0 14px; gap: 12px;
+}
+.sb-topbar-logo {
+  width: 32px; height: 32px; background: var(--g-deep); border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-d); font-weight: 900; font-size: 10px;
+  color: var(--gold); line-height: 1.1; text-align: center; flex-shrink: 0;
+}
+.sb-topbar-title { font-size: 13px; font-weight: 700; color: var(--g-deep); flex: 1; }
+.sb-hamburger {
+  display: flex; flex-direction: column; gap: 4px;
+  cursor: pointer; padding: 7px; border: none;
+  background: none; border-radius: 5px; transition: background 0.2s;
+}
+.sb-hamburger:hover { background: var(--g-pale); }
+.sb-hamburger span { display: block; width: 20px; height: 2px; background: var(--g-deep); border-radius: 2px; transition: all 0.25s; }
+
+/* Mobile overlay */
+.sb-overlay {
+  display: none; position: fixed;
+  top: 52px; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.35); z-index: 199;
+}
+.sb-overlay.open { display: block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 860px) {
+  :root { --sidebar-w: 0px; }
+
+  .rmb-sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    top: 52px;
+    z-index: 200;
+  }
+  .rmb-sidebar.mob-open { transform: translateX(0); }
+
+  .sb-topbar { display: flex; }
+
+  .page-wrap { padding-left: 0; padding-top: 52px; }
+  .hero, .section { padding: 40px 20px; }
+  .rmb-footer { padding: 28px 20px; flex-direction: column; }
+  .stats-bar { gap: 20px; }
+  .stat { border: none; margin: 0; padding: 0; min-width: 100px; }
+}

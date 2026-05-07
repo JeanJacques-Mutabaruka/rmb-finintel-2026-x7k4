@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Smart Stock Surveillance — RMB-FinIntel</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+/* ═══════════════════════════════════════════════════════════
+   PAGE-SPECIFIC — Smart Stock Surveillance
+═══════════════════════════════════════════════════════════ */
+
+/* Global mobile overflow guard */
+@media (max-width:860px) {
+  html, body { overflow-x: hidden !important; max-width:100vw !important; }
+  * { max-width:100%; box-sizing:border-box; }
+}
+
+/* ── Flow diagram ── */
+.flow-wrap { display:flex; align-items:stretch; gap:0; overflow-x:auto; padding-bottom:8px; }
+.flow-node {
+  flex:1; min-width:130px; display:flex; flex-direction:column;
+  align-items:center; text-align:center;
+}
+.flow-box {
+  border-radius:var(--radius); padding:16px 12px; width:100%;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  box-shadow:var(--shadow-sm); position:relative;
+}
+.flow-icon { font-size:28px; }
+.flow-label { font-family:var(--font-m); font-size:10px; letter-spacing:1.2px; text-transform:uppercase; font-weight:700; }
+.flow-sub   { font-size:11px; color:var(--text-muted); line-height:1.45; margin-top:2px; }
+.flow-arrow {
+  display:flex; align-items:center; justify-content:center;
+  padding:0 8px; color:var(--text-muted); font-size:18px; flex-shrink:0;
+  align-self:center; margin-top:-16px;
+}
+@media (max-width:700px) {
+  .flow-wrap { flex-direction:column; gap:4px; overflow-x:visible; }
+  .flow-arrow { transform:rotate(90deg); margin:0 auto; }
+}
+
+/* ── Sensor cards ── */
+.sensor-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+.sensor-card {
+  background:#FFFFFF; border:1px solid var(--border-lt); border-radius:var(--radius);
+  overflow:hidden; box-shadow:var(--shadow-sm); transition:all 0.22s;
+}
+.sensor-card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.sensor-card-header { padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.sensor-icon { font-size:28px; flex-shrink:0; }
+.sensor-name  { font-family:var(--font-d); font-size:15px; font-weight:700; color:var(--text-head); }
+.sensor-tag   { font-family:var(--font-m); font-size:9px; letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+.sensor-body  { padding:0 16px 16px; }
+.sensor-spec  { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:12px; margin-bottom:10px; }
+.sensor-spec-label { color:var(--text-muted); font-family:var(--font-m); font-size:10px; letter-spacing:0.5px; text-transform:uppercase; }
+.sensor-spec-val   { color:var(--text-body); font-weight:600; }
+.sensor-use   { font-size:12px; color:var(--text-muted); line-height:1.6; padding-top:10px; border-top:1px solid var(--border-lt); }
+
+/* ── Notification mockup ── */
+.notif-phone {
+  max-width:360px; margin:0 auto;
+  background:#1A1A2E; border-radius:28px; padding:24px 16px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.35); position:relative;
+  overflow:hidden;
+}
+.notif-phone::before {
+  content:''; position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:80px; height:5px; background:#333; border-radius:3px;
+}
+.notif-card {
+  background:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.notif-top { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.notif-app-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.notif-app-name { font-size:11px; font-weight:700; color:#666; font-family:var(--font-m); letter-spacing:0.5px; text-transform:uppercase; }
+.notif-time { font-size:10px; color:#AAA; margin-left:auto; }
+.notif-title { font-size:13px; font-weight:700; color:#111; margin-bottom:4px; }
+.notif-body  { font-size:12px; color:#555; line-height:1.5; }
+.notif-urgent { background:#FFF0F0; border-left:3px solid #C00; }
+.notif-urgent .notif-title { color:#C00; }
+.notif-ok     { background:#F0FFF4; border-left:3px solid #1A5C38; }
+.notif-ok .notif-title { color:#1A5C38; }
+.notif-info   { background:#EEF4FB; border-left:3px solid #1B6CA8; }
+.notif-info .notif-title { color:#1B6CA8; }
+
+/* ── Reconciliation table mockup ── */
+.recon-table { width:100%; border-collapse:collapse; font-size:13px; }
+.recon-table th { padding:10px 14px; background:var(--g-deep); color:#FFFFFF; font-family:var(--font-m); font-size:9px; letter-spacing:1.2px; text-transform:uppercase; text-align:left; }
+.recon-table td { padding:10px 14px; border-bottom:1px solid var(--border-lt); vertical-align:middle; }
+.recon-table tr:nth-child(even) td { background:var(--surface-1); }
+.recon-match { color:var(--g-deep); font-weight:700; }
+.recon-gap   { color:var(--red);   font-weight:700; }
+.recon-pending { color:var(--gold); font-weight:700; }
+.status-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+
+/* ── Phase timeline ── */
+.phase-timeline { display:flex; flex-direction:column; gap:0; position:relative; }
+.phase-timeline::before {
+  content:''; position:absolute; left:22px; top:0; bottom:0;
+  width:2px; background:var(--border-md);
+}
+.pt-item { display:flex; gap:20px; padding:0 0 28px 0; position:relative; }
+.pt-dot {
+  width:44px; height:44px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; z-index:1; box-shadow:var(--shadow-sm);
+  border:3px solid #FFFFFF;
+}
+.pt-content { flex:1; padding-top:8px; }
+.pt-period { font-family:var(--font-m); font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; margin-bottom:4px; }
+.pt-title  { font-family:var(--font-d); font-size:17px; font-weight:700; color:var(--text-head); margin-bottom:6px; }
+.pt-body   { font-size:13px; color:var(--text-muted); line-height:1.7; }
+.pt-items  { margin-top:8px; display:flex; flex-direction:column; gap:4px; }
+.pt-item-line { font-size:12px; color:var(--text-body); display:flex; align-items:flex-start; gap:6px; }
+.pt-item-line::before { content:'·'; color:var(--g-deep); font-weight:700; flex-shrink:0; margin-top:1px; }
+
+/* ── Link cards to other pages ── */
+.link-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
+.link-card {
+  display:flex; flex-direction:column; text-decoration:none;
+  background:#FFFFFF; border:1px solid var(--border-lt); border-radius:var(--radius);
+  padding:20px; box-shadow:var(--shadow-sm); transition:all 0.22s;
+}
+.link-card:hover { border-color:var(--g-lt); box-shadow:var(--shadow-md); transform:translateY(-2px); }
+.link-card-icon  { font-size:28px; margin-bottom:10px; }
+.link-card-title { font-family:var(--font-d); font-size:16px; font-weight:700; color:var(--text-head); margin-bottom:6px; }
+.link-card-body  { font-size:13px; color:var(--text-muted); line-height:1.6; flex:1; }
+.link-card-cta   { margin-top:12px; font-size:12px; font-weight:700; }
+  </style>
+</head>
+<body>
+<aside class="rmb-sidebar" id="rmb-sidebar">
+  <div class="sb-logo-block">
+    <div class="sb-logo">RMB<br>FI</div>
+    <div>
+      <div class="sb-brand-main">RMB-FinIntel</div>
+      <div class="sb-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section-label">Proposal</span>
+    <a href="index.html">📄 Technical Proposal</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Strategic Horizon</span>
+    <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+    <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+    <a href="financing-models.html">🏦 Financing Models</a>
+    <a href="smart-stock.html" class="active">📡 Smart Stock</a>
+    <a href="market-manipulation.html" style="color:#C00000;background:rgba(192,0,0,0.06);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Current Situation Model</span>
+    <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
+      <span>🏛 Current Sit. Model</span>
+      <span class="sb-arrow">▾</span>
+    </button>
+    <div class="sb-group-items" id="sb-csm-items">
+      <a href="architecture.html" class="sb-sub">🏗 Architecture</a>
+      <a href="energy.html" class="sb-sub">⚡ Energy Component</a>
+      <a href="demo.html" class="sb-sub">🔬 Tool Mock-up</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Mobile top bar -->
+<div class="sb-topbar">
+  <div class="sb-topbar-logo">RMB<br>FI</div>
+  <div class="sb-topbar-title">RMB-FinIntel</div>
+  <button class="sb-hamburger" id="sb-hbg" onclick="sbMobileToggle()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="sbMobileClose()"></div>
+
+
+<!-- NAV -->
+
+
+<!-- Mobile nav panel -->
+<div class="nav-mobile-panel" id="nav-mobile">
+  <a href="index.html">Technical Proposal</a>
+  <span class="mob-section-label">Strategic Horizon</span>
+  <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+  <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+  <a href="financing-models.html">🏦 Financing Models</a>
+  <a href="smart-stock.html" class="active">📡 Smart Stock Surveillance</a>
+  <span class="mob-section-label">Current Situation Model</span>
+  <a href="architecture.html">🏗 Architecture</a>
+  <a href="energy.html">⚡ Energy Component</a>
+  <a href="demo.html">🔬 Tool Mock-up</a>
+</div>
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<div class="hero" style="min-height:52vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Strategic Horizon · Smart Infrastructure</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal">Smart Stock <span class="accent">Surveillance</span></h1>
+    <p class="hero-lead fade-up au-3">AI-powered sensors as a continuous, impartial witness for mineral stock movements — replacing manual spot-checks with real-time automated detection, instant notifications, and end-of-day reconciliation reports. The foundation for trusted, low-cost tokenised collateral.</p>
+    <p class="hero-meta fade-up au-4">Strategic Horizon · Smart Infrastructure · Year 1 Pilot</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-5">
+      <a href="#how-it-works" class="btn btn-gold">How It Works ↓</a>
+      <a href="#sensors" class="btn btn-outline">Sensor Stack ↓</a>
+      <a href="#token-link" class="btn btn-green">🔗 Tokenisation Link ↓</a>
+    </div>
+    <div class="stats-bar fade-up au-5">
+      <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Continuous monitoring</div></div>
+      <div class="stat"><div class="stat-n">&lt;30s</div><div class="stat-l">Alert delivery time</div></div>
+      <div class="stat"><div class="stat-n">$2–5K</div><div class="stat-l">Per warehouse (pilot)</div></div>
+      <div class="stat"><div class="stat-n">Year 1</div><div class="stat-l">Deployable alongside RMB-FinIntel</div></div>
+      <div class="stat"><div class="stat-n">Alex Stewart</div><div class="stat-l">Official grade certifier (3rd party)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 0 — THE PROBLEM
+═══════════════════════════════════════════ -->
+<section id="problem" class="section section-alt">
+  <div class="eyebrow">0 — The Problem</div>
+  <h2 class="section-title">What Is Missing Today: The Movement Blind Spot</h2>
+  <p class="section-lead">Grade analysis is already solved — companies have internal labs, and Alex Stewart International provides internationally recognised third-party certification. The gap is not about what is in the stock. It is about <strong>when it moves, how much, and whether it was reported correctly.</strong></p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:28px">
+    <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-top:3px solid var(--red);border-radius:var(--radius);padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">👁️</div>
+      <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px">No Continuous Visibility</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.65">Stock movements happen at any time — day, night, weekend. Manual controls are periodic at best. Between two inspections, any quantity of product can enter or leave without a trace.</div>
+    </div>
+    <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-top:3px solid var(--red);border-radius:var(--radius);padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">📋</div>
+      <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px">Reports Not Verified in Real Time</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.65">The stock manager submits a daily report. But by the time a discrepancy is found — if ever — products have moved on and the chain of evidence is broken. Reconciliation is backward-looking, not preventive.</div>
+    </div>
+    <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-top:3px solid var(--red);border-radius:var(--radius);padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">🔓</div>
+      <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px">Collateral Cannot Be Trusted</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.65">A bank or token investor cannot lend against inventory they cannot verify is still there. Without continuous movement monitoring, tokenised collateral is only as trustworthy as the last human inspection — which may be weeks old.</div>
+    </div>
+    <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-top:3px solid var(--red);border-radius:var(--radius);padding:18px">
+      <div style="font-size:22px;margin-bottom:8px">💸</div>
+      <div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:6px">Human Controllers Are Expensive & Limited</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.65">Deploying a physical controller at every warehouse 24/7 is economically prohibitive, especially for artisanal and small-scale miners. The cost of verification currently exceeds the benefit for small lots.</div>
+    </div>
+  </div>
+
+  <div style="background:var(--g-pale);border-left:4px solid var(--g-deep);border-radius:var(--radius);padding:18px 22px">
+    <strong style="color:var(--g-deep)">The Solution Framing:</strong>
+    <span style="font-size:14px;color:var(--text-body)"> We do not need sensors to replace labs — Alex Stewart and internal lab certifications remain the reference for grade. We need sensors to be the <strong>continuous, impartial witness for movement</strong>: when did product enter or leave, how much, and does the sensor record match what the stock manager reported? Any discrepancy triggers an immediate notification and a mandatory justification request — before the trail goes cold.</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — HOW IT WORKS
+═══════════════════════════════════════════ -->
+<section id="how-it-works" class="section">
+  <div class="eyebrow">1 — How It Works</div>
+  <h2 class="section-title">The Movement Detection & Reconciliation Loop</h2>
+  <p class="section-lead">A simple, reliable four-step cycle running continuously — detection, notification, reporting, reconciliation. No human presence required for routine operations. Human judgment enters only when a discrepancy is flagged.</p>
+
+  <!-- Flow diagram -->
+  <div class="flow-wrap" style="margin-bottom:36px">
+
+    <div class="flow-node">
+      <div class="flow-box" style="background:var(--blue-lt);border:1px solid var(--blue)">
+        <div class="flow-icon">📡</div>
+        <div class="flow-label" style="color:var(--blue)">Detection</div>
+        <div class="flow-sub">Sensor detects movement IN or OUT. Weight change + camera confirm. Timestamp logged automatically.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+
+    <div class="flow-node">
+      <div class="flow-box" style="background:var(--gold-pale);border:1px solid #E8CC80">
+        <div class="flow-icon">🔔</div>
+        <div class="flow-label" style="color:var(--gold)">Notification</div>
+        <div class="flow-sub">Alert sent in &lt;30 seconds to warehouse manager + RMB supervisor via SMS / app / email.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+
+    <div class="flow-node">
+      <div class="flow-box" style="background:var(--g-pale);border:1px solid var(--g-lt)">
+        <div class="flow-icon">📝</div>
+        <div class="flow-label" style="color:var(--g-deep)">Reporting</div>
+        <div class="flow-sub">Stock manager submits movement report (type, quantity, destination, authorisation). Deadline: same day.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+
+    <div class="flow-node">
+      <div class="flow-box" style="background:var(--surface-1);border:2px solid var(--border-md)">
+        <div class="flow-icon">⚖️</div>
+        <div class="flow-label" style="color:var(--text-muted)">Reconciliation</div>
+        <div class="flow-sub">System compares sensor record vs manager report. Match = auto-approved. Gap = escalation triggered.</div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+
+    <div class="flow-node">
+      <div class="flow-box" style="background:var(--g-pale);border:1px solid var(--g-lt)">
+        <div class="flow-icon">🔗</div>
+        <div class="flow-label" style="color:var(--g-deep)">Token Update</div>
+        <div class="flow-sub">Verified movements update the inventory ledger in real time. Token value reflects current certified stock.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Notification mockup + reconciliation table side by side -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start">
+
+    <!-- Phone mockup -->
+    <div>
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;text-align:center">Notification Examples — Stock Manager's Phone</div>
+      <div class="notif-phone">
+        <!-- Movement detected -->
+        <div class="notif-card notif-info">
+          <div class="notif-top">
+            <div class="notif-app-icon" style="background:var(--blue)">📡</div>
+            <div class="notif-app-name">RMB StockWatch</div>
+            <div class="notif-time">14:37</div>
+          </div>
+          <div class="notif-title">Movement Detected — Warehouse KG-03</div>
+          <div class="notif-body">OUT movement: ~48 kg cassiterite concentrate. Please submit movement report by 18:00 today.</div>
+        </div>
+        <!-- Report not received -->
+        <div class="notif-card notif-urgent">
+          <div class="notif-top">
+            <div class="notif-app-icon" style="background:var(--red)">⚠️</div>
+            <div class="notif-app-name">RMB StockWatch</div>
+            <div class="notif-time">18:05</div>
+          </div>
+          <div class="notif-title">⚠️ Report Overdue — Action Required</div>
+          <div class="notif-body">No movement report received for 14:37 OUT movement (KG-03). Supervisor notified. Please respond immediately.</div>
+        </div>
+        <!-- Reconciliation OK -->
+        <div class="notif-card notif-ok">
+          <div class="notif-top">
+            <div class="notif-app-icon" style="background:var(--g-deep)">✓</div>
+            <div class="notif-app-name">RMB StockWatch</div>
+            <div class="notif-time">17:52</div>
+          </div>
+          <div class="notif-title">✓ Movement Reconciled — KG-02</div>
+          <div class="notif-body">IN movement 09:14 (120 kg coltan). Report matches sensor record. Inventory updated. Token collateral confirmed.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reconciliation table -->
+    <div>
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px">End-of-Day Reconciliation Report — Illustrative</div>
+      <div style="overflow-x:auto">
+        <table class="recon-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Warehouse</th>
+              <th>Sensor (kg)</th>
+              <th>Report (kg)</th>
+              <th>Gap</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family:var(--font-m);font-size:11px">09:14</td>
+              <td>KG-02</td>
+              <td>120.4</td>
+              <td>120.0</td>
+              <td class="recon-match">+0.4</td>
+              <td><span class="status-dot" style="background:var(--g-deep)"></span><span class="recon-match">Matched</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-m);font-size:11px">11:30</td>
+              <td>KG-01</td>
+              <td>85.2</td>
+              <td>85.0</td>
+              <td class="recon-match">+0.2</td>
+              <td><span class="status-dot" style="background:var(--g-deep)"></span><span class="recon-match">Matched</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-m);font-size:11px">14:37</td>
+              <td>KG-03</td>
+              <td>48.1</td>
+              <td style="color:var(--red)">No report</td>
+              <td class="recon-gap">48.1 !</td>
+              <td><span class="status-dot" style="background:var(--red)"></span><span class="recon-gap">⚠ Escalated</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-m);font-size:11px">15:20</td>
+              <td>KG-02</td>
+              <td>200.0</td>
+              <td>165.0</td>
+              <td class="recon-gap">−35.0 !</td>
+              <td><span class="status-dot" style="background:var(--red)"></span><span class="recon-gap">⚠ Gap Flagged</span></td>
+            </tr>
+            <tr>
+              <td style="font-family:var(--font-m);font-size:11px">16:45</td>
+              <td>KG-01</td>
+              <td>—</td>
+              <td style="color:var(--gold)">Pending</td>
+              <td class="recon-pending">Pending</td>
+              <td><span class="status-dot" style="background:var(--gold)"></span><span class="recon-pending">Awaiting</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="background:var(--g-xpale);border:1px solid var(--border-lt);border-radius:5px;padding:12px;margin-top:10px;font-size:12px;color:var(--text-muted)">
+        <strong style="color:var(--g-deep)">System logic:</strong> Tolerance of ±0.5 kg for weighing error. Any gap beyond tolerance with no report = immediate supervisor escalation. Gap with a report = mandatory written justification within 2 hours. Three unresolved gaps in 30 days = mandatory audit.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — SENSOR STACK
+═══════════════════════════════════════════ -->
+<section id="sensors" class="section section-alt">
+  <div class="eyebrow">2 — Year 1 Sensor Stack</div>
+  <h2 class="section-title">Three Sensors. One Purpose: Detect Every Movement.</h2>
+  <p class="section-lead">Year 1 focuses exclusively on movement detection — not grade analysis (already handled by internal labs and Alex Stewart International). The three-sensor combination is simple, robust, affordable, and deployable in remote locations without reliable mains power.</p>
+
+  <!-- Grade note -->
+  <div style="background:var(--blue-lt);border:1px solid var(--blue);border-left:4px solid var(--blue);border-radius:var(--radius);padding:14px 20px;margin-bottom:28px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);margin-bottom:6px">Note on Grade Certification</div>
+    <p style="font-size:13px;color:var(--text-body);line-height:1.7">Grade analysis is already solved in Rwanda's mineral sector. Processing and trading companies have their own internal laboratories. For official and international certification, <strong>Alex Stewart International (SGS group)</strong> is the recognised third-party reference accepted by all stakeholders — buyers, RMB, RRA, and international trading counterparts. Sensors in Year 1 do not touch this function.</p>
+  </div>
+
+  <div class="sensor-grid">
+
+    <!-- Sensor 1: Load cell -->
+    <div class="sensor-card">
+      <div class="sensor-card-header" style="background:var(--blue-lt)">
+        <div class="sensor-icon">⚖️</div>
+        <div>
+          <div class="sensor-name">Load Cell Weighbridge</div>
+          <div class="sensor-tag" style="color:var(--blue)">Primary Quantity Sensor</div>
+        </div>
+      </div>
+      <div class="sensor-body">
+        <div class="sensor-spec">
+          <span class="sensor-spec-label">Cost</span>
+          <span class="sensor-spec-val">$150–$400 / unit</span>
+          <span class="sensor-spec-label">Accuracy</span>
+          <span class="sensor-spec-val">±0.1 kg (industrial grade)</span>
+          <span class="sensor-spec-label">Power</span>
+          <span class="sensor-spec-val">Solar + battery backup</span>
+          <span class="sensor-spec-label">Connectivity</span>
+          <span class="sensor-spec-val">LoRa / GSM fallback</span>
+          <span class="sensor-spec-label">Examples</span>
+          <span class="sensor-spec-val">Flintec, HBM, Vishay</span>
+        </div>
+        <div class="sensor-use">Installed at warehouse entry/exit point. Every bag or container is weighed on movement. Weight delta automatically computed and logged with timestamp. Primary data source for reconciliation reports.</div>
+      </div>
+    </div>
+
+    <!-- Sensor 2: Camera + AI -->
+    <div class="sensor-card">
+      <div class="sensor-card-header" style="background:var(--g-pale)">
+        <div class="sensor-icon">📷</div>
+        <div>
+          <div class="sensor-name">AI Vision Camera</div>
+          <div class="sensor-tag" style="color:var(--g-deep)">Movement & Identity Confirmation</div>
+        </div>
+      </div>
+      <div class="sensor-body">
+        <div class="sensor-spec">
+          <span class="sensor-spec-label">Cost</span>
+          <span class="sensor-spec-val">$80–$200 / unit</span>
+          <span class="sensor-spec-label">Detection</span>
+          <span class="sensor-spec-val">Motion + person + bag count</span>
+          <span class="sensor-spec-label">Power</span>
+          <span class="sensor-spec-val">Low-power, solar-compatible</span>
+          <span class="sensor-spec-label">Processing</span>
+          <span class="sensor-spec-val">On-device AI (edge inference)</span>
+          <span class="sensor-spec-label">Examples</span>
+          <span class="sensor-spec-val">Raspberry Pi + camera, NVIDIA Jetson Nano</span>
+        </div>
+        <div class="sensor-use">Confirms the load cell reading with visual evidence. Counts bags moving through the door. Detects unusual activity (night movements, multiple persons, open bags). Records a short video clip for each movement event — stored as evidence for reconciliation.</div>
+      </div>
+    </div>
+
+    <!-- Sensor 3: RFID -->
+    <div class="sensor-card">
+      <div class="sensor-card-header" style="background:var(--gold-pale)">
+        <div class="sensor-icon">🏷️</div>
+        <div>
+          <div class="sensor-name">RFID Tags + Reader</div>
+          <div class="sensor-tag" style="color:var(--gold)">Bag/Lot Identity Tracking</div>
+        </div>
+      </div>
+      <div class="sensor-body">
+        <div class="sensor-spec">
+          <span class="sensor-spec-label">Tag cost</span>
+          <span class="sensor-spec-val">$0.10–$0.50 / tag</span>
+          <span class="sensor-spec-label">Reader cost</span>
+          <span class="sensor-spec-val">$300–$800 / reader</span>
+          <span class="sensor-spec-label">Read range</span>
+          <span class="sensor-spec-val">Up to 5–10 metres</span>
+          <span class="sensor-spec-label">Standards</span>
+          <span class="sensor-spec-val">ISO 18000-6C (EPC Gen2)</span>
+          <span class="sensor-spec-label">Examples</span>
+          <span class="sensor-spec-val">Zebra Technologies, Impinj</span>
+        </div>
+        <div class="sensor-use">Each certified bag receives a unique RFID tag when sealed and certified. The reader at the warehouse door logs which specific bags enter or leave — creating a lot-level audit trail, not just bulk weight. Links directly to the token record: this bag, this lot, this movement, this timestamp. Tamper-evident: broken seal triggers an exception.</div>
+      </div>
+    </div>
+
+    <!-- Connectivity: LoRaWAN -->
+    <div class="sensor-card">
+      <div class="sensor-card-header" style="background:var(--surface-1)">
+        <div class="sensor-icon">📶</div>
+        <div>
+          <div class="sensor-name">LoRaWAN Gateway</div>
+          <div class="sensor-tag" style="color:var(--text-muted)">Connectivity Infrastructure</div>
+        </div>
+      </div>
+      <div class="sensor-body">
+        <div class="sensor-spec">
+          <span class="sensor-spec-label">Cost</span>
+          <span class="sensor-spec-val">$200–$500 / gateway</span>
+          <span class="sensor-spec-label">Range</span>
+          <span class="sensor-spec-val">10–15 km in open terrain</span>
+          <span class="sensor-spec-label">Power</span>
+          <span class="sensor-spec-val">Solar-powered, no SIM</span>
+          <span class="sensor-spec-label">Latency</span>
+          <span class="sensor-spec-val">&lt;5 seconds to server</span>
+          <span class="sensor-spec-label">Examples</span>
+          <span class="sensor-spec-val">Dragino, RAK Wireless</span>
+        </div>
+        <div class="sensor-use">One gateway covers an entire mining site or small cluster of warehouses. No SIM card or mobile data contract needed — operates on its own unlicensed radio frequency. Data sent to cloud server within seconds of a movement event. GSM fallback for critical alerts if LoRa is unavailable. Already deployed by development projects in East Africa.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Cost summary -->
+  <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:var(--radius);padding:20px 24px;margin-top:20px">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:14px">💰 Indicative Cost per Warehouse — Year 1 Pilot</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px">
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-radius:6px;padding:12px">
+        <div style="font-size:18px;font-weight:700;color:var(--g-deep);font-family:var(--font-d)">$350</div>
+        <div style="font-size:12px;color:var(--text-muted)">Load cell weighbridge × 2 (entry + exit)</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-radius:6px;padding:12px">
+        <div style="font-size:18px;font-weight:700;color:var(--g-deep);font-family:var(--font-d)">$300</div>
+        <div style="font-size:12px;color:var(--text-muted)">AI camera × 2 + edge compute unit</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-radius:6px;padding:12px">
+        <div style="font-size:18px;font-weight:700;color:var(--g-deep);font-family:var(--font-d)">$600</div>
+        <div style="font-size:12px;color:var(--text-muted)">RFID reader + 500 tags</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-radius:6px;padding:12px">
+        <div style="font-size:18px;font-weight:700;color:var(--g-deep);font-family:var(--font-d)">$400</div>
+        <div style="font-size:12px;color:var(--text-muted)">LoRaWAN gateway + solar + install</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid var(--border-lt);border-radius:6px;padding:12px">
+        <div style="font-size:18px;font-weight:700;color:var(--g-deep);font-family:var(--font-d)">$500</div>
+        <div style="font-size:12px;color:var(--text-muted)">Software integration + first-year cloud</div>
+      </div>
+      <div style="background:var(--g-deep);border-radius:6px;padding:12px">
+        <div style="font-size:22px;font-weight:700;color:var(--gold);font-family:var(--font-d)">~$2,150</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.8)"><strong>Total per warehouse</strong> — all-in, Year 1</div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);font-style:italic">Indicative figures. Excludes installation labour and local logistics. For a pilot of 10 warehouses: ~$21,500 total hardware + ~$5,000 software/integration = ~$26,500. Shared LoRaWAN gateway can serve 3–5 proximate warehouses, reducing cost per warehouse further.</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — ITSCI INTEGRATION
+═══════════════════════════════════════════ -->
+<section id="itsci" class="section">
+  <div class="eyebrow">3 — Building on Existing Infrastructure</div>
+  <h2 class="section-title">ITSCI + Alex Stewart + Smart Sensors: Complementary, Not Competing</h2>
+  <p class="section-lead">Rwanda's mineral traceability ecosystem already has strong foundations. Smart sensors upgrade and automate what already exists — they do not replace it.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px">
+    <div class="card" style="border-top:3px solid var(--g-deep)">
+      <div class="card-title">📋 ITSCI Traceability System</div>
+      <div class="card-body">Currently tracks mineral movements manually through paper-based and digital tagging. Already deployed across Rwanda's 3T sector. Smart sensors <strong>automate the movement detection</strong> step that ITSCI currently relies on human agents to perform. Sensor data feeds directly into ITSCI records — increasing coverage, reducing agent cost, and creating a tamper-evident digital trail.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--blue)">
+      <div class="card-title">🔬 Alex Stewart International</div>
+      <div class="card-body">Internationally recognised third-party grade certifier for Rwandan minerals — accepted by all buyers, RMB, RRA, and international trading counterparts. Smart sensors do not touch grade certification. Alex Stewart's role remains: certify grade at point of export or official transaction. Sensors certify <strong>movement</strong> between certification events — closing the gap in the audit trail.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--gold)">
+      <div class="card-title">🏭 Internal Company Labs</div>
+      <div class="card-body">Processing and trading companies already operate their own analytical labs for routine grade monitoring. Sensors complement this by confirming that the material being tested by the lab is the same material that entered the warehouse — preventing sample substitution or misrepresentation between weighing and testing.</div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--g-deep)">
+      <div class="card-title">🔗 RMB-FinIntel Platform</div>
+      <div class="card-body">Sensor movement data flows directly into the RMB-FinIntel inventory module (D1.3b — HR &amp; Revenue Distribution Tool), feeding the daily mark-to-market calculation and the collateral verification engine for tokenisation. The sensor is the data source; the platform is the intelligence layer built on top of it.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — TOKENISATION LINK
+═══════════════════════════════════════════ -->
+<section id="token-link" class="section section-alt">
+  <div class="eyebrow">4 — The Tokenisation Connection</div>
+  <h2 class="section-title">From Movement Detection to Trusted Tokenised Collateral</h2>
+  <p class="section-lead">The sensor system is the missing link between physical mineral inventory and credible digital tokens. Without continuous movement verification, a token is only as trustworthy as the last human inspection. With sensors, the token reflects the real-time physical reality — continuously and automatically.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">
+    <div>
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px">❌ Without Smart Sensors</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">Token value = last certified weight (may be 2–4 weeks old)</div>
+        <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">No way to detect if collateral has left the warehouse since certification</div>
+        <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">Lender must send inspector to verify — expensive, slow, periodic</div>
+        <div style="background:var(--red-lt);border:1px solid #F4B8B8;border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">CMA cannot approve token issuance without robust custody evidence</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);margin-bottom:10px">✅ With Smart Sensors</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">Token value = current sensor-verified weight, updated in real time</div>
+        <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">Every movement logged, timestamped, reconciled — full audit trail</div>
+        <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">No human inspector needed for routine monitoring — cost drops 90%</div>
+        <div style="background:var(--g-pale);border:1px solid var(--g-lt);border-radius:6px;padding:12px;font-size:13px;color:var(--text-body)">CMA has continuous, machine-generated evidence for token collateral</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--g-deep);border-radius:var(--radius);padding:22px 26px;color:#FFFFFF">
+    <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">The Architecture in Three Words: Detect · Record · Tokenise</div>
+    <p style="font-size:14px;color:rgba(255,255,255,0.88);line-height:1.75">Every movement detected by the sensor network is hashed and written to an immutable ledger — creating a tamper-evident, machine-generated audit trail from warehouse entry to export. This is the data substrate on which the token smart contract runs: when the sensor confirms stock is in the warehouse, the token is active. When the sensor detects a verified outflow matching a reported sale, the token settles. No manual step. No delay. No trust required between parties — only verified data.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — IMPLEMENTATION ROADMAP
+═══════════════════════════════════════════ -->
+<section id="roadmap" class="section">
+  <div class="eyebrow">5 — Implementation Roadmap</div>
+  <h2 class="section-title">Three Phases: From Pilot to National Infrastructure</h2>
+  <p class="section-lead">Starting in Year 1 alongside the RMB-FinIntel programme — not after it. The sensor infrastructure and the financial intelligence platform are built in parallel, feeding each other from Day 1.</p>
+
+  <div class="phase-timeline">
+    <div class="pt-item">
+      <div class="pt-dot" style="background:var(--blue)">📡</div>
+      <div class="pt-content">
+        <div class="pt-period" style="color:var(--blue)">Year 1 — M3 to M12</div>
+        <div class="pt-title">Pilot: Movement Detection at 5–10 Priority Warehouses</div>
+        <div class="pt-body">Deploy the three-sensor stack (load cell + AI camera + RFID) at 5–10 pilot warehouses — prioritising gold and cassiterite. Build the notification and reconciliation platform. Integrate with RMB-FinIntel inventory module.</div>
+        <div class="pt-items">
+          <div class="pt-item-line">Select 5–10 pilot warehouses in cooperation with mining companies and RMB</div>
+          <div class="pt-item-line">Deploy LoRaWAN gateway network across pilot sites</div>
+          <div class="pt-item-line">Install load cells + RFID readers at warehouse doors</div>
+          <div class="pt-item-line">Deploy AI camera units with edge inference (motion + bag counting)</div>
+          <div class="pt-item-line">Launch RMB StockWatch notification app (SMS + app + web dashboard)</div>
+          <div class="pt-item-line">Run 3-month parallel operation: sensor records vs manual reporting — measure discrepancy rate</div>
+          <div class="pt-item-line">Estimated total cost: ~$25,000–$50,000 for 10 warehouses</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-item">
+      <div class="pt-dot" style="background:var(--g-deep)">🔗</div>
+      <div class="pt-content">
+        <div class="pt-period" style="color:var(--g-deep)">Year 2 — M12 to M24</div>
+        <div class="pt-title">Integration: Sensor Data Feeds Tokenisation Platform</div>
+        <div class="pt-body">Connect the sensor audit trail directly to the tokenisation smart contract infrastructure. Sensor data becomes the primary collateral verification mechanism — replacing periodic human inspection for routine monitoring.</div>
+        <div class="pt-items">
+          <div class="pt-item-line">Integrate sensor data feed into token smart contract (token active = stock confirmed in warehouse)</div>
+          <div class="pt-item-line">Build automated token value update on verified movement events</div>
+          <div class="pt-item-line">Submit sensor architecture to CMA as part of token issuance approval documentation</div>
+          <div class="pt-item-line">Extend to 20–30 warehouses based on Year 1 learnings</div>
+          <div class="pt-item-line">Formalise ITSCI data-sharing protocol: sensor records feed ITSCI database automatically</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-item" style="padding-bottom:0">
+      <div class="pt-dot" style="background:var(--gold)">🌍</div>
+      <div class="pt-content">
+        <div class="pt-period" style="color:var(--gold)">Year 3+ — National Scale</div>
+        <div class="pt-title">National Stock Surveillance Infrastructure</div>
+        <div class="pt-body">Scale to all registered mineral warehouses in Rwanda. The sensor network becomes part of Rwanda's national mineral financial intelligence infrastructure — feeding real-time data into the RMB-FinIntel platform, the tokenisation exchange, and BNR's gold reserve monitoring.</div>
+        <div class="pt-items">
+          <div class="pt-item-line">All RMB-licensed warehouses required to have certified sensor installation as condition of licence</div>
+          <div class="pt-item-line">Real-time national stock position map: aggregate inventory by mineral, by region, by company</div>
+          <div class="pt-item-line">Sensor data feeds BNR gold reserve monitoring directly</div>
+          <div class="pt-item-line">Regional hub: offer sensor-as-a-service to DRC, Uganda, Tanzania mineral sectors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — LINKS TO OTHER PAGES
+═══════════════════════════════════════════ -->
+<section id="connections" class="section section-alt">
+  <div class="eyebrow">6 — Connections to Other Programme Components</div>
+  <h2 class="section-title">How This Fits Into the Broader Architecture</h2>
+  <p class="section-lead">Smart Stock Surveillance is not a standalone technology project — it is a strategic component of Rwanda's mineral financial intelligence ecosystem, feeding data into the tokenisation platform, the financing models, and the RMB-FinIntel dashboard.</p>
+
+  <div class="link-cards">
+    <a href="tokenisation.html" class="link-card" style="border-top:3px solid var(--blue)">
+      <div class="link-card-icon">🔗</div>
+      <div class="link-card-title" style="color:var(--blue)">Mineral Tokenisation</div>
+      <div class="link-card-body">Sensor movement records feed directly into the token smart contract — making tokenised collateral continuously verifiable. Without the sensor layer, tokenisation requires periodic human inspection. With it, token value updates in real time.</div>
+      <div class="link-card-cta" style="color:var(--blue)">View Tokenisation Page →</div>
+    </a>
+    <a href="financing-models.html" class="link-card" style="border-top:3px solid var(--g-deep)">
+      <div class="link-card-icon">🏦</div>
+      <div class="link-card-title" style="color:var(--g-deep)">Financing Models</div>
+      <div class="link-card-body">Warehouse receipt financing requires verifiable, real-time stock positions. Sensor data makes the collateral credible for commercial banks and KIFC-registered lending vehicles — unlocking cheaper financing for all entity types.</div>
+      <div class="link-card-cta" style="color:var(--g-deep)">View Financing Models →</div>
+    </a>
+    <a href="index.html" class="link-card" style="border-top:3px solid var(--gold)">
+      <div class="link-card-icon">📊</div>
+      <div class="link-card-title" style="color:var(--gold)">Technical Proposal — D1.3b</div>
+      <div class="link-card-body">The inventory module (D1.3b — HR &amp; Revenue Distribution Tool) is the first analytical tool delivered at end of Phase 1. Sensor data feeds this module directly — enabling the daily mark-to-market calculation that underpins the entire financial intelligence framework.</div>
+      <div class="link-card-cta" style="color:var(--gold)">View Technical Proposal →</div>
+    </a>
+    <a href="architecture.html" class="link-card" style="border-top:3px solid var(--text-muted)">
+      <div class="link-card-icon">🏗</div>
+      <div class="link-card-title">Current Situation Model — Architecture</div>
+      <div class="link-card-body">The sensor network is a new data source feeding the Current Situation Model — adding a real-time movement layer to the static snapshot data currently captured from company declarations and RRA filings.</div>
+      <div class="link-card-cta" style="color:var(--text-muted)">View Architecture →</div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="rmb-footer">
+  <div>
+    <div class="footer-brand">Jean Jacques <span>Mutabaruka</span></div>
+    <div class="footer-meta" style="margin-top:5px">Finance Expert &amp; Financial Systems Automation Specialist</div>
+  </div>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <a href="tokenisation.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">🔗 Tokenisation →</a>
+    <a href="financing-models.html" class="btn btn-outline" style="font-size:12px;padding:8px 18px">🏦 Financing Models →</a>
+    <a href="index.html" class="btn btn-green" style="font-size:12px;padding:8px 18px">← Technical Proposal</a>
+  </div>
+  <div class="footer-meta" style="text-align:right">Smart Stock Surveillance<br>RMB Financial Market Intelligence Expert · April 2026</div>
+</footer>
+
+</div><!-- .page-wrap -->
+
+<script src="nav.js"></script>
+</body>
+</html>
