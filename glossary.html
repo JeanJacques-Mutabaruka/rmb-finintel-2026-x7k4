@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Glossary &amp; Abbreviations — RMB-FinIntel</title>
+  <link rel="stylesheet" href="shared.css"/>
+  <style>
+/* ── PAGE-SPECIFIC STYLES ── */
+
+.gl-search-wrap {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--surface-1);
+  border-bottom: 1px solid var(--border-lt);
+  padding: 14px 0 14px;
+  margin-bottom: 32px;
+}
+.gl-search {
+  width: 100%; max-width: 520px;
+  padding: 10px 16px 10px 40px;
+  font-size: 14px; font-family: var(--font-b);
+  border: 1.5px solid var(--border-md);
+  border-radius: 8px;
+  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239EB0A4' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 12px center;
+  color: var(--text-body);
+  transition: border-color 0.18s;
+  outline: none;
+}
+.gl-search:focus { border-color: var(--g-deep); }
+
+.gl-filter-bar {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.gl-filter {
+  padding: 5px 14px; font-size: 12px; font-family: var(--font-m);
+  font-weight: 700; letter-spacing: 0.5px;
+  border: 1.5px solid var(--border-md);
+  border-radius: 20px; background: #FFFFFF;
+  color: var(--text-muted); cursor: pointer;
+  transition: all 0.18s;
+}
+.gl-filter:hover { border-color: var(--g-deep); color: var(--g-deep); }
+.gl-filter.active { background: var(--g-deep); color: #FFFFFF; border-color: var(--g-deep); }
+
+/* Category section */
+.gl-category { margin-bottom: 48px; }
+.gl-cat-header {
+  display: flex; align-items: center; gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--border-md);
+  margin-bottom: 16px;
+}
+.gl-cat-icon { font-size: 20px; }
+.gl-cat-title { font-family: var(--font-d); font-size: 18px; font-weight: 700; color: var(--text-head); }
+.gl-cat-count { font-family: var(--font-m); font-size: 11px; color: var(--text-muted); padding: 2px 8px; background: var(--surface-2); border-radius: 10px; }
+
+/* Term cards grid */
+.gl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+}
+.gl-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-lt);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  position: relative;
+}
+.gl-card:hover { box-shadow: var(--shadow-md); border-color: var(--g-lt); }
+.gl-card.hidden { display: none; }
+
+.gl-abbr {
+  font-family: var(--font-d); font-size: 18px; font-weight: 900;
+  color: var(--text-head); margin-bottom: 2px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.gl-abbr-tag {
+  font-family: var(--font-m); font-size: 9px; letter-spacing: 1.5px;
+  text-transform: uppercase; font-weight: 700;
+  padding: 2px 7px; border-radius: 3px;
+}
+.gl-full {
+  font-size: 13px; font-weight: 600; color: var(--g-deep);
+  margin-bottom: 6px;
+}
+.gl-def {
+  font-size: 12px; color: var(--text-muted); line-height: 1.6;
+}
+.gl-context {
+  margin-top: 8px; font-size: 11px; color: var(--text-muted);
+  font-style: italic; border-top: 1px solid var(--border-lt);
+  padding-top: 7px;
+}
+.gl-pages {
+  margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap;
+}
+.gl-page-badge {
+  font-size: 10px; font-family: var(--font-m); font-weight: 700;
+  padding: 2px 7px; border-radius: 3px;
+  background: var(--g-pale); color: var(--g-deep);
+}
+
+.no-results {
+  display: none; padding: 40px; text-align: center;
+  color: var(--text-muted); font-size: 14px;
+}
+
+.gl-view-btn {
+  padding: 7px 18px; font-size: 12px; font-weight: 700; font-family: var(--font-m);
+  border: 1.5px solid var(--border-md); border-radius: 6px; background: #FFFFFF;
+  color: var(--text-muted); cursor: pointer; transition: all 0.18s;
+}
+.gl-view-btn:hover { background: var(--g-pale); color: var(--g-deep); border-color: var(--g-lt); }
+.gl-view-btn.active { background: var(--g-deep); color: #FFFFFF; border-color: var(--g-deep); }
+
+/* Alphabetical view */
+.alpha-group { margin-bottom: 36px; }
+.alpha-letter-head {
+  font-family: var(--font-d); font-size: 32px; font-weight: 900;
+  color: var(--g-deep); margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 2px solid var(--g-lt);
+}
+.alpha-row {
+  display: grid; grid-template-columns: 160px 1fr;
+  gap: 14px; padding: 11px 0;
+  border-bottom: 1px solid var(--border-lt);
+  align-items: baseline;
+}
+.alpha-row:last-child { border-bottom: none; }
+.alpha-row.hidden { display: none; }
+.alpha-code { font-family: var(--font-m); font-size: 14px; font-weight: 800; color: var(--g-deep); }
+.alpha-full { font-size: 14px; color: var(--text-head); font-weight: 600; margin-bottom: 3px; }
+.alpha-def  { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+.alpha-tags { margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; }
+.alpha-cat-badge {
+  font-size: 10px; font-family: var(--font-m); font-weight: 700;
+  padding: 2px 7px; border-radius: 3px;
+  background: var(--surface-2); color: var(--text-muted);
+}
+
+#view-alpha-content { display: none; }
+
+@media (max-width: 768px) {
+  .gl-grid { grid-template-columns: 1fr; }
+  .alpha-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════════════════════════ -->
+<aside class="rmb-sidebar" id="rmb-sidebar">
+  <div class="sb-logo-block">
+    <div class="sb-logo">RMB<br>FI</div>
+    <div>
+      <div class="sb-brand-main">RMB-FinIntel</div>
+      <div class="sb-brand-sub">Mineral Financial Intelligence</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-section-label">Proposal</span>
+    <a href="index.html">📄 Technical Proposal</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Strategic Horizon</span>
+    <a href="index.html#strategic-horizon">🔭 Strategic Horizon</a>
+    <a href="tokenisation.html">🔗 Mineral Tokenisation</a>
+    <a href="financing-models.html">🏦 Financing Models</a>
+    <a href="smart-stock.html">📡 Smart Stock</a>
+    <a href="market-manipulation.html" style="color:#C00000;background:rgba(192,0,0,0.06);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Reference</span>
+    <a href="glossary.html" class="active">📖 Glossary &amp; Abbreviations</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Current Situation Model</span>
+    <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
+      <span>🏛 Current Sit. Model</span>
+      <span class="sb-arrow">▾</span>
+    </button>
+    <div class="sb-group-items" id="sb-csm-items">
+      <a href="architecture.html" class="sb-sub">🏗 Architecture</a>
+      <a href="energy.html" class="sb-sub">⚡ Energy Component</a>
+      <a href="demo.html" class="sb-sub">🔬 Tool Mock-up</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- Mobile top bar -->
+<div class="sb-topbar">
+  <div class="sb-topbar-logo">RMB<br>FI</div>
+  <div class="sb-topbar-title">RMB-FinIntel</div>
+  <button class="sb-hamburger" id="sb-hbg" onclick="sbMobileToggle()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="sbMobileClose()"></div>
+
+<div class="page-wrap">
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════════════ -->
+<div class="hero" style="min-height:36vh">
+  <div class="hero-bg-mesh"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="eyebrow fade-up au-1">Reference · RMB-FinIntel</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal;font-size:clamp(26px,3vw,42px)">Glossary &amp; <span class="accent">Abbreviations</span></h1>
+    <p class="hero-lead fade-up au-3">A comprehensive reference of all abbreviations, acronyms, technical terms, regulatory frameworks, and market concepts used across the RMB Mineral Financial Intelligence proposal and strategic horizon modules. Search, filter by category, and click any card for full context.</p>
+    <div class="stats-bar fade-up au-4">
+      <div class="stat"><div class="stat-n">60+</div><div class="stat-l">Terms, acronyms &amp; abbreviations defined</div></div>
+      <div class="stat"><div class="stat-n">7</div><div class="stat-l">Categories: Regulatory, Market, Institutions, Minerals, Finance, Geopolitical, Technical</div></div>
+      <div class="stat"><div class="stat-n">All</div><div class="stat-l">Pages cross-referenced for each term</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════════════════════ -->
+<section class="section" style="padding-top:0">
+
+  <!-- Sticky search & filter -->
+  <div class="gl-search-wrap">
+
+    <!-- View switcher -->
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="gl-view-btn active" id="btn-view-cat" onclick="switchView('cat')">📂 By Category</button>
+      <button class="gl-view-btn" id="btn-view-alpha" onclick="switchView('alpha')">🔤 Alphabetical</button>
+    </div>
+
+    <input class="gl-search" type="text" id="gl-search-input" placeholder="Search terms, abbreviations, definitions…" oninput="filterGlossary()"/>
+
+    <!-- Category filters (shown in cat view) -->
+    <div class="gl-filter-bar" id="cat-filters">
+      <button class="gl-filter active" onclick="filterCat('all',this)">All categories</button>
+      <button class="gl-filter" onclick="filterCat('regulatory',this)">⚖️ Regulatory</button>
+      <button class="gl-filter" onclick="filterCat('market',this)">📊 Market</button>
+      <button class="gl-filter" onclick="filterCat('institutions',this)">🏛 Institutions</button>
+      <button class="gl-filter" onclick="filterCat('minerals',this)">💎 Minerals</button>
+      <button class="gl-filter" onclick="filterCat('finance',this)">💰 Finance</button>
+      <button class="gl-filter" onclick="filterCat('geopolitical',this)">🌍 Geopolitical</button>
+      <button class="gl-filter" onclick="filterCat('technical',this)">🔬 Technical</button>
+    </div>
+
+    <!-- Letter filters (shown in alpha view) -->
+    <div class="gl-filter-bar" id="alpha-filters" style="display:none">
+      <button class="gl-filter active" id="alpha-all" onclick="filterLetter('ALL',this)">All</button>
+      <button class="gl-filter" onclick="filterLetter('A',this)">A</button>
+      <button class="gl-filter" onclick="filterLetter('C',this)">C</button>
+      <button class="gl-filter" onclick="filterLetter('D',this)">D</button>
+      <button class="gl-filter" onclick="filterLetter('E',this)">E</button>
+      <button class="gl-filter" onclick="filterLetter('F',this)">F</button>
+      <button class="gl-filter" onclick="filterLetter('H',this)">H</button>
+      <button class="gl-filter" onclick="filterLetter('I',this)">I</button>
+      <button class="gl-filter" onclick="filterLetter('J',this)">J</button>
+      <button class="gl-filter" onclick="filterLetter('K',this)">K</button>
+      <button class="gl-filter" onclick="filterLetter('L',this)">L</button>
+      <button class="gl-filter" onclick="filterLetter('M',this)">M</button>
+      <button class="gl-filter" onclick="filterLetter('N',this)">N</button>
+      <button class="gl-filter" onclick="filterLetter('O',this)">O</button>
+      <button class="gl-filter" onclick="filterLetter('R',this)">R</button>
+      <button class="gl-filter" onclick="filterLetter('S',this)">S</button>
+      <button class="gl-filter" onclick="filterLetter('U',this)">U</button>
+      <button class="gl-filter" onclick="filterLetter('W',this)">W</button>
+      <button class="gl-filter" onclick="filterLetter('3',this)">3T</button>
+    </div>
+  </div>
+
+  <div id="no-results" class="no-results">No terms match your search. Try a different keyword.</div>
+
+  <div id="view-cat-content" style="display:block">
+  <!-- ── REGULATORY ── -->
+  <div class="gl-category" data-cat="regulatory">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">⚖️</span>
+      <span class="gl-cat-title">Regulatory Frameworks &amp; Compliance</span>
+      <span class="gl-cat-count" id="count-regulatory"></span>
+    </div>
+    <div class="gl-grid" id="grid-regulatory">
+
+      <div class="gl-card" data-cat="regulatory" data-search="dfars defense federal acquisition regulation supplement">
+        <div class="gl-abbr">DFARS <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">Defense Federal Acquisition Regulation Supplement</div>
+        <div class="gl-def">US procurement rules governing the acquisition of goods and services by the Department of Defense. The 2027 DFARS amendment mandates that defense contractors source specified minerals (including rare earths) from non-Chinese suppliers, creating policy-mandated demand that is independent of market price signals.</div>
+        <div class="gl-context">Key relevance: First major policy tool to break China's rare earth pricing leverage by making Western sourcing a legal requirement rather than a market choice.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="dodd frank 1502 conflict minerals">
+        <div class="gl-abbr">Dodd-Frank §1502 <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">Section 1502 of the Dodd-Frank Wall Street Reform and Consumer Protection Act</div>
+        <div class="gl-def">US legislation (2010) requiring publicly listed companies to disclose whether their products contain "conflict minerals" (tin, tantalum, tungsten, and gold — 3TG) originating from the DRC or adjoining countries. Companies must conduct supply chain due diligence and file annual reports with the SEC.</div>
+        <div class="gl-context">Creates the compliance premium market for certified Rwandan minerals. Also creates asymmetric cost burden: compliant producers bear certification costs that non-compliant competitors avoid.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="eu cmr critical raw materials act european union">
+        <div class="gl-abbr">EU CRMA <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">European Union Critical Raw Materials Act</div>
+        <div class="gl-def">EU regulation (2024) establishing strategic benchmarks for domestic extraction, processing, and recycling of critical minerals. Sets targets: 10% domestic extraction, 40% domestic processing, 25% recycling of EU annual consumption by 2030. Creates certified partner country frameworks that benefit compliant African producers.</div>
+        <div class="gl-context">Directly relevant to Rwanda's market positioning: EU buyers under CRMA will prioritise certified, traceable sources — strengthening Rwanda's compliance premium.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="ira inflation reduction act united states critical mineral">
+        <div class="gl-abbr">IRA <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">Inflation Reduction Act (United States, 2022)</div>
+        <div class="gl-def">Major US legislation providing tax credits for electric vehicles and clean energy, contingent on critical minerals being sourced from the US or free-trade-agreement (FTA) partner countries — explicitly excluding Chinese-processed minerals from eligibility. Creates significant structural demand for non-Chinese critical mineral supply chains.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="itsci tin tantalum tungsten initiative supply chain">
+        <div class="gl-abbr">ITSCI <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">ITRI Tin Supply Chain Initiative</div>
+        <div class="gl-def">Industry-led supply chain traceability programme covering tin, tantalum, and tungsten from the Great Lakes region of Africa (DRC, Rwanda, Burundi, Uganda). Provides bag-and-tag tracking of mineral shipments from mine to export, enabling compliance with Dodd-Frank §1502 and EU CMR requirements.</div>
+        <div class="gl-context">Rwanda's primary traceability infrastructure for 3T minerals. Recognised by major downstream buyers as proof of conflict-free sourcing.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="ctc conflict-free tin certificate smelter">
+        <div class="gl-abbr">CTC <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">Conflict-Free Tin Certificate / Certification</div>
+        <div class="gl-def">Certification framework ensuring that tin ore (cassiterite) and refined tin have been sourced from conflict-free mines and processed through validated, audited smelters. Part of the responsible sourcing infrastructure that generates Rwanda's compliance premium in Western markets.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="oecd due diligence guidance minerals conflict">
+        <div class="gl-abbr">OECD DDG <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">OECD Due Diligence Guidance for Responsible Supply Chains of Minerals from Conflict-Affected and High-Risk Areas</div>
+        <div class="gl-def">International framework providing five-step guidance for companies to identify and manage risks in mineral supply chains. Forms the basis of Dodd-Frank §1502 compliance and EU CMR requirements. Reference standard for responsible mineral sourcing globally.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="regulatory" data-search="sec securities exchange commission filing report">
+        <div class="gl-abbr">SEC <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Regulatory</span></div>
+        <div class="gl-full">US Securities and Exchange Commission</div>
+        <div class="gl-def">US federal regulatory agency overseeing securities markets and enforcing investor protection laws. Receives annual conflict minerals reports filed by publicly listed companies under Dodd-Frank §1502. SEC disclosure requirements are a key driver of corporate demand for certified conflict-free minerals.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MARKET ── -->
+  <div class="gl-category" data-cat="market">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">📊</span>
+      <span class="gl-cat-title">Market Mechanisms &amp; Pricing</span>
+      <span class="gl-cat-count" id="count-market"></span>
+    </div>
+    <div class="gl-grid" id="grid-market">
+
+      <div class="gl-card" data-cat="market" data-search="lme london metal exchange tin copper trading futures">
+        <div class="gl-abbr">LME <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">London Metal Exchange</div>
+        <div class="gl-def">The world's leading metals exchange, providing price discovery and hedging for base metals including tin, copper, aluminium, zinc, nickel, and lead. Tin is the least liquid of the LME metals, making it more susceptible to speculative price distortion. LME prices are used as global reference benchmarks by physical market participants.</div>
+        <div class="gl-context">The January 2026 tin price spike to $56,800/t originated partly from LME and SHFE positioning, not physical market tightness.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="shfe shanghai futures exchange china tin copper">
+        <div class="gl-abbr">SHFE <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Shanghai Futures Exchange</div>
+        <div class="gl-def">China's primary commodity futures exchange, trading metals including tin, copper, gold, and aluminium. SHFE tin contracts are increasingly influential in global price formation. In January 2026, SHFE tin trading volumes exceeded one million tonnes in a single session — more than twice annual world physical supply — triggering Chinese regulatory intervention.</div>
+        <div class="gl-context">SHFE speculative positioning is a primary driver of short-term tin price volatility relevant to Rwanda's cassiterite exports.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="ami asian metal index rare earth benchmark price">
+        <div class="gl-abbr">AMI <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Asian Metal Index</div>
+        <div class="gl-def">A price index published by Asian Metal Inc. that serves as a primary global pricing benchmark for rare earth elements and other minor metals. Critically, AMI is a wholly Chinese-controlled information service. China's ability to influence this benchmark was a key instrument in the rare earth competitive destruction strategy documented in the China case study.</div>
+        <div class="gl-context">Illustrates the risk of benchmark concentration: controlling the ruler used to measure value is as powerful as controlling supply.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="apt ammonium paratungstate tungsten benchmark price mtu">
+        <div class="gl-abbr">APT <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Ammonium Paratungstate</div>
+        <div class="gl-def">The primary intermediate product in tungsten processing, and the global pricing benchmark for tungsten. Priced in USD per Metric Tonne Unit (MTU, = 10kg of WO₃). APT prices are published by Fastmarkets and Metal Bulletin. Since China controls 82% of global tungsten supply, APT prices reflect Chinese production economics and strategic export decisions more than free market forces.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="mtu metric tonne unit tungsten measurement">
+        <div class="gl-abbr">MTU <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Metric Tonne Unit</div>
+        <div class="gl-def">Unit of measurement used in the tungsten market. 1 MTU = 10 kilograms of tungsten trioxide (WO₃) content. APT (Ammonium Paratungstate) is priced in USD per MTU. As of Q1 2026, APT was trading around $520–573/MTU.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="otc over the counter bilateral trading tantalum">
+        <div class="gl-abbr">OTC <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Over-the-Counter (Market)</div>
+        <div class="gl-def">Trading that occurs directly between two parties, without going through a formal exchange. Tantalum and tungsten are primarily OTC markets — prices are negotiated bilaterally between producers, smelters, and buyers, with no public benchmark equivalent to the LME. This opacity increases manipulation risk: price discovery is fragmented and dominated by the most informed participants.</div>
+        <div class="gl-context">Rwanda's tantalum exports are priced OTC, making independent price intelligence critical to ensuring fair value is obtained.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="hhi herfindahl hirschman index concentration market">
+        <div class="gl-abbr">HHI <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Herfindahl–Hirschman Index</div>
+        <div class="gl-def">A standard measure of market concentration. Calculated as the sum of squared market share percentages of all participants. HHI below 1,500 = competitive market; 1,500–2,500 = moderately concentrated; above 2,500 = highly concentrated. Used in the MFI buyer concentration monitor to flag dangerous dependency on a single buyer.</div>
+        <div class="gl-context">The MFI framework proposes triggering an advisory when Rwanda's buyer HHI exceeds 40% concentration in a single mineral category.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="fob free on board export price logistics">
+        <div class="gl-abbr">FOB <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Free On Board</div>
+        <div class="gl-def">International trade term (Incoterm) indicating that the seller is responsible for loading goods onto the transport vessel at the named port of shipment. The buyer assumes all risk and cost from that point. FOB price is a standard export pricing reference. Logistics cost as a percentage of FOB price is a key MFI metric for monitoring Rwanda's export competitiveness.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="market" data-search="irr internal rate return investment profitability">
+        <div class="gl-abbr">IRR <span class="gl-abbr-tag" style="background:rgba(184,134,11,0.1);color:#7A5800">Market</span></div>
+        <div class="gl-full">Internal Rate of Return</div>
+        <div class="gl-def">A financial metric used to evaluate the profitability of an investment. The IRR is the discount rate at which the net present value (NPV) of all cash flows equals zero. Commercial mining investors typically require IRRs of 15–25%+ at base-case price assumptions. When prices crash in a manipulation cycle, IRR falls below hurdle rates and investors exit — this is the core mechanism of competitive destruction.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── INSTITUTIONS ── -->
+  <div class="gl-category" data-cat="institutions">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">🏛</span>
+      <span class="gl-cat-title">Institutions &amp; Organisations</span>
+      <span class="gl-cat-count" id="count-institutions"></span>
+    </div>
+    <div class="gl-grid" id="grid-institutions">
+
+      <div class="gl-card" data-cat="institutions" data-search="rmb rwanda mines petroleum gas board regulator">
+        <div class="gl-abbr">RMB <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Rwanda Mines, Petroleum and Gas Board</div>
+        <div class="gl-def">The primary regulatory authority for Rwanda's extractive sector. Responsible for issuing and monitoring mining licences, enforcing compliance with mining law, promoting responsible mineral development, and — under the proposed MFI programme — producing mineral market intelligence to guide strategic investment and licensing decisions.</div>
+        <div class="gl-pages"><span class="gl-page-badge">All pages</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="mfi mineral financial intelligence programme system">
+        <div class="gl-abbr">MFI <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Mineral Financial Intelligence (Programme)</div>
+        <div class="gl-def">The proposed analytical programme at the heart of this proposal. MFI is a structured system for monitoring, modelling, and interpreting global mineral market dynamics — including price trends, buyer behaviour, geopolitical shifts, and manipulation signals — to generate data-driven intelligence that guides RMB's licensing decisions and Rwanda's mineral sector investment strategy.</div>
+        <div class="gl-pages"><span class="gl-page-badge">All pages</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="dfi development finance institution blended capital">
+        <div class="gl-abbr">DFI <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Development Finance Institution</div>
+        <div class="gl-def">Specialised financial institutions (e.g. IFC, BII, Proparco, DEG, FMO) that provide financing to private sector projects in developing markets, often using blended finance structures, patient capital, and concessional terms. DFI-financed mining companies are structurally more resilient to price manipulation cycles than commercially financed peers because their return expectations are not purely market-rate driven.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="rdb rwanda development board investment promotion">
+        <div class="gl-abbr">RDB <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Rwanda Development Board</div>
+        <div class="gl-def">Rwanda's primary investment promotion authority, responsible for facilitating and accelerating investment across sectors including mining. Key partner for MFI-generated investment advisory outputs: when MFI signals confirm structural demand growth, RDB can coordinate accelerated licensing and investor outreach.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="minicom ministry trade industry commerce rwanda">
+        <div class="gl-abbr">MINICOM <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Ministry of Trade and Industry (Rwanda)</div>
+        <div class="gl-def">Rwandan government ministry responsible for trade policy, industrial development, and commercial regulation. MFI outputs related to compliance premium erosion, export market shifts, or geopolitical bloc realignment would be escalated to MINICOM for strategic policy response.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="rra rwanda revenue authority tax export declaration">
+        <div class="gl-abbr">RRA <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Rwanda Revenue Authority</div>
+        <div class="gl-def">Rwanda's tax and customs authority. A key primary data source for MFI: RRA export declaration data provides buyer identification, export volumes, declared prices, and trade flow patterns — enabling the buyer concentration monitoring and export unit value tracking that are central to the MFI detection framework.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Architecture</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="usgs united states geological survey mineral commodity">
+        <div class="gl-abbr">USGS <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">United States Geological Survey</div>
+        <div class="gl-def">US federal agency that publishes annual Mineral Commodity Summaries — the world's most comprehensive freely available database of mineral production, trade, and price data for 90+ commodities. A primary reference source for MFI baseline data and global supply-demand modelling.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Architecture</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="institutions" data-search="jogmec japan oil gas metals national corporation">
+        <div class="gl-abbr">JOGMEC <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Institution</span></div>
+        <div class="gl-full">Japan Oil, Gas and Metals National Corporation</div>
+        <div class="gl-def">Japanese government agency that provides financial and technical support for overseas resource development by Japanese companies. JOGMEC financing for critical mineral projects provides government-backed capital that, like DFI financing, is more resilient to market price manipulation than purely commercial funding.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MINERALS ── -->
+  <div class="gl-category" data-cat="minerals">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">💎</span>
+      <span class="gl-cat-title">Minerals &amp; Commodities</span>
+      <span class="gl-cat-count" id="count-minerals"></span>
+    </div>
+    <div class="gl-grid" id="grid-minerals">
+
+      <div class="gl-card" data-cat="minerals" data-search="3t tin tantalum tungsten conflict minerals great lakes">
+        <div class="gl-abbr">3T <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Tin, Tantalum, and Tungsten</div>
+        <div class="gl-def">The three minerals that, together with gold (Au), constitute Rwanda's primary mineral export profile and the focus of the international conflict minerals regulatory framework. Each has distinct market structures, dominant actor profiles, and manipulation risk levels. The 3T designation originates from the Dodd-Frank §1502 "3TG" classification (3T + Gold).</div>
+        <div class="gl-pages"><span class="gl-page-badge">All pages</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="minerals" data-search="3tg tin tantalum tungsten gold conflict dodd frank">
+        <div class="gl-abbr">3TG <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Tin, Tantalum, Tungsten, and Gold</div>
+        <div class="gl-def">The four "conflict minerals" designated under US Dodd-Frank §1502. Companies using these minerals in products must disclose their sourcing and conduct due diligence if minerals originate from the DRC or adjoining countries. The 3TG framework created the international compliance infrastructure that Rwanda's certified export programme is built upon.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="minerals" data-search="coltan columbite tantalite ore tantalum source africa">
+        <div class="gl-abbr">Coltan <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Columbite-Tantalite (ore)</div>
+        <div class="gl-def">The primary ore mineral from which tantalum is extracted. A combination of columbite (niobium-rich) and tantalite (tantalum-rich). Rwanda and DRC are major global sources. The ore is processed into tantalum pentoxide and further refined into tantalum metal or powder, primarily by smelters in Malaysia (AMG Metallurgy) and Germany (H.C. Starck).</div>
+        <div class="gl-context">Rwanda exports coltan ore to Malaysian and German smelters — meaning Rwanda is a price-taker relative to the processors who control the next stage of the value chain.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="minerals" data-search="cassiterite tin ore mineral export rwanda">
+        <div class="gl-abbr">Cassiterite <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Cassiterite (Tin Ore, SnO₂)</div>
+        <div class="gl-def">The primary ore mineral for tin production (tin dioxide, SnO₂). Rwanda's primary tin export product. Cassiterite is smelted into refined tin metal, primarily in Malaysia, China, and Indonesia. Rwanda, as a cassiterite exporter, is exposed to tin metal prices set by LME and SHFE — but receives a discounted price reflecting ore-to-metal processing costs retained by smelters.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="minerals" data-search="wolframite tungsten ore mineral export rwanda">
+        <div class="gl-abbr">Wolframite <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Wolframite ((Fe,Mn)WO₄ — Tungsten Ore)</div>
+        <div class="gl-def">The primary ore mineral for tungsten production, an iron-manganese tungstate. Rwanda exports wolframite concentrate, which is processed into APT (Ammonium Paratungstate) and subsequently into tungsten metal, carbide, or alloys. The APT price benchmark is the primary market reference for wolframite trade.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Smart Stock</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="minerals" data-search="rare earth ree elements neodymium dysprosium china monopoly">
+        <div class="gl-abbr">REE / REO <span class="gl-abbr-tag" style="background:rgba(123,45,139,0.1);color:#7B2D8B">Mineral</span></div>
+        <div class="gl-full">Rare Earth Elements / Rare Earth Oxides</div>
+        <div class="gl-def">A group of 17 metallic elements (lanthanides + scandium + yttrium) with critical applications in permanent magnets (EVs, wind turbines), electronics, and defence systems. China controls approximately 60% of global mining and 85%+ of processing. The rare earth market is the primary documented case study of systematic market manipulation used to eliminate competitors — directly applicable to Rwanda's 3T analysis.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FINANCE ── -->
+  <div class="gl-category" data-cat="finance">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">💰</span>
+      <span class="gl-cat-title">Finance &amp; Investment</span>
+      <span class="gl-cat-count" id="count-finance"></span>
+    </div>
+    <div class="gl-grid" id="grid-finance">
+
+      <div class="gl-card" data-cat="finance" data-search="capex capital expenditure investment machinery equipment">
+        <div class="gl-abbr">Capex <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Finance</span></div>
+        <div class="gl-full">Capital Expenditure</div>
+        <div class="gl-def">Spending on physical assets — machinery, equipment, infrastructure, mine development — that generate economic benefits over multiple years. Capex decisions in mining are long-lead, difficult to reverse, and highly sensitive to price signals. The MFI strategic investment calibration framework explicitly addresses when to commit, hold, or freeze capex based on market intelligence signals.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="finance" data-search="npv net present value discounted cashflow investment">
+        <div class="gl-abbr">NPV <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Finance</span></div>
+        <div class="gl-full">Net Present Value</div>
+        <div class="gl-def">A financial metric representing the present value of future cash flows discounted at a required rate of return. Positive NPV = value-creating investment. Mining project NPVs are extremely sensitive to long-term price assumptions — a 20% reduction in projected mineral price can eliminate NPV entirely, which is why engineered price crashes are so effective at killing investment cases.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="finance" data-search="offtake agreement purchase contract buyer mineral long term">
+        <div class="gl-abbr">Off-take <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Finance</span></div>
+        <div class="gl-full">Off-take Agreement</div>
+        <div class="gl-def">A long-term contract between a mineral producer and a buyer, guaranteeing the purchase of a specified volume of output at agreed pricing terms (fixed price, index-linked, or floor-and-cap). Off-take agreements reduce price risk and can be used to secure project financing. Concentrated single-buyer off-take agreements are flagged by the MFI framework as high manipulation risk.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="finance" data-search="ifc international finance corporation world bank private sector">
+        <div class="gl-abbr">IFC <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Finance</span></div>
+        <div class="gl-full">International Finance Corporation</div>
+        <div class="gl-def">The private sector arm of the World Bank Group. Provides debt, equity, and advisory services to private sector projects in developing countries. A key DFI partner for Rwanda's mining sector — IFC financing is structurally more resilient to market manipulation cycles than commercial bank financing, and IFC's environmental and social standards align with Rwanda's compliance-premium positioning.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="finance" data-search="eximbank export import bank us financing guarantee">
+        <div class="gl-abbr">Ex-Im Bank <span class="gl-abbr-tag" style="background:rgba(27,108,168,0.1);color:#1B4F7A">Finance</span></div>
+        <div class="gl-full">Export-Import Bank of the United States</div>
+        <div class="gl-def">US government agency providing export financing guarantees and loans to support US exports and supply chain security. Increasingly active in critical mineral projects as part of the US strategic response to Chinese supply chain dominance. Ex-Im Bank financing for rare earth projects is cited in the China case study as one mechanism that breaks the price-manipulation cycle.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── GEOPOLITICAL ── -->
+  <div class="gl-category" data-cat="geopolitical">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">🌍</span>
+      <span class="gl-cat-title">Geopolitical &amp; Strategic</span>
+      <span class="gl-cat-count" id="count-geopolitical"></span>
+    </div>
+    <div class="gl-grid" id="grid-geopolitical">
+
+      <div class="gl-card" data-cat="geopolitical" data-search="critical minerals strategic supply chain security government">
+        <div class="gl-abbr">Critical Minerals <span class="gl-abbr-tag" style="background:rgba(192,0,0,0.1);color:#C00000">Geopolitical</span></div>
+        <div class="gl-full">Critical Minerals / Strategic Minerals</div>
+        <div class="gl-def">Minerals designated by governments as essential to national security, economic competitiveness, or the energy transition — and for which supply chain concentration poses strategic risk. The EU lists 34 critical raw materials; the US lists 50 critical minerals. Tantalum, tungsten, and tin are included on both lists, as is gallium, germanium, cobalt, and lithium.</div>
+        <div class="gl-context">Critical mineral designation is both a protection (triggers government support programmes) and a risk signal (attracts geopolitical competition for supply control).</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="geopolitical" data-search="supply chain due diligence traceability conflict free responsible">
+        <div class="gl-abbr">SCDD <span class="gl-abbr-tag" style="background:rgba(192,0,0,0.1);color:#C00000">Geopolitical</span></div>
+        <div class="gl-full">Supply Chain Due Diligence</div>
+        <div class="gl-def">The process of identifying and managing risks (conflict financing, human rights violations, environmental damage) in mineral supply chains. Mandated by Dodd-Frank §1502, the EU CMR, and aligned with OECD DDG standards. SCDD compliance is the basis of Rwanda's compliance premium — but also imposes costs that create pricing asymmetry vs. non-compliant competitors.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="geopolitical" data-search="drc democratic republic congo mineral conflict artisanal">
+        <div class="gl-abbr">DRC <span class="gl-abbr-tag" style="background:rgba(192,0,0,0.1);color:#C00000">Geopolitical</span></div>
+        <div class="gl-full">Democratic Republic of the Congo</div>
+        <div class="gl-def">Rwanda's neighbour and the world's largest source of cobalt and a major source of coltan (tantalum ore) and cassiterite. DRC's complex conflict dynamics — armed groups financing through mineral revenue — are the origin of the global conflict minerals regulatory framework. Rwanda serves as a significant transit, processing, and export corridor for DRC minerals under certified chains of custody.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span><span class="gl-page-badge">Architecture</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="geopolitical" data-search="asm artisanal small scale mining africa informal">
+        <div class="gl-abbr">ASM <span class="gl-abbr-tag" style="background:rgba(192,0,0,0.1);color:#C00000">Geopolitical</span></div>
+        <div class="gl-full">Artisanal and Small-Scale Mining</div>
+        <div class="gl-def">Informal or semi-formal mineral extraction by individual miners or small cooperatives using manual methods with limited capital equipment. ASM accounts for a significant share of 3T mineral production in Rwanda and DRC. Formalising ASM into certified, traceable supply chains is central to Rwanda's strategy for capturing compliance premium markets and meeting regulatory requirements.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Financing Models</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="geopolitical" data-search="geopolitical bloc western china non-aligned mineral trade segmentation">
+        <div class="gl-abbr">Market Blocs <span class="gl-abbr-tag" style="background:rgba(192,0,0,0.1);color:#C00000">Geopolitical</span></div>
+        <div class="gl-full">Geopolitical Market Blocs (Mineral Trade Segmentation)</div>
+        <div class="gl-def">The emerging fragmentation of global mineral markets into three distinct spheres driven by geopolitical competition: (1) Western Compliance Bloc (EU/US/Japan/Korea/Australia) — demanding certified, traceable, non-Chinese-processed minerals; (2) Chinese Processing Sphere — absorbing non-certified African and Asian supply; (3) Non-Aligned Middle (India, Gulf states, Turkey) — opportunistic participation in both blocs. This fragmentation is structural and reshaping trade flows for decades.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Market Manipulation</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── TECHNICAL ── -->
+  <div class="gl-category" data-cat="technical">
+    <div class="gl-cat-header">
+      <span class="gl-cat-icon">🔬</span>
+      <span class="gl-cat-title">Technical &amp; Analytical</span>
+      <span class="gl-cat-count" id="count-technical"></span>
+    </div>
+    <div class="gl-grid" id="grid-technical">
+
+      <div class="gl-card" data-cat="technical" data-search="fte full time equivalent staffing cost human resources">
+        <div class="gl-abbr">FTE <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">Full-Time Equivalent</div>
+        <div class="gl-def">A unit of measurement for workforce capacity: 1 FTE = one person working full time (typically 8 hours/day, 5 days/week). Used in project budgeting and staffing analysis to express total human resource requirements regardless of whether they are met by full-time employees, part-time staff, or consultants. Relevant in MFI team capacity planning and grant budget analysis.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Technical Proposal</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="kpi key performance indicator monitoring evaluation">
+        <div class="gl-abbr">KPI <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">Key Performance Indicator</div>
+        <div class="gl-def">A quantifiable measure used to evaluate progress toward specific objectives. In the MFI context, KPIs include: buyer concentration index (target: no single buyer &gt;30%), compliance premium level (target: &gt;15% above non-certified price), price anomaly detection rate, and number of manipulation warnings issued and acted upon by RMB.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Technical Proposal</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="api application programming interface data integration system">
+        <div class="gl-abbr">API <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">Application Programming Interface</div>
+        <div class="gl-def">A software interface that allows different systems to communicate and exchange data. In the MFI architecture, APIs enable automated data ingestion from external price feeds (LME, Fastmarkets), RRA export databases, and RMB internal systems — ensuring the MFI dashboard reflects current data without manual entry.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Demo</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="ebm electronic billing machine rwanda tax invoice">
+        <div class="gl-abbr">EBM <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">Electronic Billing Machine</div>
+        <div class="gl-def">Rwanda Revenue Authority's mandatory fiscal invoicing device, required for VAT-registered businesses. EBM transaction data is a rich primary data source for the MFI system — providing real-time revenue flows, sales patterns, and financial activity of licensed mining companies that can be used to validate production claims and detect financial anomalies.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Demo</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="vat etax tax declaration filing rwanda rra">
+        <div class="gl-abbr">eTax <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">eTax (RRA Electronic Tax System)</div>
+        <div class="gl-def">Rwanda Revenue Authority's online tax filing and management system, through which businesses submit VAT declarations, income tax returns, and other filings. eTax data — including declared revenues, input costs, and export values — is a primary data source for MFI financial analysis of licensed mining companies.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Demo</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="sap accounting records financial reporting enterprise">
+        <div class="gl-abbr">SAP <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">SAP (Systems, Applications &amp; Products in Data Processing)</div>
+        <div class="gl-def">Enterprise resource planning (ERP) software widely used in large organisations for financial management, accounting, procurement, and reporting. Referenced in the FINDAP financial management system in the context of SAP-compatible accounting records output format, enabling MFI financial data to integrate with corporate financial systems of mining licence holders.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span></div>
+      </div>
+
+      <div class="gl-card" data-cat="technical" data-search="csm current situation model automated tool analysis">
+        <div class="gl-abbr">CSM <span class="gl-abbr-tag" style="background:rgba(26,92,56,0.1);color:#1A5C38">Technical</span></div>
+        <div class="gl-full">Current Situation Model</div>
+        <div class="gl-def">The automated analytical tool being developed as Phase 1 of the RMB-FinIntel programme. The CSM provides an integrated dashboard view of current mineral sector performance — production volumes, export values, price benchmarks, licence status, and company financial health — enabling RMB to maintain a real-time, data-driven picture of Rwanda's mining sector without manual report compilation.</div>
+        <div class="gl-pages"><span class="gl-page-badge">Architecture</span><span class="gl-page-badge">Energy</span><span class="gl-page-badge">Demo</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- /view-cat-content -->
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ALPHABETICAL VIEW
+════════════════════════════════════════════════════════════ -->
+<section class="section" style="padding-top:0" id="view-alpha-content">
+
+  <!-- A -->
+  <div class="alpha-group" data-letter="A">
+    <div class="alpha-letter-head">A</div>
+    <div class="alpha-row" data-letter="A" data-search="ami asian metal index rare earth benchmark"><div class="alpha-code">AMI</div><div><div class="alpha-full">Asian Metal Index</div><div class="alpha-def">Chinese-controlled global pricing benchmark for rare earths. Owning the benchmark gave Beijing the ability to define "the market price" without buying or selling anything — the core instrument of the rare earth competitive destruction strategy.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="A" data-search="api application programming interface data integration"><div class="alpha-code">API</div><div><div class="alpha-full">Application Programming Interface</div><div class="alpha-def">Software interface enabling systems to exchange data. Used in MFI architecture for automated ingestion from LME, Fastmarkets, and RRA export databases.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+    <div class="alpha-row" data-letter="A" data-search="apt ammonium paratungstate tungsten benchmark mtu"><div class="alpha-code">APT</div><div><div class="alpha-full">Ammonium Paratungstate</div><div class="alpha-def">Primary intermediate tungsten product and global pricing benchmark. Priced in USD per MTU (Metric Tonne Unit = 10 kg WO₃). China controls 82% of global supply, making APT prices reflect Chinese strategic decisions more than free market forces.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+    <div class="alpha-row" data-letter="A" data-search="asm artisanal small scale mining africa informal"><div class="alpha-code">ASM</div><div><div class="alpha-full">Artisanal and Small-Scale Mining</div><div class="alpha-def">Informal or semi-formal mineral extraction by individual miners or small cooperatives. A significant share of Rwanda's 3T production. Formalisation into certified supply chains is central to capturing compliance premium markets.</div><div class="alpha-tags"><span class="alpha-cat-badge">Geopolitical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- C -->
+  <div class="alpha-group" data-letter="C">
+    <div class="alpha-letter-head">C</div>
+    <div class="alpha-row" data-letter="C" data-search="capex capital expenditure machinery equipment investment"><div class="alpha-code">Capex</div><div><div class="alpha-full">Capital Expenditure</div><div class="alpha-def">Spending on physical assets generating multi-year economic benefits. Mining capex decisions are long-lead and highly price-signal sensitive. MFI's investment calibration framework governs when to commit, hold, or freeze capex.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="C" data-search="cassiterite tin ore sno2 rwanda export"><div class="alpha-code">Cassiterite</div><div><div class="alpha-full">Cassiterite (Tin Ore, SnO₂)</div><div class="alpha-def">Rwanda's primary tin export product. Smelted into refined tin metal mainly in Malaysia, China, and Indonesia. Rwanda receives ore prices discounted by smelter processing margins.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+    <div class="alpha-row" data-letter="C" data-search="coltan columbite tantalite ore tantalum drc rwanda"><div class="alpha-code">Coltan</div><div><div class="alpha-full">Columbite-Tantalite (Tantalum ore)</div><div class="alpha-def">Primary ore mineral for tantalum extraction. Rwanda and DRC are major global sources. Processed into tantalum pentoxide and metal by smelters in Malaysia (AMG) and Germany (H.C. Starck). Rwanda is a price-taker relative to processors.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+    <div class="alpha-row" data-letter="C" data-search="csm current situation model automated tool dashboard"><div class="alpha-code">CSM</div><div><div class="alpha-full">Current Situation Model</div><div class="alpha-def">Automated analytical tool — Phase 1 of RMB-FinIntel. Provides an integrated dashboard of mineral sector performance: production volumes, export values, price benchmarks, licence status, and company financial health.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+    <div class="alpha-row" data-letter="C" data-search="ctc conflict free tin certificate smelter"><div class="alpha-code">CTC</div><div><div class="alpha-full">Conflict-Free Tin Certificate</div><div class="alpha-def">Certification ensuring tin ore has been sourced from conflict-free, audited mines and smelters. Part of Rwanda's compliance premium infrastructure in Western markets.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- D -->
+  <div class="alpha-group" data-letter="D">
+    <div class="alpha-letter-head">D</div>
+    <div class="alpha-row" data-letter="D" data-search="dfars defense federal acquisition regulation supplement"><div class="alpha-code">DFARS</div><div><div class="alpha-full">Defense Federal Acquisition Regulation Supplement</div><div class="alpha-def">US DoD procurement rules. 2027 amendment mandates non-Chinese sourcing for specified minerals in defense contracts — creating policy-mandated demand independent of market price, breaking China's rare earth pricing leverage.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="D" data-search="dfi development finance institution blended capital patient"><div class="alpha-code">DFI</div><div><div class="alpha-full">Development Finance Institution</div><div class="alpha-def">Specialised institutions (IFC, BII, Proparco, DEG, FMO) financing private sector projects in developing markets. DFI-financed mining companies are more resilient to price manipulation cycles than commercially financed peers.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+    <div class="alpha-row" data-letter="D" data-search="dodd frank 1502 conflict minerals sec disclosure"><div class="alpha-code">Dodd-Frank §1502</div><div><div class="alpha-full">Section 1502, Dodd-Frank Wall Street Reform Act (2010)</div><div class="alpha-def">US legislation requiring listed companies to disclose conflict mineral (3TG) sourcing from DRC/adjoining countries and conduct supply chain due diligence. Creates the compliance premium market for Rwanda's certified exports — but also imposes asymmetric compliance costs.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="D" data-search="drc democratic republic congo conflict mineral coltan"><div class="alpha-code">DRC</div><div><div class="alpha-full">Democratic Republic of the Congo</div><div class="alpha-def">Rwanda's neighbour and world's largest cobalt source; major coltan and cassiterite producer. Rwanda serves as a significant transit and certified export corridor for DRC minerals. The DRC conflict dynamic gave rise to the global 3TG regulatory framework.</div><div class="alpha-tags"><span class="alpha-cat-badge">Geopolitical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- E -->
+  <div class="alpha-group" data-letter="E">
+    <div class="alpha-letter-head">E</div>
+    <div class="alpha-row" data-letter="E" data-search="ebm electronic billing machine rwanda rra tax invoice"><div class="alpha-code">EBM</div><div><div class="alpha-full">Electronic Billing Machine</div><div class="alpha-def">RRA mandatory fiscal invoicing device for VAT-registered businesses. EBM data provides real-time revenue flows and financial activity of licensed mining companies — a primary MFI data source for production validation and anomaly detection.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+    <div class="alpha-row" data-letter="E" data-search="etax rra electronic tax system declaration filing"><div class="alpha-code">eTax</div><div><div class="alpha-full">eTax (RRA Electronic Tax System)</div><div class="alpha-def">RRA's online tax filing system. Declared revenues, input costs, and export values from eTax are primary data sources for MFI financial analysis of licensed mining companies.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+    <div class="alpha-row" data-letter="E" data-search="eu crma critical raw materials act european union 2024"><div class="alpha-code">EU CRMA</div><div><div class="alpha-full">European Union Critical Raw Materials Act (2024)</div><div class="alpha-def">EU regulation setting strategic benchmarks for domestic extraction (10%), processing (40%), and recycling (25%) of critical minerals by 2030. Creates certified partner frameworks benefiting compliant African producers including Rwanda.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="E" data-search="eximbank export import bank us financing guarantee mineral"><div class="alpha-code">Ex-Im Bank</div><div><div class="alpha-full">Export-Import Bank of the United States</div><div class="alpha-def">US government agency providing export financing guarantees. Increasingly active in critical mineral projects as part of the US strategic response to Chinese supply chain dominance. Cited as a cycle-breaking tool in the rare earth case study.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- F -->
+  <div class="alpha-group" data-letter="F">
+    <div class="alpha-letter-head">F</div>
+    <div class="alpha-row" data-letter="F" data-search="fob free on board export logistics incoterm price"><div class="alpha-code">FOB</div><div><div class="alpha-full">Free On Board</div><div class="alpha-def">International trade term (Incoterm): seller responsible for loading goods at named port; buyer assumes all risk/cost thereafter. FOB price is the standard export pricing reference. Logistics cost as % of FOB price is a key MFI competitiveness metric.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+    <div class="alpha-row" data-letter="F" data-search="fte full time equivalent staffing cost human resources workforce"><div class="alpha-code">FTE</div><div><div class="alpha-full">Full-Time Equivalent</div><div class="alpha-def">Workforce measurement unit: 1 FTE = one person working full time. Used in project budgeting, staffing analysis, and MFI team capacity planning. Also used in grant budget analysis for Gavi IRC reviews.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- H -->
+  <div class="alpha-group" data-letter="H">
+    <div class="alpha-letter-head">H</div>
+    <div class="alpha-row" data-letter="H" data-search="hhi herfindahl hirschman index market concentration buyer"><div class="alpha-code">HHI</div><div><div class="alpha-full">Herfindahl–Hirschman Index</div><div class="alpha-def">Standard market concentration measure: sum of squared market share percentages. &lt;1,500 = competitive; 1,500–2,500 = moderate; &gt;2,500 = highly concentrated. MFI triggers an advisory when Rwanda's buyer HHI exceeds 40% in any single mineral.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- I -->
+  <div class="alpha-group" data-letter="I">
+    <div class="alpha-letter-head">I</div>
+    <div class="alpha-row" data-letter="I" data-search="ifc international finance corporation world bank private sector"><div class="alpha-code">IFC</div><div><div class="alpha-full">International Finance Corporation</div><div class="alpha-def">Private sector arm of the World Bank Group. Provides debt, equity, and advisory to private sector projects in developing countries. Key DFI partner for Rwanda's mining sector — IFC financing is more resilient to market manipulation cycles than commercial bank funding.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+    <div class="alpha-row" data-letter="I" data-search="ira inflation reduction act us critical mineral ev battery"><div class="alpha-code">IRA</div><div><div class="alpha-full">Inflation Reduction Act (USA, 2022)</div><div class="alpha-def">US legislation providing EV and clean energy tax credits conditional on critical minerals from the US or FTA partner countries — explicitly excluding Chinese-processed minerals. Creates significant structural demand for non-Chinese critical mineral supply chains.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="I" data-search="irr internal rate return investment profitability mining project"><div class="alpha-code">IRR</div><div><div class="alpha-full">Internal Rate of Return</div><div class="alpha-def">Financial metric: the discount rate at which NPV of all cash flows = 0. Commercial mining investors typically require 15–25%+ IRR. Engineered price crashes eliminate IRR, causing investor exit — the core mechanism of competitive destruction.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="I" data-search="itsci tin tantalum tungsten initiative supply chain traceability"><div class="alpha-code">ITSCI</div><div><div class="alpha-full">ITRI Tin Supply Chain Initiative</div><div class="alpha-def">Industry-led traceability programme for 3T minerals from the Great Lakes region. Bag-and-tag tracking from mine to export. Enables Dodd-Frank §1502 and EU CMR compliance. Rwanda's primary 3T traceability infrastructure.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+  </div>
+
+  <!-- J -->
+  <div class="alpha-group" data-letter="J">
+    <div class="alpha-letter-head">J</div>
+    <div class="alpha-row" data-letter="J" data-search="jogmec japan oil gas metals corporation financing resource"><div class="alpha-code">JOGMEC</div><div><div class="alpha-full">Japan Oil, Gas and Metals National Corporation</div><div class="alpha-def">Japanese government agency supporting overseas resource development. JOGMEC financing provides government-backed capital more resilient to market manipulation cycles than commercial funding. Cited as a cycle-breaking mechanism in the rare earth case study.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- K -->
+  <div class="alpha-group" data-letter="K">
+    <div class="alpha-letter-head">K</div>
+    <div class="alpha-row" data-letter="K" data-search="kpi key performance indicator monitoring evaluation target"><div class="alpha-code">KPI</div><div><div class="alpha-full">Key Performance Indicator</div><div class="alpha-def">Quantifiable measure of progress toward objectives. Key MFI KPIs: buyer concentration index (target: no single buyer &gt;30%), compliance premium (target: &gt;15%), price anomaly detection rate, and manipulation warnings issued and acted upon.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- L -->
+  <div class="alpha-group" data-letter="L">
+    <div class="alpha-letter-head">L</div>
+    <div class="alpha-row" data-letter="L" data-search="lme london metal exchange tin copper futures trading"><div class="alpha-code">LME</div><div><div class="alpha-full">London Metal Exchange</div><div class="alpha-def">World's leading metals exchange for price discovery and hedging. Tin is the least liquid LME metal, making it susceptible to speculative price distortion. The January 2026 tin spike to $56,800/t originated partly from LME/SHFE positioning, not physical tightness.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+  </div>
+
+  <!-- M -->
+  <div class="alpha-group" data-letter="M">
+    <div class="alpha-letter-head">M</div>
+    <div class="alpha-row" data-letter="M" data-search="mfi mineral financial intelligence programme system analytics"><div class="alpha-code">MFI</div><div><div class="alpha-full">Mineral Financial Intelligence (Programme)</div><div class="alpha-def">The proposed analytical programme at the heart of this proposal. A structured system for monitoring, modelling, and interpreting global mineral market dynamics — price trends, buyer behaviour, geopolitical shifts, and manipulation signals — to generate data-driven intelligence guiding RMB's decisions and Rwanda's mineral sector investment strategy.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">All pages</span></div></div></div>
+    <div class="alpha-row" data-letter="M" data-search="minicom ministry trade industry commerce rwanda government"><div class="alpha-code">MINICOM</div><div><div class="alpha-full">Ministry of Trade and Industry (Rwanda)</div><div class="alpha-def">Rwandan ministry responsible for trade policy and industrial development. MFI escalates compliance premium erosion signals and geopolitical bloc realignment alerts to MINICOM for strategic policy response.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="M" data-search="mtu metric tonne unit tungsten measurement apt pricing"><div class="alpha-code">MTU</div><div><div class="alpha-full">Metric Tonne Unit</div><div class="alpha-def">Tungsten market unit of measurement: 1 MTU = 10 kg of WO₃ content. APT is priced in USD/MTU. As of Q1 2026, APT traded at ~$520–573/MTU.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+  </div>
+
+  <!-- N -->
+  <div class="alpha-group" data-letter="N">
+    <div class="alpha-letter-head">N</div>
+    <div class="alpha-row" data-letter="N" data-search="npv net present value discounted cashflow investment project"><div class="alpha-code">NPV</div><div><div class="alpha-full">Net Present Value</div><div class="alpha-def">Present value of future cash flows discounted at a required rate of return. Positive NPV = value-creating investment. Mining project NPVs are extremely price-assumption sensitive: a 20% price reduction can eliminate NPV entirely — why engineered price crashes are so effective at killing investment cases.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+  </div>
+
+  <!-- O -->
+  <div class="alpha-group" data-letter="O">
+    <div class="alpha-letter-head">O</div>
+    <div class="alpha-row" data-letter="O" data-search="oecd due diligence guidance minerals conflict responsible supply"><div class="alpha-code">OECD DDG</div><div><div class="alpha-full">OECD Due Diligence Guidance for Responsible Supply Chains of Minerals</div><div class="alpha-def">International five-step framework for identifying and managing risks in mineral supply chains from conflict-affected areas. Basis of Dodd-Frank §1502 and EU CMR compliance. Global reference standard for responsible mineral sourcing.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+    <div class="alpha-row" data-letter="O" data-search="offtake off-take agreement purchase contract buyer long term mineral"><div class="alpha-code">Off-take</div><div><div class="alpha-full">Off-take Agreement</div><div class="alpha-def">Long-term contract guaranteeing purchase of specified mineral volumes at agreed pricing terms. Can secure project financing but concentrated single-buyer off-take agreements are flagged by MFI as high manipulation risk.</div><div class="alpha-tags"><span class="alpha-cat-badge">Finance</span><span class="alpha-cat-badge">Financing Models</span></div></div></div>
+    <div class="alpha-row" data-letter="O" data-search="otc over counter bilateral trading tantalum opaque pricing"><div class="alpha-code">OTC</div><div><div class="alpha-full">Over-the-Counter (Market)</div><div class="alpha-def">Trading directly between two parties without a formal exchange. Tantalum and tungsten are primarily OTC markets — no public benchmark, bilateral pricing, fragmented price discovery. Opacity increases manipulation risk: the most informed participants dominate.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- R -->
+  <div class="alpha-group" data-letter="R">
+    <div class="alpha-letter-head">R</div>
+    <div class="alpha-row" data-letter="R" data-search="rdb rwanda development board investment promotion"><div class="alpha-code">RDB</div><div><div class="alpha-full">Rwanda Development Board</div><div class="alpha-def">Rwanda's primary investment promotion authority. Key partner for MFI investment advisory outputs: when MFI confirms structural demand growth, RDB coordinates accelerated licensing and investor outreach.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="R" data-search="ree reo rare earth elements oxides china monopoly processing"><div class="alpha-code">REE / REO</div><div><div class="alpha-full">Rare Earth Elements / Rare Earth Oxides</div><div class="alpha-def">17 metallic elements critical for EVs, wind turbines, electronics, and defence. China controls ~60% of mining and 85%+ of processing. The primary documented case study of systematic market manipulation to eliminate competitors — directly applicable to Rwanda's 3T analysis.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="R" data-search="rmb rwanda mines petroleum gas board regulator licensing"><div class="alpha-code">RMB</div><div><div class="alpha-full">Rwanda Mines, Petroleum and Gas Board</div><div class="alpha-def">Primary regulatory authority for Rwanda's extractive sector. Responsible for mining licences, compliance enforcement, responsible mineral development, and — under the MFI programme — producing mineral market intelligence to guide strategic investment and licensing decisions.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">All pages</span></div></div></div>
+    <div class="alpha-row" data-letter="R" data-search="rra rwanda revenue authority tax export declaration customs"><div class="alpha-code">RRA</div><div><div class="alpha-full">Rwanda Revenue Authority</div><div class="alpha-def">Rwanda's tax and customs authority. Primary MFI data source via export declarations: buyer identification, volumes, declared prices, and trade flow patterns enabling buyer concentration monitoring and export unit value tracking.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- S -->
+  <div class="alpha-group" data-letter="S">
+    <div class="alpha-letter-head">S</div>
+    <div class="alpha-row" data-letter="S" data-search="sap enterprise resource planning erp accounting financial"><div class="alpha-code">SAP</div><div><div class="alpha-full">SAP (Systems, Applications &amp; Products in Data Processing)</div><div class="alpha-def">Enterprise ERP software widely used for financial management and accounting. Referenced in FINDAP for SAP-compatible accounting records output, enabling MFI financial data to integrate with corporate systems of mining licence holders.</div><div class="alpha-tags"><span class="alpha-cat-badge">Technical</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+    <div class="alpha-row" data-letter="S" data-search="scdd supply chain due diligence traceability conflict responsible minerals"><div class="alpha-code">SCDD</div><div><div class="alpha-full">Supply Chain Due Diligence</div><div class="alpha-def">Process of identifying and managing risks in mineral supply chains. Mandated by Dodd-Frank §1502, EU CMR, and OECD DDG. SCDD compliance is the basis of Rwanda's compliance premium — but imposes costs creating pricing asymmetry vs. non-compliant competitors.</div><div class="alpha-tags"><span class="alpha-cat-badge">Geopolitical</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="S" data-search="sec securities exchange commission filing conflict minerals annual report"><div class="alpha-code">SEC</div><div><div class="alpha-full">US Securities and Exchange Commission</div><div class="alpha-def">US federal securities regulator. Receives annual conflict minerals reports from listed companies under Dodd-Frank §1502. SEC disclosure requirements are a key driver of corporate demand for certified conflict-free minerals.</div><div class="alpha-tags"><span class="alpha-cat-badge">Regulatory</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+    <div class="alpha-row" data-letter="S" data-search="shfe shanghai futures exchange china tin copper speculative"><div class="alpha-code">SHFE</div><div><div class="alpha-full">Shanghai Futures Exchange</div><div class="alpha-def">China's primary commodity futures exchange. SHFE tin contracts are increasingly influential in global price formation. In January 2026, SHFE tin volumes exceeded 1M tonnes in a single session — 2× annual world physical supply — triggering Chinese regulatory intervention.</div><div class="alpha-tags"><span class="alpha-cat-badge">Market</span><span class="alpha-cat-badge">Market Manipulation</span></div></div></div>
+  </div>
+
+  <!-- U -->
+  <div class="alpha-group" data-letter="U">
+    <div class="alpha-letter-head">U</div>
+    <div class="alpha-row" data-letter="U" data-search="usgs united states geological survey mineral commodity summary data"><div class="alpha-code">USGS</div><div><div class="alpha-full">United States Geological Survey</div><div class="alpha-def">US federal agency publishing annual Mineral Commodity Summaries — the world's most comprehensive freely available database of production, trade, and price data for 90+ commodities. A primary reference for MFI baseline data and global supply-demand modelling.</div><div class="alpha-tags"><span class="alpha-cat-badge">Institution</span><span class="alpha-cat-badge">Architecture</span></div></div></div>
+  </div>
+
+  <!-- W -->
+  <div class="alpha-group" data-letter="W">
+    <div class="alpha-letter-head">W</div>
+    <div class="alpha-row" data-letter="W" data-search="wolframite tungsten ore mineral export rwanda wo4"><div class="alpha-code">Wolframite</div><div><div class="alpha-full">Wolframite (Iron-Manganese Tungstate — Tungsten Ore)</div><div class="alpha-def">Primary ore mineral for tungsten production. Rwanda exports wolframite concentrate, which is processed into APT and subsequently into tungsten metal, carbide, or alloys. APT price benchmark is the primary market reference for wolframite trade.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">Smart Stock</span></div></div></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="alpha-group" data-letter="3">
+    <div class="alpha-letter-head">3T / 3TG</div>
+    <div class="alpha-row" data-letter="3" data-search="3t tin tantalum tungsten conflict minerals great lakes rwanda"><div class="alpha-code">3T</div><div><div class="alpha-full">Tin, Tantalum, and Tungsten</div><div class="alpha-def">Rwanda's three core mineral exports and the focus of international conflict minerals regulations. Each has distinct market structures, dominant actor profiles, and manipulation risk levels. Together with gold, they form the 3TG classification under Dodd-Frank §1502.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">All pages</span></div></div></div>
+    <div class="alpha-row" data-letter="3" data-search="3tg tin tantalum tungsten gold dodd frank conflict sec"><div class="alpha-code">3TG</div><div><div class="alpha-full">Tin, Tantalum, Tungsten, and Gold</div><div class="alpha-def">The four "conflict minerals" designated under Dodd-Frank §1502. The 3TG framework created the international compliance infrastructure that Rwanda's certified export programme is built upon. Companies using 3TG in products must disclose sourcing from DRC/adjoining countries.</div><div class="alpha-tags"><span class="alpha-cat-badge">Mineral</span><span class="alpha-cat-badge">Regulatory</span></div></div></div>
+  </div>
+
+</section>
+
+
+<footer class="rmb-footer">
+  <div class="footer-brand">RMB-<span>FinIntel</span></div>
+  <div style="display:flex;gap:16px;flex-wrap:wrap">
+    <a href="index.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Technical Proposal</a>
+    <a href="market-manipulation.html" style="font-size:12px;color:rgba(255,255,255,0.55);text-decoration:none">Market Manipulation</a>
+    <a href="glossary.html" style="font-size:12px;color:var(--gold);text-decoration:none;font-weight:700">Glossary</a>
+  </div>
+  <div class="footer-meta">RMB Mineral Financial Intelligence · Reference Module · Confidential Working Document</div>
+</footer>
+
+</div><!-- /page-wrap -->
+
+<script>
+var currentCat   = 'all';
+var currentView  = 'cat';
+var currentLetter = 'ALL';
+
+/* ── View switcher ── */
+function switchView(view) {
+  currentView = view;
+  var catSection  = document.getElementById('view-cat-content');
+  var alphaSection= document.getElementById('view-alpha-content');
+  var catFilters  = document.getElementById('cat-filters');
+  var alphaFilters= document.getElementById('alpha-filters');
+  var btnCat   = document.getElementById('btn-view-cat');
+  var btnAlpha = document.getElementById('btn-view-alpha');
+
+  if (view === 'cat') {
+    catSection.style.display   = 'block';
+    alphaSection.style.display = 'none';
+    catFilters.style.display   = '';
+    alphaFilters.style.display = 'none';
+    btnCat.classList.add('active');
+    btnAlpha.classList.remove('active');
+  } else {
+    catSection.style.display   = 'none';
+    alphaSection.style.display = 'block';
+    catFilters.style.display   = 'none';
+    alphaFilters.style.display = '';
+    btnCat.classList.remove('active');
+    btnAlpha.classList.add('active');
+    filterAlpha();
+  }
+  /* Re-run search filter */
+  filterGlossary();
+}
+
+/* ── Category view filter ── */
+function filterGlossary() {
+  var query = (document.getElementById('gl-search-input').value || '').toLowerCase();
+
+  if (currentView === 'cat') {
+    var cards = document.querySelectorAll('#view-cat-content .gl-card');
+    var anyVisible = false;
+    cards.forEach(function(card) {
+      var catMatch = currentCat === 'all' || card.getAttribute('data-cat') === currentCat;
+      var searchText = (card.getAttribute('data-search') || '') + ' ' + card.textContent.toLowerCase();
+      var show = catMatch && (query === '' || searchText.includes(query));
+      card.classList.toggle('hidden', !show);
+      if (show) anyVisible = true;
+    });
+    document.querySelectorAll('#view-cat-content .gl-category').forEach(function(cat) {
+      if (currentCat !== 'all' && cat.getAttribute('data-cat') !== currentCat) { cat.style.display='none'; return; }
+      cat.style.display = '';
+      var vis = cat.querySelectorAll('.gl-card:not(.hidden)').length;
+      cat.style.display = vis > 0 ? '' : 'none';
+    });
+    document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
+    updateCounts();
+  } else {
+    /* Alpha search */
+    var rows = document.querySelectorAll('#view-alpha-content .alpha-row');
+    var anyVisible = false;
+    rows.forEach(function(row) {
+      var letterMatch = currentLetter === 'ALL' || row.getAttribute('data-letter') === currentLetter;
+      var searchText  = (row.getAttribute('data-search') || '') + ' ' + row.textContent.toLowerCase();
+      var show = letterMatch && (query === '' || searchText.includes(query));
+      row.classList.toggle('hidden', !show);
+      if (show) anyVisible = true;
+    });
+    document.querySelectorAll('#view-alpha-content .alpha-group').forEach(function(g) {
+      var vis = g.querySelectorAll('.alpha-row:not(.hidden)').length;
+      g.style.display = vis > 0 ? '' : 'none';
+    });
+    document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
+  }
+}
+
+function filterCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('#cat-filters .gl-filter').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  filterGlossary();
+}
+
+function filterAlpha() {
+  var rows = document.querySelectorAll('#view-alpha-content .alpha-row');
+  rows.forEach(function(row) {
+    var match = currentLetter === 'ALL' || row.getAttribute('data-letter') === currentLetter;
+    row.classList.toggle('hidden', !match);
+  });
+  document.querySelectorAll('#view-alpha-content .alpha-group').forEach(function(g) {
+    var vis = g.querySelectorAll('.alpha-row:not(.hidden)').length;
+    g.style.display = vis > 0 ? '' : 'none';
+  });
+}
+
+function filterLetter(letter, btn) {
+  currentLetter = letter;
+  document.querySelectorAll('#alpha-filters .gl-filter').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  filterGlossary();
+}
+
+function updateCounts() {
+  ['regulatory','market','institutions','minerals','finance','geopolitical','technical'].forEach(function(cat) {
+    var el = document.getElementById('count-' + cat);
+    if (!el) return;
+    var grid = document.getElementById('grid-' + cat);
+    if (!grid) return;
+    var total   = grid.querySelectorAll('.gl-card').length;
+    var visible = grid.querySelectorAll('.gl-card:not(.hidden)').length;
+    el.textContent = (currentCat === 'all' && document.getElementById('gl-search-input').value === '')
+      ? total + ' terms' : visible + ' / ' + total + ' terms';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  /* Wrap existing category content in a named div */
+  updateCounts();
+});
+</script>
+<script src="nav.js"></script>
+</body>
+</html>

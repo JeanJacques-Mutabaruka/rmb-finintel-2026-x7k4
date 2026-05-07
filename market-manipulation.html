@@ -58,7 +58,7 @@
 /* ── Strategy playbook cards ── */
 .playbook-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .pb-card {
@@ -160,7 +160,7 @@
 /* ── MFI framework cards ── */
 .mfi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
 .mfi-card {
@@ -280,6 +280,9 @@
 /* Responsive */
 @media (max-width: 768px) {
   .actor-grid, .playbook-grid, .mfi-grid, .rw-grid { grid-template-columns: 1fr; }
+  .geo-layer-grid { grid-template-columns: 1fr !important; }
+  .inv-pillar-grid { grid-template-columns: 1fr !important; }
+  .inv-pillar-grid > div { border-right: none !important; border-bottom: 1px solid var(--border-lt); }
   .risk-matrix-table { display: block; overflow-x: auto; }
   .c-step { flex-direction: column; gap: 10px; }
   .c-step-left { flex-direction: row; }
@@ -310,6 +313,9 @@
     <a href="financing-models.html">🏦 Financing Models</a>
     <a href="smart-stock.html">📡 Smart Stock</a>
     <a href="market-manipulation.html" class="active" style="color:#C00000;background:rgba(192,0,0,0.1);border-left-color:#C00000;font-weight:700">⚠️ Market Manipulation</a>
+    <div class="sb-divider"></div>
+    <span class="sb-section-label">Reference</span>
+    <a href="glossary.html">📖 Glossary &amp; Abbreviations</a>
     <div class="sb-divider"></div>
     <span class="sb-section-label">Current Situation Model</span>
     <button class="sb-group-trigger" id="sb-csm-trigger" onclick="sbToggle(this)">
@@ -343,20 +349,20 @@
   <div class="hero-bg-mesh"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="eyebrow fade-up au-1">Mineral Financial Intelligence · Market Structure Analysis</div>
-    <h1 class="hero-title fade-up au-2" style="white-space:normal">Market <span class="accent">Price Manipulation</span><br>&amp; Competitive Destruction</h1>
-    <p class="hero-lead fade-up au-3">How dominant actors — state powers, major corporations, price cartels, and regulators — engineer mineral price cycles to eliminate competition, trap investors, and entrench supply chain control. Why Mineral Financial Intelligence must detect, model, and anticipate these dynamics to protect Rwanda's licensing strategy and investment decisions.</p>
-    <p class="hero-meta fade-up au-4">Strategic Horizon · Market Intelligence · Price Dynamics Analysis</p>
+    <div class="eyebrow fade-up au-1">Mineral Financial Intelligence · Geopolitical &amp; Market Structure Analysis</div>
+    <h1 class="hero-title fade-up au-2" style="white-space:normal;font-size:clamp(24px,3vw,40px)">Mineral Markets as Geopolitical Weapons — <span class="accent">Price Distortion &amp; Market Manipulation</span></h1>
+    <p class="hero-lead fade-up au-3">The rules of the global mineral economy have changed. Price manipulation by dominant actors is no longer a hidden corporate strategy — it is an explicit instrument of state power, used as deliberately as sanctions, tariffs, or military posturing. Mineral markets that were once relatively open and price-driven are being systematically segmented along geopolitical fault lines. For Rwanda, a country whose economic future is deeply linked to its mineral wealth, the response is not optional: <strong style="color:var(--gold)">sovereign Mineral Financial Intelligence is now a strategic necessity.</strong></p>
+    <p class="hero-meta fade-up au-4">Strategic Horizon · Geopolitical Intelligence · Market Manipulation · Investment Calibration</p>
     <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up au-5">
-      <a href="#the-playbook" class="btn btn-gold">The Playbook ↓</a>
-      <a href="#actor-taxonomy" class="btn btn-outline">Who Does It ↓</a>
+      <a href="#geopolitical-context" class="btn btn-gold">The New Reality ↓</a>
+      <a href="#the-playbook" class="btn btn-outline">Manipulation Strategies ↓</a>
       <a href="#mfi-framework" class="btn btn-green">MFI Response ↓</a>
     </div>
     <div class="stats-bar fade-up au-5">
-      <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Years China ran the rare earth playbook before being seriously challenged</div></div>
-      <div class="stat"><div class="stat-n">$2,300</div><div class="stat-l">Dysprosium peak ($/kg, 2011) — crashed to &lt;$200 by 2016</div></div>
-      <div class="stat"><div class="stat-n">3×</div><div class="stat-l">Distinct price collapse cycles engineered by a single dominant actor</div></div>
-      <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Western rare earth companies destroyed in each cycle — without exception</div></div>
+      <div class="stat"><div class="stat-n">2023–25</div><div class="stat-l">China restricted gallium, germanium, tungsten, antimony — all in 24 months. Explicit economic warfare.</div></div>
+      <div class="stat"><div class="stat-n">3 blocs</div><div class="stat-l">Global mineral markets fracturing into Western compliance, Chinese processing, and non-aligned spheres</div></div>
+      <div class="stat"><div class="stat-n">20+</div><div class="stat-l">Years China's rare earth price weapon destroyed every Western competitor — without exception</div></div>
+      <div class="stat"><div class="stat-n">$230M+</div><div class="stat-l">US tantalum import value 2024 — driven by geopolitical supply chain restructuring, not just demand</div></div>
     </div>
   </div>
 </div>
@@ -367,6 +373,18 @@
 <section class="section" style="padding-top:36px;padding-bottom:36px;background:var(--surface-1);border-bottom:1px solid var(--border-lt)">
   <div class="eyebrow" style="margin-bottom:14px">What You Will Find on This Page</div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px">
+
+    <a href="#geopolitical-context" style="text-decoration:none">
+      <div class="card" style="border-top:3px solid #5A5A7A;cursor:pointer;height:100%;background:linear-gradient(135deg,#BEBEBE 0%,#C8C8C8 100%)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:18px">🌍</span>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);font-weight:700">Section 0 — Context</div>
+        </div>
+        <div class="card-title" style="color:#111111">The New Geopolitical Reality</div>
+        <div class="card-body" style="color:rgba(20,20,20,0.75)">Mineral market manipulation has become an explicit instrument of state power. How geopolitical competition is fragmenting global mineral markets into rival blocs — and why this makes sovereign MFI a strategic necessity, not a luxury.</div>
+        <div style="margin-top:8px;font-size:12px;color:#7A5800;font-weight:600">Read →</div>
+      </div>
+    </a>
 
     <a href="#case-study" style="text-decoration:none">
       <div class="card" style="border-top:3px solid var(--red);cursor:pointer;height:100%">
@@ -427,6 +445,159 @@
         <div style="margin-top:8px;font-size:12px;color:var(--g-deep);font-weight:600">Read →</div>
       </div>
     </a>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 0 — GEOPOLITICAL CONTEXT
+════════════════════════════════════════════════════════════ -->
+<section id="geopolitical-context" class="section" style="background:linear-gradient(180deg,#C8C8C8 0%,#BEBEBE 60%,#B8C4BB 100%);color:#1A1A1A;position:relative;overflow:hidden">
+
+  <!-- Background texture -->
+  <div style="position:absolute;inset:0;pointer-events:none;opacity:0.04;background-image:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,1) 40px,rgba(255,255,255,1) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,1) 40px,rgba(255,255,255,1) 41px)"></div>
+  <div style="position:absolute;top:-60px;right:-60px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(184,134,11,0.06) 0%,transparent 70%);pointer-events:none"></div>
+  <div style="position:absolute;bottom:-40px;left:10%;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(26,92,56,0.08) 0%,transparent 70%);pointer-events:none"></div>
+
+  <div style="position:relative;z-index:2">
+
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
+      <div style="width:40px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0"></div>
+      <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700">Section 0 — Strategic Context</div>
+    </div>
+
+    <h2 style="font-family:var(--font-d);font-size:32px;font-weight:800;color:#111111;margin-bottom:8px;line-height:1.2">
+      The New Geopolitical Reality:<br>
+      <span style="color:var(--gold)">Mineral Markets as Economic Weapons</span>
+    </h2>
+    <p style="font-size:15px;color:rgba(20,20,20,0.78);line-height:1.7;margin-bottom:40px">
+      The global mineral economy has entered a new era. What was once primarily a matter of supply, demand, and price 
+      is now inseparable from geopolitical strategy, alliance architecture, and interstate competition. 
+      <strong style="font-size:16px;letter-spacing:0.5px">FOR RWANDA</strong> — <strong>a country whose strategic mineral wealth positions it at the intersection of these forces — 
+      understanding this shift is not academic.</strong> <strong style="font-size:16px;letter-spacing:0.5px">IT IS EXISTENTIAL.</strong>
+    </p>
+
+    <!-- Three-layer argument -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px" class="geo-layer-grid">
+
+      <!-- Layer 1 -->
+      <div style="background:rgba(255,255,255,0.45);border:1px solid rgba(0,0,0,0.1);border-top:3px solid #C00000;border-radius:var(--radius);padding:26px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(192,0,0,0.15);border:1px solid rgba(192,0,0,0.35);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:16px;font-weight:900;color:#E05050;flex-shrink:0">1</div>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#E05050;font-weight:700">Layer 1 — Weaponisation</div>
+        </div>
+        <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:#111111;margin-bottom:10px;line-height:1.3">Market Manipulation Is Now Explicit State Policy</div>
+        <div style="font-size:13px;color:rgba(30,30,30,0.82);line-height:1.7;margin-bottom:16px">
+          It is no longer hidden, deniable, or incidental. The weaponisation of mineral supply chains is now openly 
+          discussed in government policy documents — on all sides. China's export restrictions on gallium and 
+          germanium (July 2023), graphite (October 2023), and tungsten and antimony (December 2024) are not 
+          market responses to supply pressures. They are calibrated strategic moves in an ongoing economic conflict, 
+          timed to create maximum disruption to Western technology supply chains.
+          <br><br>
+          The Western response is equally explicit: the US Inflation Reduction Act (2022), the EU Critical Raw 
+          Materials Act (2024), and US DFARS defense procurement mandates (effective 2027) all represent 
+          state-directed demand engineering — governments using purchasing power and regulation to redirect 
+          mineral supply chains away from Chinese dominance, regardless of price.
+        </div>
+        <div style="background:rgba(192,0,0,0.08);border:1px solid rgba(192,0,0,0.2);border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:#E05050;margin-bottom:4px">THE IMPLICATION FOR RWANDA</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.55">Every export decision, every off-take agreement, every licensing decision Rwanda makes now occurs within a geopolitical context that did not exist five years ago. A buyer is not just a buyer — they are an actor in a supply chain battle. MFI must track and decode these allegiances.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;color:rgba(20,20,20,0.5);font-family:var(--font-m);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:2px">Documented cases</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid #C00000">🇨🇳 China · Gallium &amp; Germanium export controls → July 2023</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid #C00000">🇨🇳 China · Graphite export restrictions → October 2023</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid #C00000">🇨🇳 China · Tungsten &amp; Antimony dual-use controls → December 2024</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--blue)">🇺🇸 USA · IRA critical mineral mandates → 2022–ongoing</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--blue)">🇪🇺 EU · Critical Raw Materials Act → 2024</div>
+        </div>
+      </div>
+
+      <!-- Layer 2 -->
+      <div style="background:rgba(255,255,255,0.45);border:1px solid rgba(0,0,0,0.1);border-top:3px solid var(--gold);border-radius:var(--radius);padding:26px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(184,134,11,0.15);border:1px solid rgba(184,134,11,0.35);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:16px;font-weight:900;color:var(--gold);flex-shrink:0">2</div>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);font-weight:700">Layer 2 — Fragmentation</div>
+        </div>
+        <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:#111111;margin-bottom:10px;line-height:1.3">Global Mineral Markets Are Splitting Into Rival Blocs</div>
+        <div style="font-size:13px;color:rgba(30,30,30,0.82);line-height:1.7;margin-bottom:16px">
+          The integrated global mineral market that existed pre-2018 — relatively open, price-driven, with Chinese 
+          processing dominance accepted as a cost efficiency — is fracturing. Three distinct spheres are emerging, 
+          each with different pricing dynamics, compliance requirements, and political allegiances. 
+          This fragmentation is not temporary turbulence. It is a structural shift driven by the same forces 
+          that produced the Cold War's parallel economic blocs — and it will reshape mineral trade flows 
+          for decades.
+        </div>
+        <!-- Bloc diagram -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <div style="background:rgba(27,108,168,0.1);border:1px solid rgba(27,108,168,0.2);border-radius:6px;padding:12px 14px">
+            <div style="font-size:11px;font-weight:700;color:#6AACDE;margin-bottom:4px">🌐 WESTERN COMPLIANCE BLOC — EU · USA · Japan · South Korea · Australia</div>
+            <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.5">Demand certified, traceable, non-Chinese-processed minerals. Willing to pay compliance premium. Driven by regulatory mandates (Dodd-Frank, EU CMR, DFARS). <strong style="color:#6AACDE">Rwanda's primary market target.</strong></div>
+          </div>
+          <div style="background:rgba(192,0,0,0.08);border:1px solid rgba(192,0,0,0.2);border-radius:6px;padding:12px 14px">
+            <div style="font-size:11px;font-weight:700;color:#E05050;margin-bottom:4px">🏭 CHINESE PROCESSING SPHERE — China · aligned African states · parts of SE Asia</div>
+            <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.5">Absorbs non-certified African and Asian supply. No compliance premium paid. Dominates processing and value-added refining. Sets reference price for non-compliant supply. <strong style="color:#E05050">Rwanda must not become dependent on this sphere.</strong></div>
+          </div>
+          <div style="background:rgba(184,134,11,0.09);border:1px solid rgba(184,134,11,0.2);border-radius:6px;padding:12px 14px">
+            <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px">⚖️ NON-ALIGNED MIDDLE — India · Gulf States · Turkey · parts of Africa</div>
+            <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.5">Playing both sides strategically. Opportunistic sourcing and processing. Growing as re-export and re-processing hub. <strong style="color:var(--gold)">Potential partner or competitor for Rwanda — requires close monitoring.</strong></div>
+          </div>
+        </div>
+        <div style="background:rgba(184,134,11,0.08);border:1px solid rgba(184,134,11,0.15);border-radius:6px;padding:12px 14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px">THE IMPLICATION FOR RWANDA</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.55">Rwanda sits at a rare and valuable intersection: a compliant African producer able to supply the Western bloc with certified, traceable 3T minerals. But this position must be actively managed. MFI must continuously track which bloc is buying what, at what price premium, and how bloc boundaries are shifting — because Rwanda's competitive advantage lives or dies in that data.</div>
+        </div>
+      </div>
+
+      <!-- Layer 3 -->
+      <div style="background:rgba(255,255,255,0.45);border:1px solid rgba(0,0,0,0.1);border-top:3px solid var(--g-deep);border-radius:var(--radius);padding:26px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(26,92,56,0.15);border:1px solid rgba(26,92,56,0.4);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:16px;font-weight:900;color:#6FD19A;flex-shrink:0">3</div>
+          <div style="font-family:var(--font-m);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#6FD19A;font-weight:700">Layer 3 — Sovereignty</div>
+        </div>
+        <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:#111111;margin-bottom:10px;line-height:1.3">Market Intelligence Is Now a Sovereign Capability</div>
+        <div style="font-size:13px;color:rgba(30,30,30,0.82);line-height:1.7;margin-bottom:16px">
+          When mineral markets are geopolitical instruments, a country that cannot read those markets 
+          independently is strategically blind. This is not a metaphor. A country relying on international 
+          commodity price feeds alone — Bloomberg, LME, Fastmarkets — for its mineral market intelligence 
+          is equivalent to relying on a foreign government's intelligence service for national security 
+          assessments. The data arrives filtered, lagged, and framed by interests that are not Rwanda's.
+          <br><br>
+          Sovereign MFI means Rwanda builds its own analytical capability: collecting primary data, 
+          modelling its own scenarios, tracking its own buyer relationships, and generating its own 
+          forward projections — independent of any external actor's narrative or pricing agenda.
+        </div>
+        <div style="background:rgba(26,92,56,0.1);border:1px solid rgba(26,92,56,0.2);border-radius:6px;padding:12px 14px;margin-bottom:12px">
+          <div style="font-size:11px;font-weight:700;color:#6FD19A;margin-bottom:4px">THE IMPLICATION FOR RWANDA</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.78);line-height:1.55">RMB's Mineral Financial Intelligence programme is not a reporting tool. It is a sovereign intelligence infrastructure. Its outputs — price scenario models, buyer concentration analyses, manipulation detection alerts, investment calibration signals — are instruments of national economic strategy. They must be built, owned, and operated by Rwanda, for Rwanda.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:11px;color:rgba(20,20,20,0.5);font-family:var(--font-m);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:2px">What sovereign MFI must answer independently</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--g-deep)">Which price movements are fundamental vs. geopolitically engineered?</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--g-deep)">Which buyers are acting commercially vs. on state instruction?</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--g-deep)">Which bloc is Rwanda's supply actually serving — and at what premium?</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--g-deep)">When is a price spike an opportunity vs. a trap being set?</div>
+          <div style="font-size:12px;color:rgba(20,20,20,0.72);padding:5px 10px;background:rgba(0,0,0,0.05);border-radius:4px;border-left:2px solid var(--g-deep)">How fast are the geopolitical blocs shifting — and is Rwanda positioned correctly?</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- The central imperative callout -->
+    <div style="background:rgba(255,255,255,0.5);border:1px solid rgba(0,0,0,0.1);border-left:4px solid var(--gold);border-radius:var(--radius);padding:28px 32px;display:flex;gap:20px;align-items:flex-start">
+      <div style="font-size:28px;flex-shrink:0;margin-top:2px">🎯</div>
+      <div>
+        <div style="font-family:var(--font-d);font-size:19px;font-weight:700;color:#111111;margin-bottom:10px">Why This Module Exists: The Central Imperative</div>
+        <div style="font-size:14px;color:rgba(20,20,20,0.82);line-height:1.75">
+          The analysis that follows — the documented history of price manipulation, the taxonomy of actors, the six manipulation strategies, the 3T market risk assessment, the MFI detection framework, and the strategic investment calibration model — is not a theoretical exercise. It is a practical toolkit for navigating a mineral economy that has been fundamentally transformed by geopolitical competition.
+          <br><br>
+          <strong style="color:#111111">Countries, regulators, mining companies, and investors that operate without this level of market intelligence are not operating on a level playing field. They are operating blind, in an arena where their adversaries have night-vision.</strong>
+          <br><br>
+          Rwanda's Mineral Financial Intelligence programme — anchored in RMB's regulatory authority, built on primary data, and driven by the analytical frameworks this module describes — is the response to that asymmetry. It is not an administrative function. It is a <strong style="color:var(--gold)">strategic weapon</strong> in Rwanda's own arsenal.
+        </div>
+      </div>
+    </div>
 
   </div>
 </section>
@@ -916,6 +1087,213 @@
     </div>
 
   </div>
+
+  <!-- ── Strategic Investment Calibration sub-section ── -->
+  <div style="margin-top:64px">
+
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px">
+      <div style="width:40px;height:3px;background:var(--gold);border-radius:2px;flex-shrink:0"></div>
+      <div class="eyebrow" style="margin-bottom:0">Core MFI Function — Beyond Monitoring</div>
+    </div>
+    <h3 style="font-family:var(--font-d);font-size:28px;font-weight:800;color:var(--text-head);margin-bottom:12px;line-height:1.2">
+      Strategic Investment Calibration:<br>
+      <span style="color:var(--g-deep)">MFI as the Decision Engine</span>
+    </h3>
+    <p style="font-size:15px;color:var(--text-muted);line-height:1.7;margin-bottom:36px">
+      Mineral Financial Intelligence must go beyond warning and protection. Its most powerful function is 
+      <strong style="color:var(--text-head)">active investment navigation</strong> — providing data-driven, 
+      scenario-backed guidance on <em>where, when, how much, and why</em> to deploy capital across the full 
+      mineral value chain. MFI transforms from a thermometer (measuring market temperature) into a 
+      <strong style="color:var(--g-deep)">thermostat</strong> — actively calibrating investment decisions in 
+      real time against market intelligence signals. This is how Rwanda builds not just resilience, but 
+      <strong style="color:var(--text-head)">competitive advantage</strong>.
+    </p>
+
+    <!-- Three investment pillars -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border-lt);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-md);margin-bottom:40px" class="inv-pillar-grid">
+
+      <!-- Pillar 1 -->
+      <div style="padding:28px 26px;border-right:1px solid var(--border-lt);background:#FFFFFF;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--blue)"></div>
+        <div style="font-size:32px;margin-bottom:14px">⚙️</div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:8px">Investment Pillar 1</div>
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:800;color:var(--text-head);margin-bottom:10px;line-height:1.2">Production Capacity<br>Investment</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:18px">
+          <em>When and how much to invest in machinery, equipment, and mine development to scale production capacity.</em>
+          <br><br>
+          This is the most consequential — and most dangerous — investment decision in the mineral sector. 
+          Capacity expansion takes 12–36 months to come online. If the price signal driving the decision 
+          is speculative rather than structural, new capacity arrives into a collapsed market. MFI must 
+          definitively answer: <strong style="color:var(--text-head)">is this demand real?</strong>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--blue)">
+            <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:3px">MFI INVESTMENT TRIGGER</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Structural demand growth confirmed (end-use sector expansion, new long-term off-take contracts signed, policy mandates creating durable demand) AND price rise driven by fundamentals, not speculative accumulation → <strong>SCALE NOW</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--red)">
+            <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:3px">MFI INVESTMENT BRAKE</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Price rise accompanied by rising exchange inventories, concentrated buyer procurement, or narrative amplification without verified end-use data → <strong>HOLD CAPEX. Build cash reserves instead.</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--gold)">
+            <div style="font-size:11px;font-weight:700;color:#7A5800;margin-bottom:3px">KEY MFI ANALYTICS</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">End-use demand decomposition · Capacity utilisation rates globally · Capex payback modelling at three price scenarios (base / bear / crash) · Break-even price vs. current and projected spot</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pillar 2 -->
+      <div style="padding:28px 26px;border-right:1px solid var(--border-lt);background:#FDFDFC;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--gold)"></div>
+        <div style="font-size:32px;margin-bottom:14px">🚚</div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#7A5800;font-weight:700;margin-bottom:8px">Investment Pillar 2</div>
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:800;color:var(--text-head);margin-bottom:10px;line-height:1.2">Logistics, Transport<br>&amp; Storage Infrastructure</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:18px">
+          <em>When and how much to invest in transport, storage, and handling infrastructure to leverage price cycle dynamics.</em>
+          <br><br>
+          Storage capacity is a direct profit multiplier — but only when combined with market intelligence 
+          to time it. The ability to <strong style="color:var(--text-head)">hold inventory during price troughs 
+          and release during peaks</strong> converts market volatility from a threat into a revenue opportunity. 
+          Without MFI, this is speculation. With MFI, it is <strong style="color:var(--g-deep)">data-driven 
+          arbitrage</strong>. Logistics investment also determines Rwanda's ability to respond rapidly when 
+          export windows open.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--gold)">
+            <div style="font-size:11px;font-weight:700;color:#7A5800;margin-bottom:3px">MFI INVESTMENT TRIGGER</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Price trough with forward fundamentals showing recovery + strong compliance premium + identified storage deficit in Rwanda's supply chain → <strong>INVEST IN STORAGE &amp; HANDLING. Accumulate inventory strategically.</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--red)">
+            <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:3px">MFI INVESTMENT BRAKE</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Price decline with unclear recovery horizon, dominant buyer withdrawal detected, or manipulation crash phase suspected → <strong>DO NOT accumulate inventory. Preserve liquidity.</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--gold)">
+            <div style="font-size:11px;font-weight:700;color:#7A5800;margin-bottom:3px">KEY MFI ANALYTICS</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Price cycle duration modelling · Optimal inventory holding period vs. storage cost · Transport corridor cost benchmarking · Export timing optimisation vs. seasonal/market price windows · Logistics cost as % of FOB price per mineral</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pillar 3 -->
+      <div style="padding:28px 26px;background:#FAFCFA;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:var(--g-deep)"></div>
+        <div style="font-size:32px;margin-bottom:14px">🧠</div>
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--g-deep);font-weight:700;margin-bottom:8px">Investment Pillar 3</div>
+        <div style="font-family:var(--font-d);font-size:18px;font-weight:800;color:var(--text-head);margin-bottom:10px;line-height:1.2">Knowledge &amp; Human<br>Capital Investment</div>
+        <div style="font-size:13px;color:var(--text-muted);line-height:1.65;margin-bottom:18px">
+          <em>When and how much to invest in expertise, technical skills, and institutional knowledge to maintain competitive advantage and influence market dynamics.</em>
+          <br><br>
+          The rare earth case study delivers one brutal lesson above all others: 
+          <strong style="color:var(--text-head)">knowledge is the ultimate moat</strong>. China sold equipment 
+          while retaining expertise — and that retention was worth more than the equipment itself. Rwanda's 
+          protection against this is not just regulatory — it is building irreplaceable human capital in 
+          metallurgy, market analysis, compliance, and financial modelling that cannot be switched off by 
+          an adversarial actor withdrawing a service contract.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--g-deep)">
+            <div style="font-size:11px;font-weight:700;color:var(--g-deep);margin-bottom:3px">MFI INVESTMENT TRIGGER</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Identified knowledge gap vs. competitors · New compliance framework (EU, US) requiring technical expertise Rwanda currently lacks · Processing capacity investment planned requiring metallurgical skills → <strong>INVEST IN EXPERTISE BEFORE THE CAPABILITY IS NEEDED.</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--red)">
+            <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:3px">MFI RED FLAG</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Critical technical functions (assay, certification, market pricing, financial modelling) dependent on a single external provider or foreign-contracted expert → <strong>KNOWLEDGE DEPENDENCY = STRATEGIC VULNERABILITY. Internalise urgently.</strong></div>
+          </div>
+          <div style="background:var(--surface-1);border-radius:6px;padding:11px 14px;border-left:3px solid var(--g-deep)">
+            <div style="font-size:11px;font-weight:700;color:var(--g-deep);margin-bottom:3px">KEY MFI ANALYTICS</div>
+            <div style="font-size:12px;color:var(--text-muted);line-height:1.5">Expertise gap mapping vs. sector requirements · Training ROI modelling · Knowledge retention risk assessment · Competitor capability benchmarking · MFI staff capacity plan (analytics, compliance, market intelligence)</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- The decision matrix -->
+    <div style="background:var(--surface-1);border:1px solid var(--border-lt);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);margin-bottom:32px">
+      <div style="padding:20px 24px;border-bottom:1px solid var(--border-lt);display:flex;align-items:center;gap:12px">
+        <div style="font-size:22px">🧭</div>
+        <div>
+          <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--text-head)">Strategic Investment Decision Matrix</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">MFI signal → Investment decision — across all three pillars simultaneously</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--surface-2)">
+              <th style="padding:11px 14px;text-align:left;font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);border-bottom:2px solid var(--border-md);white-space:nowrap">MFI Signal</th>
+              <th style="padding:11px 14px;text-align:left;font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue);border-bottom:2px solid var(--border-md)">⚙️ Production Capex</th>
+              <th style="padding:11px 14px;text-align:left;font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#7A5800;border-bottom:2px solid var(--border-md)">🚚 Logistics &amp; Storage</th>
+              <th style="padding:11px 14px;text-align:left;font-family:var(--font-m);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--g-deep);border-bottom:2px solid var(--border-md)">🧠 Knowledge &amp; HR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border-lt)">
+              <td style="padding:13px 14px;vertical-align:top"><strong style="color:var(--g-deep)">Structural demand growth confirmed</strong><br><span style="font-size:11px;color:var(--text-muted)">End-use sector expansion, long-term contracts</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ SCALE UP</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Commission capacity expansion. Prioritise projects with ≤18-month payback at base-case price.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ INVEST</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Expand export corridor capacity. Secure long-term freight contracts before spot rates rise with demand.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ INVEST NOW</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Hire/train metallurgists and compliance specialists. Do not wait until capacity is built.</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-lt);background:rgba(255,245,220,0.3)">
+              <td style="padding:13px 14px;vertical-align:top"><strong style="color:#7A5800">Speculative price spike detected</strong><br><span style="font-size:11px;color:var(--text-muted)">Inventory rising + narrative amplification</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(192,0,0,0.08);color:var(--red);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">⏸ HOLD</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Do not commit capex at current price signal. Build cash. Revisit in 2 quarters.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(184,134,11,0.1);color:#7A5800;font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">◆ SELECTIVE</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Expand storage only if cost is low and crash scenario still profitable. Avoid long-term freight lock-in.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ CONTINUE</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Knowledge investment is always justified — it is the one asset that survives a price crash.</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-lt)">
+              <td style="padding:13px 14px;vertical-align:top"><strong style="color:var(--blue)">Price trough + strong forward fundamentals</strong><br><span style="font-size:11px;color:var(--text-muted)">Temporary low + confirmed future demand</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(27,108,168,0.1);color:var(--blue);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">◆ PREPARE</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Plan and tender capacity expansion now. Lock in equipment &amp; contractor costs at trough prices. Execute when recovery confirmed.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ ACCUMULATE</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Strategic inventory build at trough prices. This is the highest-return logistics investment window.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ INVEST</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Use trough period for training &amp; capability building. Staff capacity will be needed when production scales.</span></td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border-lt);background:rgba(255,235,235,0.3)">
+              <td style="padding:13px 14px;vertical-align:top"><strong style="color:var(--red)">Manipulation crash phase suspected</strong><br><span style="font-size:11px;color:var(--text-muted)">Price drop ≥30%, dominant buyer withdrawal</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(192,0,0,0.1);color:var(--red);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">🛑 FREEZE</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">All non-essential capex suspended. Assess cashflow survival at -40% and -60% price scenarios.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(192,0,0,0.1);color:var(--red);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">🛑 HOLD</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Do not accumulate inventory without clarity on crash duration. Preserve liquidity above all else.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ PROTECT</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Retain key expertise at all costs. Knowledge loss during a crash is permanent. Physical assets can be recovered; people cannot be easily replaced.</span></td>
+            </tr>
+            <tr>
+              <td style="padding:13px 14px;vertical-align:top"><strong style="color:#7B2D8B">Compliance premium widening</strong><br><span style="font-size:11px;color:var(--text-muted)">Rwanda certification advantage strengthening</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(123,45,139,0.08);color:#7B2D8B;font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">◆ ASSESS</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Premium window justifies capacity investment — but verify whether premium is durable or regulatory-cycle driven.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(123,45,139,0.08);color:#7B2D8B;font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ CERTIFY</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Invest in certified storage and chain-of-custody infrastructure. Compliance traceability must reach the warehouse, not just the mine gate.</span></td>
+              <td style="padding:13px 14px;vertical-align:top"><span style="background:rgba(26,92,56,0.1);color:var(--g-deep);font-weight:700;padding:2px 8px;border-radius:4px;font-size:11px">▲ INVEST</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block">Compliance expertise IS the premium. Invest in auditors, certification managers, and regulatory specialists who understand EU/US due diligence frameworks in depth.</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Closing callout -->
+    <div style="background:linear-gradient(135deg,var(--g-deep) 0%,#0F3D22 100%);border-radius:var(--radius);padding:32px 36px;color:#FFFFFF;box-shadow:var(--shadow-md);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.03)"></div>
+      <div style="position:absolute;bottom:-20px;left:40%;width:120px;height:120px;border-radius:50%;background:rgba(184,134,11,0.08)"></div>
+      <div style="position:relative;z-index:2">
+        <div style="font-family:var(--font-m);font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px">The Strategic Imperative</div>
+        <div style="font-family:var(--font-d);font-size:22px;font-weight:800;color:#FFFFFF;margin-bottom:16px;line-height:1.3">MFI does not just protect Rwanda from bad investment decisions.<br>It drives Rwanda toward the right ones — at the right time.</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.72);line-height:1.7;margin-bottom:24px">
+          Every investment decision in Rwanda's mineral sector — whether to expand a mine, build a warehouse, hire a metallurgist, or sign an off-take agreement — is made either with market intelligence or without it. Without MFI, these decisions are driven by instinct, incomplete data, and lagged price signals that dominant actors have already moved past. With MFI, they are calibrated against the full picture: real demand vs. manufactured demand, structural price vs. speculative price, genuine opportunity vs. engineered trap.
+          <br><br>
+          The three investment pillars — production capacity, logistics infrastructure, and human capital — are not independent decisions. They are a <strong style="color:var(--gold)">coordinated portfolio</strong> that MFI must navigate simultaneously, ensuring that Rwanda's mineral sector grows not just in volume but in resilience, value-added capability, and long-term competitive positioning in global markets.
+        </div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:14px 18px;flex:1;min-width:180px">
+            <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:var(--font-d)">3</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px">Investment pillars navigated simultaneously by MFI</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:14px 18px;flex:1;min-width:180px">
+            <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:var(--font-d)">5</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px">Market signal types mapped to investment decisions</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:14px 18px;flex:1;min-width:180px">
+            <div style="font-size:22px;font-weight:800;color:var(--gold);font-family:var(--font-d)">1</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px">Integrated intelligence system driving all three pillars</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </section>
 
 
